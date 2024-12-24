@@ -14,5 +14,5 @@ local function fetchGame(id)
     end
 end
 
-local key = fetchGame(game.PlaceID)
+local key = fetchGame(game.PlaceId)
 print(tostring(key))
