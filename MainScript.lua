@@ -1,7 +1,7 @@
 local function fetchGame(id)
     local supported = setmetatable({
         [1] = 16732694052,
-        [2[ = 17625359962,
+        [2] = 17625359962,
     }, {
         __index = function()
             return nil
