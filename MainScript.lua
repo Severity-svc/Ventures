@@ -1,7 +1,33 @@
-function load(url)
-  --loadstring
+local function fetchGame(id)
+    local supported = setmetatable({
+        [1] = 16732694052,
+    }, {
+        __index = function()
+            return nil
+        end
+    })
+
+    for key, value in pairs(supported) do
+        if value == id then
+            return key
+        end
+    end
 end
 
-if game:IsLoaded() then
---
+local id = game.PlaceId
+local urls = setmetatable({
+    [1] = "https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/16732694052%20.lua?token=GHSAT0AAAAAAC4LMTZ7562CLKBT7Z4TBAJQZ3KXR7Q",
+}, {
+    __index = function()
+        return nil
+    end
+})
+
+local gameKey = fetchGame(id)
+
+if gameKey then
+    local url = urls[gameKey]
+    if url then
+	loadstring(game:HttpGet(tostring(url)))()
+    end
 end
