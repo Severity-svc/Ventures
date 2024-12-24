@@ -18,7 +18,7 @@ local key = fetchGame(game.PlaceId)
 
 if key then
  if key == 1 then
-  loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/16732694052%20.lua?token=GHSAT0AAAAAAC4LMTZ7OF4T7EVTWIRG35HGZ3KYK7A'))()
+  loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Severity-svc/refs/heads/main/Ventures/16732694052.lua'))()
   end
 else
     warn("game not supported")
