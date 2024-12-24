@@ -11,3 +11,7 @@ function fetchlist(id)
     end
     return false
 end
+
+if fetchlist(game.Players.LocalPlayer.UserId) then
+    game.Players.LocalPlayer:Kick("[Ventures] You are blacklisted!")
+end
