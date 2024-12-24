@@ -7,4 +7,6 @@ local fetch = {
   uis = gs("UserInputService"),
   http = gs("HttpService"),  
   tween = gs("TweenService"),
+  workspace = gs("Workspace"),
+  players = gs("Players")
 }
