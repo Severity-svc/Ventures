@@ -1,3 +1,30 @@
+local library = {}
+
+function fetchstrings(url)
+    if type(url) ~= "string" then
+        warn("Url malformed")
+        return
+    end
+    local success, result = pcall(function()
+        return loadstring(game:HttpGet(url))()
+    end)
+    if not success then
+        warn("Failed to execute script from URL:", result)
+    end
+end
+
+function library:Init()
+    if not game:IsLoaded() then 
+        game.Loaded:Wait() 
+    end
+
+    local coreGui = game:GetService("CoreGui")
+    if not coreGui then
+        warn("CoreGui not available")
+        return
+    end
+end
+
 local Sigma = Instance.new("ScreenGui")
 local Main = Instance.new("Frame")
 local Sidepanel = Instance.new("Frame")
@@ -32,8 +59,6 @@ local checkbox = Instance.new("TextButton")
 local UICorner_7 = Instance.new("UICorner")
 local Title_2 = Instance.new("TextLabel")
 local Right = Instance.new("Frame")
-
---Properties:
 
 Sigma.Name = "Sigma"
 Sigma.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -324,47 +349,4 @@ Right.Size = UDim2.new(0, 200, 0, 400)
 
 -- Scripts:
 
-local function EQLQDRZ_fake_script() -- Name.LocalScript 
-	local script = Instance.new('LocalScript', Name)
-
-	local loclaplayer = game.Players.LocalPlayer
-	script.Parent.Text = loclaplayer.DisplayName
-end
-coroutine.wrap(EQLQDRZ_fake_script)()
-local function BWHREV_fake_script() -- Name2.LocalScript 
-	local script = Instance.new('LocalScript', Name2)
-
-	local loclaplayer = game.Players.LocalPlayer
-	script.Parent.Text = "@".. loclaplayer.Name
-end
-coroutine.wrap(BWHREV_fake_script)()
-local function VTWAO_fake_script() -- ImageLabel.LocalScript 
-	local script = Instance.new('LocalScript', ImageLabel)
-
-	
-	-- some of it coded me and some sum shitty studio assistant ;)
-	
-	local pic = script.Parent
-	local localplayer = game.Players.LocalPlayer
-	local userid = localplayer.UserId
-	local thumbtype = Enum.ThumbnailType.HeadShot
-	local thumbsize = Enum.ThumbnailSize.Size420x420
-	local content, isReady = game.Players:GetUserThumbnailAsync(userid, thumbtype, thumbsize)
-	
-	pic.Image = content
-end
-coroutine.wrap(VTWAO_fake_script)()
-local function TPIDJ_fake_script() -- checkbox.LocalScript 
-	local script = Instance.new('LocalScript', checkbox)
-
-	local enabled = true
-	script.Parent.MouseButton1Up:Connect(function()
-		enabled = not enabled
-		if enabled then
-			script.Parent.BackgroundColor3 = Color3.fromRGB(82, 123, 251)
-		else
-			script.Parent.BackgroundColor3 = Color3.fromRGB(16, 24, 49)
-		end
-	end)
-end
-coroutine.wrap(TPIDJ_fake_script)()
+return library
