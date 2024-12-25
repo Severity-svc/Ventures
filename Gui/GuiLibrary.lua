@@ -9,7 +9,7 @@ function fetchstrings(url)
         return loadstring(game:HttpGet(url))()
     end)
     if not success then
-        warn("Failed to execute script from URL:", result)
+        warn("err", result)
     end
 end
 
