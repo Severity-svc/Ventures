@@ -20,7 +20,7 @@ function library:Init()
 
     local coreGui = game:GetService("CoreGui")
     if not coreGui then
-        warn("CoreGui not available")
+        warn("[Ventures]: core gui inactive")
         return
     end
 end
