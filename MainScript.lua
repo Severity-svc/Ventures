@@ -16,6 +16,7 @@ local function fetchGame(id)
 end
 
 local key = fetchGame(game.PlaceId)
+setclipboard("discord.gg/v3n")
 
 if key then
  if key == 1 then
