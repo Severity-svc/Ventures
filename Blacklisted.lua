@@ -1,7 +1,6 @@
 local blacklisted = {
     "1",
-    -- add more
-} -- Make serversided, for now client-sided
+}
 
 function fetchlist(id)
     for i,v in pairs(blacklisted) do
@@ -13,5 +12,5 @@ function fetchlist(id)
 end
 
 if fetchlist(game.Players.LocalPlayer.UserId) then
-    game.Players.LocalPlayer:Kick("[Ventures] You are blacklisted!")
+    game.Players.LocalPlayer:Kick("[Ventures] blacklisted, open a ticket at discord.gg/v3n")
 end
