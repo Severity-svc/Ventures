@@ -1,10 +1,11 @@
+print("loaded keysystm")
 local keysystem = {}
 
 local ts = game:GetService("TweenService")
 local players = game:GetService("Players")
 local localPlayer = players.LocalPlayer
 
-function keysystem:CreateKeySystem(SecretKey, Loadstring, Tittle)
+local function keysystem:CreateKeySystem(SecretKey, Loadstring, Tittle)
 	local existingGui = game:GetService("CoreGui"):FindFirstChild("KeySystem Holder") or localPlayer:WaitForChild("PlayerGui"):FindFirstChild("KeySystem Holder")
 	if existingGui then
 		existingGui:Destroy()
