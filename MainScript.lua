@@ -1,3 +1,5 @@
+local lib = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+
 local function fetchGame(id)
     local supported = setmetatable({
         [1] = 16732694052,
@@ -8,9 +10,9 @@ local function fetchGame(id)
         end
     })
 
-    for key, value in pairs(supported) do
-        if value == id then
-            return key
+    for k, v in ipairs(supported) do
+        if v == id then
+            return k
         end
     end
 end
@@ -25,6 +27,11 @@ if key then
     loadstring(game:HttpGet(--[[url]]))()-- rep privated, cant use loadstrings as tokens
   end
 else
-    warn("game not supported")
+    lib:Notify({
+        Title = "Ventures",
+		Content = "Game Not Supported!",
+		SubContent = "",
+		Duration = 3 
+	})
 end
 
