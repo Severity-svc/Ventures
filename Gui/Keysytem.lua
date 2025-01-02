@@ -1,9 +1,9 @@
 local fetch = {}
 
 local ts = game:GetService("TweenService")
-
+local key2 = false
 function fetch:spawnfunc(func)
-    if type(func) == "function" then
+    if type(func) == "function" and key2 then
         func()
     else
         warn("[ventures spawnfunc]: func is not a function, returning.")
@@ -231,6 +231,7 @@ function fetch:spawnui(key, tittle, discordinvite, toloadstring)
 
 	checkbttn.MouseButton1Click:Connect(function()
 		if keyinput.Text == key then
+				key2
 			ts:Create(keysystem, TweenInfo.new(0.4), {Position = UDim2.new(0.5,0,0.4,0)}):Play()
 			task.wait(0.3)
 			ts:Create(keysystem, TweenInfo.new(0.5), {Position = UDim2.new(0.5,0,1.2,0)}):Play()
