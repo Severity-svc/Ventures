@@ -1,15 +1,6 @@
 local fetch = {}
 
 local ts = game:GetService("TweenService")
-local key2 = false
-function fetch:spawnfunc(func)
-    if type(func) == "function" and key2 then
-        func()
-    else
-        warn("[ventures spawnfunc]: func is not a function, returning.")
-        return
-    end
-end
 
 function spawnstr(instance)
 	local str = Instance.new("UIStroke")
