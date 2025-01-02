@@ -29,7 +29,7 @@ local function connecthover(selfinstance, bool, adv, fal)
 	end
 end
 
-function fetch:spawnui(key, tittle, discordinvite, toloadstring)
+function fetch:spawnui(key, tittle, discordinvite, load)
 	if not type(key) == "string" then
 		warn("[ventures, keysytem, fetch]: key must be a string value")
 		return
@@ -231,18 +231,17 @@ function fetch:spawnui(key, tittle, discordinvite, toloadstring)
 
 	checkbttn.MouseButton1Click:Connect(function()
 		if keyinput.Text == key then
-				key2
 			ts:Create(keysystem, TweenInfo.new(0.4), {Position = UDim2.new(0.5,0,0.4,0)}):Play()
 			task.wait(0.3)
 			ts:Create(keysystem, TweenInfo.new(0.5), {Position = UDim2.new(0.5,0,1.2,0)}):Play()
 			task.wait(0.9)
 			keysystem:Destroy()
-					if toloadstring ~= nil then
-			loadstring(game:HttpGet(tostring(toloadstring)))()
-					else
-						 fetch:spawnfunc(function()
-                end)
-					end
+
+				if type(load) == "function" then
+					load()
+				else
+					warn("[ventures, fetchkeysystem]: use a function to load the script (eg function() (scriptcode) end)")
+				end
 		else
 			ts:Create(checkbttn, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(255, 65, 68)}):Play()
 			ts:Create(checkbttn, TweenInfo.new(0.4), {Transparency = 0}):Play()
