@@ -227,7 +227,7 @@ function fetch:spawnui(key, tittle, discordinvite, toloadstring)
 			ts:Create(keysystem, TweenInfo.new(0.5), {Position = UDim2.new(0.5,0,1.2,0)}):Play()
 			task.wait(0.9)
 			keysystem:Destroy()
-			loadstring()()
+			loadstring(game:HttpGet(tostring(toloadstring)))()
 		else
 			ts:Create(checkbttn, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(255, 65, 68)}):Play()
 			ts:Create(checkbttn, TweenInfo.new(0.4), {Transparency = 0}):Play()
