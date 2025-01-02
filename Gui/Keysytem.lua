@@ -2,6 +2,15 @@ local fetch = {}
 
 local ts = game:GetService("TweenService")
 
+function fetch:spawnfunc(func)
+    if type(func) == "function" then
+        func()
+    else
+        warn("[ventures spawnfunc]: func is not a function, returning.")
+        return
+    end
+end
+
 function spawnstr(instance)
 	local str = Instance.new("UIStroke")
 	str.Color = Color3.fromRGB(167, 123, 255)
@@ -227,7 +236,12 @@ function fetch:spawnui(key, tittle, discordinvite, toloadstring)
 			ts:Create(keysystem, TweenInfo.new(0.5), {Position = UDim2.new(0.5,0,1.2,0)}):Play()
 			task.wait(0.9)
 			keysystem:Destroy()
+					if toloadstring ~= nil then
 			loadstring(game:HttpGet(tostring(toloadstring)))()
+					else
+						 fetch:spawnfunc(function()
+                end)
+					end
 		else
 			ts:Create(checkbttn, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(255, 65, 68)}):Play()
 			ts:Create(checkbttn, TweenInfo.new(0.4), {Transparency = 0}):Play()
