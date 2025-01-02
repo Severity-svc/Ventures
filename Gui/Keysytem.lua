@@ -207,7 +207,7 @@ function fetch:spawnui(key, tittle, discordinvite, toloadstring)
 			warn("[ventures, fetchkeysystem]: discord invite must be a string")
 			return
 		else
-			setclipboard(discordinvite)
+			setclipboard(discordinvite or "Discord.gg/v3n")
 		end
 	end)
 
@@ -236,7 +236,7 @@ function fetch:spawnui(key, tittle, discordinvite, toloadstring)
 
 			ts:Create(checkbttn, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(53, 25, 136)}):Play()
 			ts:Create(checkbttn, TweenInfo.new(0.4), {Transparency = 0.55}):Play()
-
+			return
 		end
 	end)
 	return keysystem
