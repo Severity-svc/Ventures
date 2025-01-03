@@ -29,7 +29,7 @@ if key then
  if key == 1 then
   loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/16732694052%20.lua'))()
     elseif key == 2 then
-    loadstring(game:HttpGet("https://github.com/Severity-svc/Ventures/blob/main/Profiles/17625359962.lua"))()
+    loadstring(game:HttpGet("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/17625359962.lua"))()
   end
 else
     lib:Notify({
