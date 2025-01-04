@@ -50,7 +50,7 @@ function fetch:spawnui(key, tittle, discordinvite, load)
 	local UIAspectRatioConstraint_7 = Instance.new("UIAspectRatioConstraint")
 
 	Keysystem.Name = "Keysystem"
-	Keysystem.Parent = game:GetService("CoreGui") or game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
+	Keysystem.Parent = game:GetService("Players").LocalPlayer:WaitForChild("PlayerGui")
 	Keysystem.Enabled = true
 	Keysystem.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
