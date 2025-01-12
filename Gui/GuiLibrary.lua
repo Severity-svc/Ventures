@@ -1,6 +1,3 @@
---[[ventures ui lib]]
-
-
 if not game:IsLoaded() then
 	repeat task.wait(0.1) until game:IsLoaded()
 end
@@ -941,7 +938,7 @@ function lib:Notify(tablen)
 	str4.Color = Color3.fromRGB(91, 67, 100)
 	str4.Thickness = 1.3
 	str4.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-	
+
 	closebttn.MouseEnter:Connect(function()
 		ts:Create(str4, TweenInfo.new(0.4), {Color = Color3.fromRGB(186, 139, 206)}):Play()
 		ts:Create(closebttn, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
@@ -987,6 +984,20 @@ function lib:Notify(tablen)
 	end
 
 	return Notification
+end
+
+local function fastnotify(ty)
+	if ty == "callback error" then
+		lib:Notify({
+			Title = "Ventures - Callback Error",
+			Content = "there's an erorr at the callback function",
+		})
+	elseif ty == "library error" then
+		lib:Notify({
+			Title = "Ventures - Library Error",
+			Content = "there's an erorr in the library, please dm sentrysvc for help and what you did to get this erorr.",
+		})
+	end
 end
 
 function lib:CreateWindow(tablew)
@@ -1275,10 +1286,9 @@ function lib:CreateWindow(tablew)
 	UIListLayout.Padding = UDim.new(0, 15)
 
 	function tab:CreateTab(tablet)
+		local holders = {}
 		local element = {}
 		local selected = nil
-		
-		local y = tablet.Width / 100 or 0.46
 
 		local Tab = Instance.new("Frame")
 		local UICorner_3 = Instance.new("UICorner")
@@ -1295,7 +1305,6 @@ function lib:CreateWindow(tablew)
 		local TabHolder = Instance.new("Frame")
 		local UIListLayout_3 = Instance.new("UIListLayout")
 		local str2 = Instance.new("UIStroke")
-		local str3 = Instance.new("UIStroke")
 
 		local function fetchicon(name)
 			for k, v in pairs(lucide) do
@@ -1319,11 +1328,11 @@ function lib:CreateWindow(tablew)
 		str2.Color = Color3.fromRGB(91, 67, 100)
 		str2.Transparency = 0
 		str2.Thickness = 1.3
-		
+
 		Tab.MouseEnter:Connect(function()
 			ts:Create(str2, TweenInfo.new(0.4), {Color = Color3.fromRGB(186, 139, 206)}):Play()
 		end)
-		
+
 		Tab.MouseLeave:Connect(function()
 			ts:Create(str2, TweenInfo.new(0.4), {Color = Color3.fromRGB(91, 67, 100)}):Play()
 		end)
@@ -1378,27 +1387,12 @@ function lib:CreateWindow(tablew)
 		TabContainer2.Position = UDim2.new(0.140000002, 0, 0.0710000023, 0)
 		TabContainer2.Size = UDim2.new(0.758441567, 0, 0.909615397, 0)
 
-		UIListLayout_2.Parent = TabContainer2
-		UIListLayout_2.SortOrder = Enum.SortOrder.LayoutOrder
-		UIListLayout_2.Padding = UDim.new(0, 10)
-		
-		TabHolder.Name = "Tab Holder"
-		TabHolder.Parent = TabContainer2
-		TabHolder.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
-		TabHolder.BackgroundTransparency = 0.3
-		TabHolder.BorderColor3 = Color3.fromRGB(0, 0, 0)
-		TabHolder.BorderSizePixel = 0
-		TabHolder.Position = UDim2.new(-0.0221402217, 0, 0, 0)
-		TabHolder.Size = UDim2.new(0.559502661, 0, y, 0)
-
-		str3.Parent = TabHolder
-		str3.Color = Color3.fromRGB(91, 67, 100)
-		str3.Thickness = 1.3
-
-		UIListLayout_3.Parent = TabHolder
-		UIListLayout_3.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		UIListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
-		UIListLayout_3.Padding = UDim.new(0, 10)
+		local UIListLayout = Instance.new("UIListLayout")
+		UIListLayout.Parent = TabContainer2
+		UIListLayout.Wraps = true
+		UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		UIListLayout.Padding = UDim.new(0, 10)
 
 		TabName2.Name = "Tab Name2"
 		TabName2.Parent = Holder
@@ -1418,120 +1412,187 @@ function lib:CreateWindow(tablew)
 		UIAspectRatioConstraint_30.AspectRatio = 24.818
 
 		UIAspectRatioConstraint_31.Parent = Holder
-		UIAspectRatioConstraint_31.AspectRatio = 1.481
+		UIAspectRatioConstraint_31.AspectRatio = 1.48
 
-		local function gettab(tabtype)
-			if tabtype == "first" and #TabContainer1:GetChildren() > 0 then
+		if tablet.Holders then
+			for h, d in pairs(tablet.Holders) do
+				local holder = Instance.new("Frame")
+				holder.Name = h
+				holder.Parent = TabContainer2
+				holder.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
+				holder.BackgroundTransparency = 0.3
+				holder.Size = UDim2.new(0.55, 0, d.Width or 0.46, 0)
+
+				local UIListLayout = Instance.new("UIListLayout")
+				UIListLayout.Parent = holder
+				UIListLayout.FillDirection = Enum.FillDirection.Vertical
+				UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Top
+				UIListLayout.Padding = UDim.new(0, 10)
+
+				local UICorner_6 = Instance.new("UICorner")
+				UICorner_6.Parent = holder
+
+				local UIPadding = Instance.new("UIPadding")
+				UIPadding.Parent = holder
+				UIPadding.PaddingTop = UDim.new(0, 13)
+
+				local str3 = Instance.new("UIStroke")
+				str3.Parent = holder
+				str3.Color = Color3.fromRGB(91, 67, 100)
+				str3.Thickness = 1.3
+
+				local function gettab(tabtype)
+					if tabtype == "first" and #TabContainer1:GetChildren() > 0 then
+						for _, v in pairs(TabContainer1:GetChildren()) do
+							if v:IsA("Frame") then
+								return v
+							end
+						end
+					end
+					return nil
+				end
+
+				local function getcontainer(name)
+					for _, v in pairs(Holder:GetChildren()) do
+						if v.Name == name then
+							return v
+						end
+					end
+					return nil
+				end
+
+				local function fade(container, way)
+					local tweens = {}
+
+					for _, holder in pairs(container:GetChildren()) do
+						if holder:IsA("Frame") then
+							local strn = holder:FindFirstChild("UIStroke")
+							if not strn then
+								lib:Notify({
+									Title = "Ventures - Library Error",
+									Content = "UIStroke not found for holder: " .. holder.Name .. ". Please check the structure."
+								})
+								return
+							end
+
+							if way then
+								if way == "in" then
+									for _, v in pairs(holder:GetDescendants()) do
+										if v:IsA("GuiObject") then v.Visible = true end
+									end
+									local holderTween = ts:Create(holder, TweenInfo.new(0.4), {
+										Position = UDim2.new(0.008, 0, 0, 0),
+										BackgroundTransparency = 0.45
+									})
+									table.insert(tweens, holderTween)
+
+									local strnTween = ts:Create(strn, TweenInfo.new(0.4), {Transparency = 0})
+									table.insert(tweens, strnTween)
+								elseif way == "out" then
+									local holderTween = ts:Create(holder, TweenInfo.new(0.4), {
+										Position = UDim2.new(0.008, 0, 0.2, 0),
+										BackgroundTransparency = 1
+									})
+									table.insert(tweens, holderTween)
+
+									local strnTween = ts:Create(strn, TweenInfo.new(0.4), {Transparency = 1})
+									table.insert(tweens, strnTween)
+
+									for _, v in pairs(holder:GetDescendants()) do
+										if v:IsA("GuiObject") then v.Visible = false end
+									end
+								end
+							end
+						end
+					end
+
+					for _, tween in pairs(tweens) do
+						tween:Play()
+					end
+				end
+
+
+				if gettab("first") then
+					selected = gettab("first")
+					if selected then
+						selected.BackgroundTransparency = 0
+
+						local container = getcontainer(selected.Name)
+						if container then
+							container.Visible = true
+						else
+							fastnotify("library error")
+						end
+					end
+				else
+					fastnotify("library error")
+				end
+
+				local function settab(tab)
+					local container = getcontainer(tab.Name)
+					if container then
+						container.Visible = true
+						fade(container, "in")
+					end
+				end
+
+				local function hide(tab)
+					local container = getcontainer(tab.Name)
+					if container then
+						fade(container, "out")
+						task.delay(0.4, function()
+							container.Visible = false
+						end)
+					end
+				end
+
+				local canchange = true
 				for _, v in pairs(TabContainer1:GetChildren()) do
-					if v:IsA("Frame") then
-						return v
+					if v:IsA("Frame") and v:FindFirstChild("TextButton") then
+						local bttn = v:FindFirstChild("TextButton")
+
+						bttn.MouseButton1Click:Connect(function()
+							if canchange and bttn.Parent ~= selected then
+								canchange = false
+
+								if selected then
+									hide(selected)
+									ts:Create(selected, TweenInfo.new(0.4), {BackgroundTransparency = 1.000}):Play()
+								end
+
+								selected = bttn.Parent
+								settab(selected)
+								ts:Create(selected, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
+
+								task.delay(0.4, function()
+									canchange = true
+								end)
+							end
+						end)
 					end
 				end
-			end
-			return nil
-		end
 
-		local function getcontainer(name)
-			for _, v in pairs(Holder:GetChildren()) do
-				if v.Name == name then 
-					return v
-				end
-			end
-			return nil
-		end
 
-		local function fade(container, way)
-			local padding = container:FindFirstChildWhichIsA("UIPadding")
-			if not padding then
-				padding = Instance.new("UIPadding", container)
-			end
+				holders[h] = holder
 
-			local start = (way == "in") and UDim.new(1, 0) or UDim.new(0, 0)
-			local target = (way == "in") and UDim.new(0, 0) or UDim.new(1, 0)
-
-			if way == "in" then
-				padding.PaddingTop = start
-				container.Visible = true
-			end
-
-			ts:Create(padding, TweenInfo.new(0.5), {PaddingTop = target}):Play()
-
-			if way == "out" then
-				task.delay(0.4, function()
-					container.Visible = false
-					padding:Destroy() 
-				end)
-			end
-		end
-
-		if gettab("first") ~= nil then
-			selected = gettab("first")
-			selected.BackgroundTransparency = 0
-			
-			local container = getcontainer(selected.Name)
-			if container then
-				container.Visible = true
-			end
-		end
-
-		local function settab(tab)
-			local container = getcontainer(tab.Name)
-			if container then
-				container.Visible = true
-				fade(container, "in")
 			end
 		end
 
 
-		local function hide(tab)
-			local container = getcontainer(tab.Name)
-			if container then
-				fade(container, "out")
-				task.delay(0.4, function()
-					container.Visible = false
-				end)
-			end
-		end
-
-
-		for _, v in pairs(TabContainer1:GetChildren()) do
-			if v:IsA("Frame") and v:FindFirstChild("TextButton") then
-				local bttn = v:FindFirstChild("TextButton")
-
-				bttn.MouseButton1Click:Connect(function()
-					if bttn.Parent ~= selected then
-						hide(selected)
-						ts:Create(selected, TweenInfo.new(0.4), {BackgroundTransparency = 1.000}):Play()
-						ts:Create(str2, TweenInfo.new(0.4), {Transparency = 1.000}):Play()
-						selected = bttn.Parent
-						ts:Create(selected, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
-						ts:Create(str2, TweenInfo.new(0.4), {Transparency = 0}):Play()
-						settab(selected)
-					end
-				end)
-			end
-		end
-
-
-		--[[TabContainer1.ChildAdded:Connect(function(child)
-			if child:IsA("Frame") and child:FindFirstChild("TextButton") then
-				local bttn = child:FindFirstChild("TextButton")
-
-				bttn.MouseButton1Click:Connect(function()
-					if bttn.Parent ~= selected then
-						hide(selected)
-						ts:Create(selected, TweenInfo.new(0.4), {BackgroundTransparency = 1.000}):Play()
-						ts:Create(str2, TweenInfo.new(0.4), {Transparency = 1.000}):Play()
-						selected = bttn.Parent
-						ts:Create(selected, TweenInfo.new(0.4), {BackgroundTransparency = 0}):Play()
-						ts:Create(str2, TweenInfo.new(0.4), {Transparency = 0}):Play()
-						settab(selected)
-					end
-				end)
-			end
-		end)]]
 
 		function element:CreateToggle(tablef)
+			local parent = holders[tablef.Parented or "1"]
+
+			if not parent then
+				lib:Notify({
+					Title = "Ventures - CallBack Error",
+					Content = "Parent failed, make sure the toggle parent is set correctly."
+				})
+				return
+			end
+
 			local toggle = Instance.new("Frame")
 			local toggleame = Instance.new("TextLabel")
 			local UIAspectRatioConstraint_8 = Instance.new("UIAspectRatioConstraint")
@@ -1557,13 +1618,18 @@ function lib:CreateWindow(tablew)
 			local str = Instance.new("UIStroke") --Gui2Lua dosent save strokes for some reason.
 
 			toggle.Name = "togglea"
-			toggle.Parent = TabHolder
+			toggle.Parent = parent
 			toggle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			toggle.BackgroundTransparency = 1.000
 			toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			toggle.BorderSizePixel = 0
 			toggle.Position = UDim2.new(-0.0571428575, 0, 0.156097561, 0)
-			toggle.Size = UDim2.new(0.949206352, 0, 0.100917429, 0)
+			toggle.Size = UDim2.new(0.949206352, 0, 0.101, 0)
+
+			local uia = Instance.new("UIAspectRatioConstraint")
+			uia.Parent = toggle
+			uia.AspectRatio = 14.453
+			uia.DominantAxis = Enum.DominantAxis.Width
 
 			toggleame.Name = "togglename"
 			toggleame.Parent = toggle
@@ -1613,15 +1679,6 @@ function lib:CreateWindow(tablew)
 			UICorner_5.CornerRadius = UDim.new(1, 0)
 			UICorner_5.Parent = Toggler
 
-			UIAspectRatioConstraint_9.Parent = Toggler
-			UIAspectRatioConstraint_9.AspectRatio = 1.063
-
-			UIAspectRatioConstraint_10.Parent = ToggleHolder
-			UIAspectRatioConstraint_10.AspectRatio = 2.417
-
-			UIAspectRatioConstraint_11.Parent = toggle
-			UIAspectRatioConstraint_11.AspectRatio = 14.453
-
 			local callback = tablef.CallBack
 			local bool = tablef.Default or false
 
@@ -1635,9 +1692,9 @@ function lib:CreateWindow(tablew)
 					ts:Create(toggleame, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(255,255,255)}):Play()
 					ts:Create(str, TweenInfo.new(0.4), {Transparency = 0}):Play()
 				else
-					ts:Create(Toggler, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(57, 56, 63)}):Play()
+					ts:Create(Toggler, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(94, 93, 104)}):Play()
 					ts:Create(Toggler, TweenInfo.new(0.4), {Position = UDim2.new(0.159999996, 0, 0.5, -6)}):Play()
-					ts:Create(ToggleHolder, TweenInfo.new(0.4), {BackgroundColor3 =  Color3.fromRGB(28, 27, 34)}):Play()
+					ts:Create(ToggleHolder, TweenInfo.new(0.4), {BackgroundColor3 =  Color3.fromRGB(56, 41, 63)}):Play()
 					ts:Create(toggleame, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(83, 57, 88)}):Play()
 					ts:Create(str, TweenInfo.new(0.4), {Transparency = 1}):Play()
 				end
@@ -1645,13 +1702,27 @@ function lib:CreateWindow(tablew)
 				if type(callback) == "function" then
 					callback(bool)
 				else
-					print("use a function for the callback")
+					lib:Notify({
+						Title = "Ventures - Callback error",
+						Content = "Use a function for callback: " .. toggleame.Text
+					})
 					return
 				end
 			end)
 		end
 
 		function element:CreateSlider(tables)
+			local parent = holders[tables.Parented or "1"]
+
+			if not parent then
+				lib:Notify({
+					Title = "Ventures - CallBack Error",
+					Content = "Parent failed, make sure the slider parent is set correctly."
+				})
+				return
+			end
+
+
 			local slider = Instance.new("Frame")
 			local name = Instance.new("TextLabel")
 			local UIAspectRatioConstraint_16 = Instance.new("UIAspectRatioConstraint")
@@ -1674,7 +1745,7 @@ function lib:CreateWindow(tablew)
 			local callmyback = tables.CallBack
 
 			slider.Name = "slider"
-			slider.Parent = TabHolder
+			slider.Parent = parent
 			slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			slider.BackgroundTransparency = 1.000
 			slider.Position = UDim2.new(-0.0571428575, 0, 0.312195122, 0)
@@ -1881,17 +1952,7 @@ function lib:CreateWindow(tablew)
 			UIAspectRatioConstraint_29.Parent = TabContainer2
 			UIAspectRatioConstraint_29.AspectRatio = 1.190
 		end
-		local UICorner_6 = Instance.new("UICorner")
-		UICorner_6.Parent = TabHolder
-		
-		local UIPadding = Instance.new("UIPadding")
-		UIPadding.Parent = TabHolder
-		UIPadding.PaddingTop = UDim.new(0, 13)
-		
-		local UIAspectRatioConstraint_27 = Instance.new("UIAspectRatioConstraint")
-		UIAspectRatioConstraint_27.Parent = TabHolder
-		UIAspectRatioConstraint_27.AspectRatio = 1.445
-		
+
 		return element
 	end
 	return tab
