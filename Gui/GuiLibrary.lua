@@ -1477,28 +1477,27 @@ function lib:CreateWindow(tablew)
 								return
 							end
 
+
 							if way then
 								if way == "in" then
 									for _, v in pairs(holder:GetDescendants()) do
 										if v:IsA("GuiObject") then v.Visible = true end
 									end
-									local holderTween = ts:Create(holder, TweenInfo.new(0.4), {
-										Position = UDim2.new(0.008, 0, 0, 0),
+									local ht = ts:Create(holder, TweenInfo.new(0.7), {
 										BackgroundTransparency = 0.45
 									})
-									table.insert(tweens, holderTween)
+									table.insert(tweens, ht)
 
-									local strnTween = ts:Create(strn, TweenInfo.new(0.4), {Transparency = 0})
-									table.insert(tweens, strnTween)
+									local strt = ts:Create(strn, TweenInfo.new(0.7), {Transparency = 0})
+									table.insert(tweens, strt)
 								elseif way == "out" then
-									local holderTween = ts:Create(holder, TweenInfo.new(0.4), {
-										Position = UDim2.new(0.008, 0, 0.2, 0),
+									local ht = ts:Create(holder, TweenInfo.new(0.7), {
 										BackgroundTransparency = 1
 									})
-									table.insert(tweens, holderTween)
+									table.insert(tweens, ht)
 
-									local strnTween = ts:Create(strn, TweenInfo.new(0.4), {Transparency = 1})
-									table.insert(tweens, strnTween)
+									local strt = ts:Create(strn, TweenInfo.new(0.7), {Transparency = 1})
+									table.insert(tweens, strt)
 
 									for _, v in pairs(holder:GetDescendants()) do
 										if v:IsA("GuiObject") then v.Visible = false end
@@ -1512,7 +1511,6 @@ function lib:CreateWindow(tablew)
 						tween:Play()
 					end
 				end
-
 
 				if gettab("first") then
 					selected = gettab("first")
