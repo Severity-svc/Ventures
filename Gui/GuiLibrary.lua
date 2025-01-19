@@ -3,7 +3,7 @@ if not game:IsLoaded() then
 end
 
 local lib = {}
-local lucide = require(script.Parent:WaitForChild("ModuleScript"))
+local lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/LucideIcons.lua'))()
 local rubik = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
 local ts = game:GetService("TweenService")
