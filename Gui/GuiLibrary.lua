@@ -4,6 +4,7 @@ end
 
 local lib = {}
 local lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/LucideIcons.lua'))()
+local rubik = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
 local ts = game:GetService("TweenService")
 local run = game:GetService("RunService")
@@ -79,7 +80,7 @@ function lib:Notify(tablen)
 	Tittle.BorderSizePixel = 0
 	Tittle.Position = UDim2.new(0.017698979, 0, 0.0384617485, 0)
 	Tittle.Size = UDim2.new(0, 199, 0, 14)
-	Tittle.Font = Enum.Font.FredokaOne
+	Tittle.FontFace = rubik
 	Tittle.Text = tablen.Title or "Notification"
 	Tittle.TextColor3 = Color3.fromRGB(194, 131, 183)
 	Tittle.TextSize = 14.000
@@ -94,7 +95,7 @@ function lib:Notify(tablen)
 	Content.BorderSizePixel = 0
 	Content.Position = UDim2.new(0.040954791, 0, 0.350898653, 0)
 	Content.Size = UDim2.new(0, 242, 0, 57)
-	Content.Font = Enum.Font.FredokaOne
+	Content.FontFace = rubik
 	Content.Text = tablen.Content or "Default content"
 	Content.TextColor3 = Color3.fromRGB(94, 63, 89)
 	Content.TextSize = 14.000
@@ -110,7 +111,7 @@ function lib:Notify(tablen)
 	closebttn.AutoButtonColor = false
 	closebttn.Position = UDim2.new(0.894999981, 0, 0.0700000003, 0)
 	closebttn.Size = UDim2.new(0, 25, 0, 25)
-	closebttn.Font = Enum.Font.FredokaOne
+	closebttn.FontFace = rubik
 	closebttn.Text = "X"
 	closebttn.TextColor3 = Color3.fromRGB(235, 159, 221)
 	closebttn.TextSize = 14.000
@@ -238,7 +239,7 @@ function lib:CreateWindow(tablew)
 			TextBox.BorderSizePixel = 0
 			TextBox.Position = UDim2.new(0.5, 0, 0.707000017, 0)
 			TextBox.Size = UDim2.new(0, 287, 0, 27)
-			TextBox.Font = Enum.Font.FredokaOne
+			TextBox.FontFace = rubik
 			TextBox.PlaceholderColor3 = Color3.fromRGB(98, 66, 92)
 			TextBox.PlaceholderText = "Input Your Key Here..."
 			TextBox.Text = ""
@@ -264,7 +265,7 @@ function lib:CreateWindow(tablew)
 			TextLabel.BorderSizePixel = 0
 			TextLabel.Position = UDim2.new(0.017699115, 0, 0.0384615399, 0)
 			TextLabel.Size = UDim2.new(0, 199, 0, 11)
-			TextLabel.Font = Enum.Font.FredokaOne
+			TextLabel.FontFace = rubik
 			TextLabel.Text = "Ventures KeySystem"
 			TextLabel.TextColor3 = Color3.fromRGB(235, 159, 221)
 			TextLabel.TextSize = 14.000
@@ -277,7 +278,7 @@ function lib:CreateWindow(tablew)
 			TextLabel_2.BorderSizePixel = 0
 			TextLabel_2.Position = UDim2.new(0.157517895, 0, 0.842481434, 0)
 			TextLabel_2.Size = UDim2.new(0, 286, 0, 31)
-			TextLabel_2.Font = Enum.Font.FredokaOne
+			TextLabel_2.FontFace = rubik
 			TextLabel_2.Text = "To get the key join our discord server, discord.gg/v3n"
 			TextLabel_2.TextColor3 = Color3.fromRGB(72, 49, 68)
 			TextLabel_2.TextSize = 11.000
@@ -332,7 +333,7 @@ function lib:CreateWindow(tablew)
 			TextButton.BorderSizePixel = 0
 			TextButton.Position = UDim2.new(0.918141603, 0, 0.0384615399, 0)
 			TextButton.Size = UDim2.new(0, 25, 0, 25)
-			TextButton.Font = Enum.Font.FredokaOne
+			TextButton.FontFace = rubik
 			TextButton.Text = "X"
 			TextButton.TextColor3 = Color3.fromRGB(235, 159, 221)
 			TextButton.TextSize = 14.000
@@ -381,6 +382,14 @@ function lib:CreateWindow(tablew)
 	local UIAspectRatioConstraint_31 = Instance.new("UIAspectRatioConstraint")
 	local blur = Instance.new("ImageLabel")
 	local grd4 = Instance.new("UIGradient")
+	local actionholder = Instance.new("Frame")
+	local uls4 = Instance.new("UIListLayout")
+	local settings = Instance.new("ImageButton")
+	local UICorner1 = Instance.new("UICorner")
+	local discord = Instance.new("ImageButton")
+	local UICorner2 = Instance.new("UICorner")
+	local closebutton2 = Instance.new("TextButton")
+	local UICorner3 = Instance.new("UICorner")
 
 	if uis.TouchEnabled and not uis.KeyboardEnabled then
 		lib:Notify({
@@ -410,8 +419,9 @@ function lib:CreateWindow(tablew)
 
 	close("in")
 	local bool2 = true
+	local keybind = tablew.MinimizeKeybind or Enum.KeyCode.RightControl 
 	uis.InputBegan:Connect(function(input, gpe)
-		if input.KeyCode == Enum.KeyCode.P then
+		if input.KeyCode == keybind then
 			bool2 = not bool2
 
 			if bool2 then
@@ -480,6 +490,128 @@ function lib:CreateWindow(tablew)
 			update(input)
 		end
 	end)
+
+	actionholder.Name = "action holder"
+	actionholder.Parent = Holder
+	actionholder.BackgroundColor3 = Color3.new(1, 1, 1)
+	actionholder.BackgroundTransparency = 1
+	actionholder.BorderColor3 = Color3.new(0, 0, 0)
+	actionholder.BorderSizePixel = 0
+	actionholder.Position = UDim2.new(0.71360466, 0, 0.00588130409, 0)
+	actionholder.Size = UDim2.new(0, 196, 0, 31)
+
+	local s1 = Instance.new("UIStroke")
+	local s2 = Instance.new("UIStroke")
+	local s3 = Instance.new("UIStroke")
+
+	uls4.Parent = actionholder
+	uls4.HorizontalAlignment = Enum.HorizontalAlignment.Right
+	uls4.SortOrder = Enum.SortOrder.LayoutOrder
+	uls4.Wraps = true
+	uls4.VerticalAlignment = Enum.VerticalAlignment.Center
+	uls4.Padding = UDim.new(0, 8)
+
+	settings.Name = "settings"
+	settings.Parent = actionholder
+	settings.BackgroundColor3 = Color3.new(0.121569, 0.0901961, 0.133333)
+	settings.BorderColor3 = Color3.new(0, 0, 0)
+	settings.BorderSizePixel = 0
+	settings.Size = UDim2.new(0, 23, 0, 23)
+	settings.Image = "http://www.roblox.com/asset/?id=7059346373"
+
+	s1.Parent = settings
+	s1.Color = Color3.fromRGB(91, 67, 100)
+	s1.Thickness = 1.3
+
+	settings.MouseEnter:Connect(function()
+		ts:Create(s1, TweenInfo.new(0.2), {Color = Color3.fromRGB(225, 166, 249)}):Play()
+		ts:Create(settings, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.207843, 0.152941, 0.227451)}):Play()
+	end)
+
+	settings.MouseLeave:Connect(function()
+		ts:Create(s1, TweenInfo.new(0.2), {Color = Color3.fromRGB(91, 67, 100)}):Play()
+		ts:Create(settings, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.121569, 0.0901961, 0.133333)}):Play()
+	end)
+
+	settings.MouseButton1Click:Connect(function()
+		lib:Notify({
+			Title = "Ventures",
+			Content = "Settings are not avalible now, will be in future updates ;3",
+		})
+	end)
+
+	UICorner1.Parent = settings
+	UICorner1.CornerRadius = UDim.new(0, 5)
+
+	discord.Name = "discord"
+	discord.Parent = actionholder
+	discord.BackgroundColor3 = Color3.new(0.121569, 0.0901961, 0.133333)
+	discord.BorderColor3 = Color3.new(0, 0, 0)
+	discord.BorderSizePixel = 0
+	discord.Size = UDim2.new(0, 23, 0, 23)
+	discord.Image = "http://www.roblox.com/asset/?id=84828491431270"
+
+	discord.MouseButton1Click:Connect(function()
+		--setclipboard("discord.gg/v3n")
+		lib:Notify({
+			Title = "Ventures",
+			Content = "Discord link copied to clipboard!"
+		})
+	end)
+
+	s2.Parent = discord
+	s2.Color = Color3.fromRGB(91, 67, 100)
+	s2.Thickness = 1.3
+
+	discord.MouseEnter:Connect(function()
+		ts:Create(s2, TweenInfo.new(0.2), {Color = Color3.fromRGB(225, 166, 249)}):Play()
+		ts:Create(discord, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.207843, 0.152941, 0.227451)}):Play()
+	end)
+
+	discord.MouseLeave:Connect(function()
+		ts:Create(s2, TweenInfo.new(0.2), {Color = Color3.fromRGB(91, 67, 100)}):Play()
+		ts:Create(discord, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.121569, 0.0901961, 0.133333)}):Play()
+	end)
+
+	UICorner2.Parent = discord
+	UICorner2.CornerRadius = UDim.new(0, 5)
+
+	closebutton2.Name = "closebutton2"
+	closebutton2.Parent = actionholder
+	closebutton2.BackgroundColor3 = Color3.new(0.121569, 0.0901961, 0.133333)
+	closebutton2.BorderColor3 = Color3.new(0, 0, 0)
+	closebutton2.BorderSizePixel = 0
+	closebutton2.Size = UDim2.new(0, 23, 0, 23)
+	closebutton2.AutoButtonColor = false
+	closebutton2.FontFace = rubik
+	closebutton2.Text = "X"
+	closebutton2.TextColor3 = Color3.new(1, 1, 1)
+	closebutton2.TextSize = 17
+	closebutton2.TextWrapped = true
+
+	closebutton2.MouseEnter:Connect(function()
+		ts:Create(s3, TweenInfo.new(0.2), {Color = Color3.fromRGB(225, 166, 249)}):Play()
+		ts:Create(closebutton2, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.207843, 0.152941, 0.227451)}):Play()
+	end)
+
+	closebutton2.MouseLeave:Connect(function()
+		ts:Create(s3, TweenInfo.new(0.2), {Color = Color3.fromRGB(91, 67, 100)}):Play()
+		ts:Create(closebutton2, TweenInfo.new(0.2), {BackgroundColor3 = Color3.new(0.121569, 0.0901961, 0.133333)}):Play()
+	end)
+
+	closebutton2.MouseButton1Click:Connect(function()
+		close("out")
+		task.wait(2)
+		Ventures:Destroy()
+	end)
+
+	s3.Parent = closebutton2
+	s3.Color = Color3.fromRGB(91, 67, 100)
+	s3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	s3.Thickness = 1.3
+
+	UICorner3.Parent = closebutton2
+	UICorner3.CornerRadius = UDim.new(0, 5)
 
 	ImageLabel.Parent = Holder
 	ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -651,7 +783,7 @@ function lib:CreateWindow(tablew)
 		TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
 		TextButton.BorderSizePixel = 0
 		TextButton.Size = UDim2.new(1, 0, 1, 0)
-		TextButton.Font = Enum.Font.SourceSans
+		TextButton.FontFace = rubik
 		TextButton.Text = " "
 		TextButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 		TextButton.TextSize = 14.000
@@ -690,10 +822,10 @@ function lib:CreateWindow(tablew)
 		TabName2.BorderSizePixel = 0
 		TabName2.Position = UDim2.new(0.149079561, 0, 0.0134615386, 0)
 		TabName2.Size = UDim2.new(0.709090889, 0, 0.0423076935, 0)
-		TabName2.Font = Enum.Font.SourceSansBold
+		TabName2.FontFace = rubik
 		TabName2.Text = tablet.Name or "you forgot to set the name lel"
 		TabName2.TextColor3 = Color3.fromRGB(235, 159, 221)
-		TabName2.TextSize = 20.000
+		TabName2.TextSize = 15.000
 		TabName2.TextXAlignment = Enum.TextXAlignment.Left
 
 		UIAspectRatioConstraint_30.Parent = TabName2
@@ -924,10 +1056,10 @@ function lib:CreateWindow(tablew)
 			toggleame.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			toggleame.BorderSizePixel = 0
 			toggleame.Size = UDim2.new(0.819151342, 0, 1, 0)
-			toggleame.Font = Enum.Font.SourceSansBold
+			toggleame.FontFace = rubik
 			toggleame.Text = tablef.Name or "Toggle"
 			toggleame.TextColor3 = Color3.fromRGB(83, 57, 88)
-			toggleame.TextSize = 17.000
+			toggleame.TextSize = 14.000
 			toggleame.TextXAlignment = Enum.TextXAlignment.Left
 
 			UIAspectRatioConstraint_8.Parent = toggleame
@@ -952,7 +1084,7 @@ function lib:CreateWindow(tablew)
 			Toggler.BorderSizePixel = 0
 			Toggler.Position = UDim2.new(0.159999996, 0, 0.5, -6)
 			Toggler.Size = UDim2.new(0.239999995, 0, 0.545454562, 0)
-			Toggler.Font = Enum.Font.SourceSans
+			Toggler.FontFace = rubik
 			Toggler.Text = ""
 			Toggler.TextColor3 = Color3.fromRGB(0, 0, 0)
 			Toggler.TextSize = 14.000
@@ -1077,10 +1209,10 @@ function lib:CreateWindow(tablew)
 			name.BackgroundTransparency = 1.000
 			name.Position = UDim2.new(-0.00246416684, 0, 0, 0)
 			name.Size = UDim2.new(0.551417112, 0, 1, 0)
-			name.Font = Enum.Font.SourceSansBold
+			name.FontFace = rubik
 			name.Text = tables.Name or "Slider"
 			name.TextColor3 = Color3.fromRGB(240, 255, 250)
-			name.TextSize = 17.000
+			name.TextSize = 14.000
 			name.TextXAlignment = Enum.TextXAlignment.Left
 
 			UIAspectRatioConstraint_16.Parent = name
@@ -1099,7 +1231,7 @@ function lib:CreateWindow(tablew)
 			numericvalue.Parent = ammount
 			numericvalue.BackgroundTransparency = 1.000
 			numericvalue.Size = UDim2.new(1, 0, 1, 0)
-			numericvalue.Font = Enum.Font.SourceSansBold
+			numericvalue.FontFace = rubik
 			numericvalue.Text = tostring(default)
 			numericvalue.TextColor3 = Color3.fromRGB(255, 255, 255)
 			numericvalue.TextSize = 20.000
@@ -1130,7 +1262,7 @@ function lib:CreateWindow(tablew)
 			dragger.BackgroundColor3 = Color3.fromRGB(235, 159, 221)
 			dragger.Position = UDim2.new(0, 0, 0.5, -6)
 			dragger.Size = UDim2.new(0.119999997, 0, 6, 0)
-			dragger.Font = Enum.Font.SourceSansBold
+			dragger.FontFace = rubik
 			dragger.Text = ""
 			dragger.TextSize = 14.000
 
@@ -1202,6 +1334,14 @@ function lib:CreateWindow(tablew)
 		function element:CreateButton(tablebb)
 			local parent = holders[tablebb.Parented or "1"]
 
+			if not parent then
+				lib:Notify({
+					Title = "Ventures - CallBack Error",
+					Content = "make sure you parented the button correctly: " .. tablebb.Name
+				})
+				return
+			end
+
 			local button = Instance.new("Frame")
 			local name = Instance.new("TextLabel")
 			local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
@@ -1228,10 +1368,10 @@ function lib:CreateWindow(tablew)
 			name.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			name.BorderSizePixel = 0
 			name.Size = UDim2.new(0.819151342, 0, 1, 0)
-			name.Font = Enum.Font.SourceSansBold
+			name.FontFace = rubik
 			name.Text =  tablebb.Name or "Button"
 			name.TextColor3 = Color3.fromRGB(240, 255, 250)
-			name.TextSize = 17.000
+			name.TextSize = 14.000
 			name.TextXAlignment = Enum.TextXAlignment.Left
 
 			UIAspectRatioConstraint.Parent = name
@@ -1249,7 +1389,7 @@ function lib:CreateWindow(tablew)
 			bttn.BorderSizePixel = 0
 			bttn.Position = UDim2.new(0.879000127, 0, 0.5, 0)
 			bttn.Size = UDim2.new(0.086554125, 0, 1.37006772, 0)
-			bttn.Font = Enum.Font.SourceSansBold
+			bttn.FontFace = rubik
 			bttn.Text = ""
 			bttn.TextColor3 = Color3.fromRGB(0, 0, 0)
 			bttn.TextSize = 14.000
@@ -1302,6 +1442,14 @@ function lib:CreateWindow(tablew)
 			local values = tabled.Values or {}
 			local callback = tabled.Callback or function() end
 
+			if not parent then
+				lib:Notify({
+					Title = "Ventures - CallBack Error",
+					Content = "make sure you parented the dropdown correctly: " .. tabled.Name
+				})
+				return
+			end
+
 			local dropdown = Instance.new("Frame")
 			dropdown.Name = "dropdown"
 			dropdown.Parent = parent
@@ -1316,10 +1464,10 @@ function lib:CreateWindow(tablew)
 			dropdownname.BackgroundTransparency = 1.000
 			dropdownname.Position = UDim2.new(0.002, 0, 0, 0)
 			dropdownname.Size = UDim2.new(0.55, 0, 1, 0)
-			dropdownname.Font = Enum.Font.SourceSansBold
+			dropdownname.FontFace = rubik
 			dropdownname.Text = tabled.Name or "Dropdown"
 			dropdownname.TextColor3 = Color3.fromRGB(240, 255, 250)
-			dropdownname.TextSize = 17
+			dropdownname.TextSize = 14.000
 			dropdownname.TextXAlignment = Enum.TextXAlignment.Left
 
 			local holder = Instance.new("Frame")
@@ -1338,10 +1486,10 @@ function lib:CreateWindow(tablew)
 			selectorname.BackgroundTransparency = 1.000
 			selectorname.Size = UDim2.new(0.73, 0, 1, 0)
 			selectorname.Position = UDim2.new(0.047,0,0,0)
-			selectorname.Font = Enum.Font.SourceSansBold
+			selectorname.FontFace = rubik
 			selectorname.Text = values[defaultIndex] or "Select"
 			selectorname.TextColor3 = Color3.fromRGB(255, 255, 255)
-			selectorname.TextSize = 17
+			selectorname.TextSize = 14.000
 			selectorname.TextXAlignment = Enum.TextXAlignment.Left
 
 			local ImageButton = Instance.new("ImageButton")
@@ -1397,7 +1545,7 @@ function lib:CreateWindow(tablew)
 					value.Parent = valuesholder
 					value.BackgroundColor3 = Color3.fromRGB(49, 36, 56)
 					value.Size = UDim2.new(0, 118,0, 21)
-					value.Font = Enum.Font.SourceSansBold
+					value.FontFace = rubik
 					value.Text = v
 					value.AutoButtonColor = false
 					value.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -1480,6 +1628,125 @@ function lib:CreateWindow(tablew)
 			}
 		end
 
+		function element:CreateInput(tablei)
+			local parent = holders[tablei.Parented or "1"]
+
+			if not parent then
+				lib:Notify({
+					Title = "Ventures - Callback Error",
+					Content = "make sure you parented the input correctly: " .. (tablei.Title or "Input")
+				})
+				return
+			end
+
+			local Input = Instance.new("Frame")
+			Input.Name = "Input"
+			Input.Parent = parent
+			Input.BackgroundColor3 = Color3.new(1, 1, 1)
+			Input.BackgroundTransparency = 1
+			Input.BorderSizePixel = 0
+			Input.Position = UDim2.new(0, 0, 0, 0)
+			Input.Size = UDim2.new(1, 0, 0.1, 0)
+
+			local Inputname = Instance.new("TextLabel")
+			Inputname.Parent = Input
+			Inputname.BackgroundTransparency = 1
+			Inputname.Position = UDim2.new(0.002, 0, 0, 0)
+			Inputname.Size = UDim2.new(0.55, 0, 1, 0)
+			Inputname.Font = Enum.Font.SourceSansBold
+			Inputname.FontFace = rubik
+			Inputname.Text = tablei.Name or "Input"
+			Inputname.TextColor3 = Color3.fromRGB(240, 255, 250)
+			Inputname.TextSize = 14
+			Inputname.TextXAlignment = Enum.TextXAlignment.Left
+
+			local TextBox = Instance.new("TextBox")
+			TextBox.Parent = Input
+			TextBox.BackgroundColor3 = Color3.fromRGB(46, 34, 52)
+			TextBox.BorderSizePixel = 0
+			TextBox.Position = UDim2.new(0.55, 0, 0, 0)
+			TextBox.Size = UDim2.new(0.4, 0, 1, 0)
+			TextBox.FontFace = rubik
+			TextBox.PlaceholderText = tablei.Placeholder or "Placeholder"
+			TextBox.PlaceholderColor3 = Color3.fromRGB(111, 76, 118)
+			TextBox.Text = tablei.Default or ""
+			TextBox.TextColor3 = Color3.new(1, 1, 1)
+			TextBox.TextSize = 12
+			TextBox.TextXAlignment = Enum.TextXAlignment.Left
+			TextBox.ClearTextOnFocus = not tablei.Numeric 
+
+			local str3 = Instance.new("UIStroke")
+			str3.Parent = TextBox
+			str3.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+			str3.Color = Color3.fromRGB(83, 69, 93)
+			str3.Thickness = 1
+
+			local UICorner = Instance.new("UICorner")
+			UICorner.CornerRadius = UDim.new(0, 6)
+			UICorner.Parent = TextBox
+
+			local UIPadding = Instance.new("UIPadding")
+			UIPadding.PaddingLeft = UDim.new(0, 5)
+			UIPadding.Parent = TextBox
+
+			local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+			UIAspectRatioConstraint.Parent = Inputname
+			UIAspectRatioConstraint.AspectRatio = 11.839
+
+			local UIAspectRatioConstraint_2 = Instance.new("UIAspectRatioConstraint")
+			UIAspectRatioConstraint_2.Parent = Input
+			UIAspectRatioConstraint_2.AspectRatio = 14.453
+
+			local function bound()
+				local bounds = TextBox.TextBounds
+				if bounds.X > TextBox.AbsoluteSize.X - 10 then 
+					TextBox.TextScaled = true
+				else
+					TextBox.TextScaled = false
+					TextBox.TextSize = 14
+				end
+			end
+
+			TextBox:GetPropertyChangedSignal("Text"):Connect(bound)
+			TextBox:GetPropertyChangedSignal("AbsoluteSize"):Connect(bound)
+			bound()
+
+			local callback = tablei.Callback or function() end
+
+			TextBox.FocusLost:Connect(function(prsd)
+				if tablei.IgnoreBlank and TextBox.Text == "" then
+					return
+				end
+				if (not tablei.Finished or prsd) and tablei.Callback then
+					if tablei.Numeric then
+						local number = tonumber(TextBox.Text)
+						if number then
+							callback(number)
+						else
+							lib:Notify({
+								Title = "ventures - input err",
+								Content = "invalid input for: " .. (tablei.Title or "Input")
+							})
+						end
+					else
+						callback(TextBox.Text)
+					end
+				end
+			end)
+
+			return {
+				OnChanged = function(self, ncallback)
+					callback = ncallback
+				end,
+				SetValue = function(self, value)
+					TextBox.Text = value
+					if callback then
+						callback(value)
+					end
+				end,
+			}
+			
+		end
 		return element
 	end
 	return tab
