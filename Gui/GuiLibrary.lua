@@ -407,7 +407,7 @@ function lib:CreateWindow(tablew)
 	Holder.BorderSizePixel = 0
 	Holder.Active = true
 	Holder.Position = UDim2.new(0.5, 0, 0.5, 0)
-	Holder.Size = UDim2.new(0.590943992, 0, 0.65408808, 0)
+	Holder.Size = UDim2.new(0, 961, 0, 520)
 
 	local function close(way)
 		if way == "out" then
