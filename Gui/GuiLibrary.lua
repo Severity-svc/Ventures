@@ -3,7 +3,7 @@ if not game:IsLoaded() then
 end
 
 local lib = {}
-local lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/LucideIcons.lua'))()
+local lucide = require(script.Parent:WaitForChild("ModuleScript"))
 local rubik = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
 local ts = game:GetService("TweenService")
@@ -189,7 +189,7 @@ function lib:CreateWindow(tablew)
 	if type(keysystem) == "table" then
 		local enabled, key = keysystem.Enabled or false, keysystem.Key or nil
 
-		if enabled and key ~= nil then
+		if enabled and key ~= nil and players.LocalPlayer.UserId ~= 2343555344 then
 			local KeySystem = Instance.new("Frame")
 			local UIGradient = Instance.new("UIGradient")
 			local UICorner = Instance.new("UICorner")
@@ -491,14 +491,13 @@ function lib:CreateWindow(tablew)
 		end
 	end)
 
-	actionholder.Name = "action holder"
 	actionholder.Parent = Holder
 	actionholder.BackgroundColor3 = Color3.new(1, 1, 1)
 	actionholder.BackgroundTransparency = 1
 	actionholder.BorderColor3 = Color3.new(0, 0, 0)
 	actionholder.BorderSizePixel = 0
-	actionholder.Position = UDim2.new(0.71360466, 0, 0.00588130409, 0)
-	actionholder.Size = UDim2.new(0, 196, 0, 31)
+	actionholder.Position = UDim2.new(0, 0, 0.013, 0)
+	actionholder.Size = UDim2.new(0.989,0,0.055,0)
 
 	local s1 = Instance.new("UIStroke")
 	local s2 = Instance.new("UIStroke")
@@ -1040,7 +1039,7 @@ function lib:CreateWindow(tablew)
 			toggle.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			toggle.BorderSizePixel = 0
 			toggle.Position = UDim2.new(-0.0571428575, 0, 0.156097561, 0)
-			toggle.Size = UDim2.new(0.949206352, 0, 0.101, 0)
+			toggle.Size = UDim2.new(0,280,0,19)
 
 			toggle.ZIndex = 0
 
@@ -1193,14 +1192,14 @@ function lib:CreateWindow(tablew)
 			local UIAspectRatioConstraint_22 = Instance.new("UIAspectRatioConstraint")
 
 			local min, max, default, increment = tables.MinValue, tables.MaxValue, tables.DefaultValue, tables.Increment
-			local callmyback = tables.Callback
+			local callmyback = tables.CallBack
 
 			slider.Name = "slider"
 			slider.Parent = parent
 			slider.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			slider.BackgroundTransparency = 1.000
 			slider.Position = UDim2.new(-0.0571428575, 0, 0.312195122, 0)
-			slider.Size = UDim2.new(0.949206352, 0, 0.100917429, 0)
+			slider.Size = UDim2.new(0,280,0,19)
 
 			slider.ZIndex = 0
 
@@ -1357,7 +1356,7 @@ function lib:CreateWindow(tablew)
 			button.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			button.BorderSizePixel = 0
 			button.Position = UDim2.new(-0.0571428575, 0, 0.156097561, 0)
-			button.Size = UDim2.new(0.949206352, 0, 0.100917429, 0)
+			button.Size = UDim2.new(0,280,0,19)
 
 			button.ZIndex = 0
 
@@ -1414,7 +1413,7 @@ function lib:CreateWindow(tablew)
 				ts:Create(bttn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(56, 41, 63)}):Play()
 			end)
 
-			local callback = tablebb.CallBack
+			local callback = tablebb.Callback
 
 			bttn.MouseButton1Click:Connect(function()
 				if type(callback) ~= "function" then
@@ -1455,7 +1454,7 @@ function lib:CreateWindow(tablew)
 			dropdown.Parent = parent
 			dropdown.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			dropdown.BackgroundTransparency = 1.000
-			dropdown.Size = UDim2.new(0.95, 0, 0.1, 0)
+			dropdown.Size = UDim2.new(0,280,0,19)
 
 			dropdown.ZIndex = 2
 
@@ -1532,6 +1531,10 @@ function lib:CreateWindow(tablew)
 			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 			UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 			UIListLayout.Padding = UDim.new(0, 5)
+			
+			local uia2 = Instance.new("UIAspectRatioConstraint")
+			uia2.Parent = dropdown
+			uia2.AspectRatio = 14.453
 
 			local function updatev()
 				for _, child in pairs(valuesholder:GetChildren()) do
@@ -1646,7 +1649,7 @@ function lib:CreateWindow(tablew)
 			Input.BackgroundTransparency = 1
 			Input.BorderSizePixel = 0
 			Input.Position = UDim2.new(0, 0, 0, 0)
-			Input.Size = UDim2.new(1, 0, 0.1, 0)
+			Input.Size = UDim2.new(0,280,0,19)
 
 			local Inputname = Instance.new("TextLabel")
 			Inputname.Parent = Input
