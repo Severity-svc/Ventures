@@ -1118,7 +1118,7 @@ function lib:CreateWindow(tablew)
 
 			Toggler.MouseButton1Click:Connect(function()
 				bool = not bool
-
+					callback(bool)
 				if bool then
 					ts:Create(Toggler, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(235, 159, 221)}):Play()
 					ts:Create(Toggler, TweenInfo.new(0.4), {Position = UDim2.new(0.680000007, 0, 0.5, -6)}):Play()
