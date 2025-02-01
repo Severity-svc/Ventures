@@ -13,7 +13,7 @@ local players = game:GetService("Players")
 
 local Ventures = Instance.new("ScreenGui")
 Ventures.Name = "Ventures"
-Ventures.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+Ventures.Parent = players:LocalPlayer:WaitForChild("PlayerGui")
 Ventures.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
 function lib:Notify(tablen)
