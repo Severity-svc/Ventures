@@ -1192,7 +1192,7 @@ function lib:CreateWindow(tablew)
 			local UIAspectRatioConstraint_22 = Instance.new("UIAspectRatioConstraint")
 
 			local min, max, default, increment = tables.MinValue, tables.MaxValue, tables.DefaultValue, tables.Increment
-			local callmyback = tables.CallBack
+			local callmyback = tables.Callback
 
 			slider.Name = "slider"
 			slider.Parent = parent
