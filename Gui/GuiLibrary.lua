@@ -6,17 +6,24 @@ local lib = {}
 local lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/LucideIcons.lua'))()
 local rubik = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
+local p
 local ts = game:GetService("TweenService")
 local run = game:GetService("RunService")
 local uis = game:GetService("UserInputService")
 local players = game:GetService("Players")
 
+if run:IsStudio() then
+	p = players.LocalPlayer:WaitForChild("PlayerGui")
+else
+	p = game:GetService("CoreGui")
+end
+
 local Ventures = Instance.new("ScreenGui")
 Ventures.Name = "Ventures"
-Ventures.Parent = players.LocalPlayer:WaitForChild("PlayerGui")
+Ventures.Parent = p
 Ventures.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
-function lib:Notify(tablen)
+function lib:Notify(t)
 	local Notification = Instance.new("Frame")
 	local UIGradient = Instance.new("UIGradient")
 	local background = Instance.new("ImageLabel")
@@ -81,7 +88,7 @@ function lib:Notify(tablen)
 	Tittle.Position = UDim2.new(0.017698979, 0, 0.0384617485, 0)
 	Tittle.Size = UDim2.new(0, 199, 0, 14)
 	Tittle.FontFace = rubik
-	Tittle.Text = tablen.Title or "Notification"
+	Tittle.Text = t.Title or "Notification"
 	Tittle.TextColor3 = Color3.fromRGB(194, 131, 183)
 	Tittle.TextSize = 14.000
 	Tittle.TextXAlignment = Enum.TextXAlignment.Left
@@ -96,7 +103,7 @@ function lib:Notify(tablen)
 	Content.Position = UDim2.new(0.040954791, 0, 0.350898653, 0)
 	Content.Size = UDim2.new(0, 242, 0, 57)
 	Content.FontFace = rubik
-	Content.Text = tablen.Content or "Default content"
+	Content.Text = t.Content or "Default content"
 	Content.TextColor3 = Color3.fromRGB(94, 63, 89)
 	Content.TextSize = 14.000
 	Content.TextWrapped = true
@@ -136,7 +143,7 @@ function lib:Notify(tablen)
 
 	UICorner_2.Parent = Notification
 
-	local duration = tablen.Duration or 3.5
+	local duration = t.Duration or 3.5
 
 	ts:Create(Notification, TweenInfo.new(0.5), {Position = UDim2.new(0.81, 0, 0.764779866 - offset, 0)}):Play()
 
@@ -1118,7 +1125,7 @@ function lib:CreateWindow(tablew)
 
 			Toggler.MouseButton1Click:Connect(function()
 				bool = not bool
-					callback(bool)
+				callback(bool)
 				if bool then
 					ts:Create(Toggler, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(235, 159, 221)}):Play()
 					ts:Create(Toggler, TweenInfo.new(0.4), {Position = UDim2.new(0.680000007, 0, 0.5, -6)}):Play()
@@ -1531,7 +1538,7 @@ function lib:CreateWindow(tablew)
 			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 			UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 			UIListLayout.Padding = UDim.new(0, 5)
-			
+
 			local uia2 = Instance.new("UIAspectRatioConstraint")
 			uia2.Parent = dropdown
 			uia2.AspectRatio = 14.453
@@ -1625,7 +1632,14 @@ function lib:CreateWindow(tablew)
 					end
 				end,
 				AddValue = function(self, value)
-					table.insert(values, value)
+
+					if type(value) == "string" then
+						table.insert(values, value)
+					elseif type(value) == "table" then
+						for i, v in value do
+							table.insert(values, v)
+						end
+					end
 					updatev()
 				end,
 			}
@@ -1748,7 +1762,7 @@ function lib:CreateWindow(tablew)
 					end
 				end,
 			}
-			
+
 		end
 		return element
 	end
