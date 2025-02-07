@@ -416,6 +416,11 @@ function lib:CreateWindow(tablew)
 	Holder.Position = UDim2.new(0.5, 0, 0.5, 0)
 	Holder.Size = UDim2.new(0, 961, 0, 520)
 
+	local str98 = Instance.new("UIStroke")
+	str98.Parent = Holder 
+	str98.Thickness = 0
+	str98.Color = Color3.fromRGB(228, 201, 234)
+
 	local function close(way)
 		if way == "out" then
 			ts:Create(Holder, TweenInfo.new(0.3), {Position = UDim2.new(0.5,0,1.4,0)}):Play()
@@ -468,6 +473,12 @@ function lib:CreateWindow(tablew)
 				Holder.Position.Y.Scale,
 				Holder.Position.Y.Offset + (target.Y.Offset - Holder.Position.Y.Offset) * speed
 			)
+		end
+
+		if dragging then
+			ts:Create(str98, TweenInfo.new(0.5), {Thickness = 1.6}):Play()
+		else
+			ts:Create(str98, TweenInfo.new(0.3), {Thickness = 0}):Play()
 		end
 	end)
 
