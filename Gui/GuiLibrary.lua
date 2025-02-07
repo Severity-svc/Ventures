@@ -854,6 +854,10 @@ function lib:CreateWindow(tablew)
 					for _, v in pairs(holder:GetChildren()) do
 						if v:IsA("Frame") then
 							fr = fr + 1
+
+							if fr > 3 then
+								fr = fr - 0.2
+							end
 						end
 					end
 					holder.Size = UDim2.new(0.55, 0, fr / 13.05, 0)
