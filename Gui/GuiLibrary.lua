@@ -845,11 +845,24 @@ function lib:CreateWindow(tablew)
 				local holder = Instance.new("Frame")
 				holder.Name = h
 				holder.Parent = TabContainer2
+				holder.ZIndex = 0
 				holder.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
 				holder.BackgroundTransparency = 0.3
-				holder.Size = UDim2.new(0.55, 0, d.Width or 0.46, 0)
 
-				holder.ZIndex = 0
+				local function updt()
+					local fr = 0
+					for _, v in pairs(holder:GetChildren()) do
+						if v:IsA("Frame") then
+							fr = fr + 1
+						end
+					end
+					holder.Size = UDim2.new(0.55, 0, fr / 13.05, 0)
+				end
+
+				holder.ChildAdded:Connect(updt)
+				holder.ChildRemoved:Connect(updt)
+
+				updt()
 
 				local UIListLayout = Instance.new("UIListLayout")
 				UIListLayout.Parent = holder
@@ -1620,6 +1633,7 @@ function lib:CreateWindow(tablew)
 				OnChanged = function(self, ncalllback)
 					callback = ncalllback
 				end,
+				
 				SetValue = function(self, value)
 					if table.find(values, value) then
 						selectorname.Text = value
@@ -1631,8 +1645,8 @@ function lib:CreateWindow(tablew)
 						})
 					end
 				end,
+				
 				AddValue = function(self, value)
-
 					if type(value) == "string" then
 						table.insert(values, value)
 					elseif type(value) == "table" then
