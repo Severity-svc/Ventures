@@ -1,3 +1,6 @@
+--//Note: im currently going over a rewrite on the library, to change the instances names into pascal case ( i can understand stuff better  ) thats why stuff might not look the same.
+
+--//Loaded Check
 if not game:IsLoaded() then
 	repeat task.wait(0.1) until game:IsLoaded()
 end
@@ -6,11 +9,17 @@ local lib = {}
 local lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/LucideIcons.lua'))()
 local rubik = Font.new("rbxassetid://12187365977", Enum.FontWeight.Bold)
 
-local p
+--//Services
 local ts = game:GetService("TweenService")
 local run = game:GetService("RunService")
 local uis = game:GetService("UserInputService")
 local players = game:GetService("Players")
+
+--//Undefined
+local p
+local whitelisted
+local device
+local keybind
 
 if run:IsStudio() then
 	p = players.LocalPlayer:WaitForChild("PlayerGui")
@@ -18,24 +27,48 @@ else
 	p = game:GetService("CoreGui")
 end
 
+if not run:IsStudio() then
+	local ans = game:GetService("RbxAnalyticsService")
+
+	if ans and ans:GetClientId() then
+		local hwid, whitelist = ans:GetClientId(), {"E234A003-18E6-4546-996E-CC216EEDAC75"}
+
+		for _, v in pairs(whitelist) do
+			if v == hwid then
+				whitelisted = true
+			end
+		end
+	end
+end
+
+local function getscriptkeybind(invert, keyCode)
+	if invert then
+		return "Enum.KeyCode." .. keyCode:gsub(" ", ""):gsub("(%l)(%u)", "%1%2")
+	else
+		return keyCode.Name:gsub("(%u)", " %1"):sub(2)
+	end
+end
+
+--//Main
 local Ventures = Instance.new("ScreenGui")
 Ventures.Name = "Ventures"
 Ventures.Parent = p
 Ventures.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
 
+--//Function:Notify
 function lib:Notify(t)
 	local Notification = Instance.new("Frame")
 	local UIGradient = Instance.new("UIGradient")
-	local background = Instance.new("ImageLabel")
-	local Tittle = Instance.new("TextLabel")
+	local Background = Instance.new("ImageLabel")
+	local Title = Instance.new("TextLabel")
 	local Content = Instance.new("TextLabel")
-	local closebttn = Instance.new("TextButton")
+	local CloseButton = Instance.new("TextButton")
 	local UICorner = Instance.new("UICorner")
-	local UICorner_2 = Instance.new("UICorner")
-	local str4 = Instance.new("UIStroke")
-	local str5  = Instance.new("UIStroke")
+	local UICorner2 = Instance.new("UICorner")
+	local Stroke1 = Instance.new("UIStroke")
+	local Stroke2 = Instance.new("UIStroke")
 
-	local function getoffset()
+	local function GetOffset()
 		local offset = 0
 		for _, v in ipairs(Ventures:GetChildren()) do
 			if v:IsA("Frame") and v.Name == "Notification" then
@@ -45,117 +78,127 @@ function lib:Notify(t)
 		return offset
 	end
 
-	local offset = getoffset()
-
 	Notification.Name = "Notification"
 	Notification.Parent = Ventures
 	Notification.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
 	Notification.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Notification.BackgroundTransparency = 0.15
 	Notification.BorderSizePixel = 0
-	Notification.Position = UDim2.new(1.3, 0, 0.764779866 - offset, 0)
+	Notification.Position = UDim2.new(1.3, 0, 0.764779866 - GetOffset(), 0)
 	Notification.Size = UDim2.new(0, 301, 0, 89)
 	Notification.Visible = true
 
-	str5.Parent = Notification
-	str5.Color = Color3.fromRGB(91, 67, 100)
-	str5.Thickness = 1.3
-	str5.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	Stroke2.Parent = Notification
+	Stroke2.Color = Color3.fromRGB(91, 67, 100)
+	Stroke2.Thickness = 1.3
+	Stroke2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+	Notification.MouseEnter:Connect(function()
+		ts:Create(Stroke2, TweenInfo.new(0.4), {Color = Color3.fromRGB(199, 148, 220)}):Play()
+		ts:Create(Stroke2, TweenInfo.new(0.4), {Thickness = 1.6}):Play()
+	end)
+
+	Notification.MouseLeave:Connect(function()
+		ts:Create(Stroke2, TweenInfo.new(0.4), {Color = Color3.fromRGB(91, 67, 100)}):Play()
+		ts:Create(Stroke2, TweenInfo.new(0.4), {Thickness = 1.3}):Play()
+	end)
 
 	UIGradient.Color = ColorSequence.new{
-		ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)), 
+		ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)),
 		ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))
 	}
 	UIGradient.Rotation = -90
 	UIGradient.Parent = Notification
 
-	background.Name = "background"
-	background.Parent = Notification
-	background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	background.BackgroundTransparency = 1.000
-	background.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	background.BorderSizePixel = 0
-	background.Size = UDim2.new(1, 0, 1, 0)
-	background.Image = "rbxassetid://138515717272375"
-	background.ImageTransparency = 0.660
+	Background.Name = "Background"
+	Background.Parent = Notification
+	Background.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+	Background.BackgroundTransparency = 1
+	Background.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	Background.BorderSizePixel = 0
+	Background.Size = UDim2.new(1, 0, 1, 0)
+	Background.Image = "rbxassetid://138515717272375"
+	Background.ImageTransparency = 0.66
 
-	Tittle.Name = "Tittle"
-	Tittle.Parent = Notification
-	Tittle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Tittle.BackgroundTransparency = 1.000
-	Tittle.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	Tittle.BorderSizePixel = 0
-	Tittle.Position = UDim2.new(0.017698979, 0, 0.0384617485, 0)
-	Tittle.Size = UDim2.new(0, 199, 0, 14)
-	Tittle.FontFace = rubik
-	Tittle.Text = t.Title or "Notification"
-	Tittle.TextColor3 = Color3.fromRGB(194, 131, 183)
-	Tittle.TextSize = 14.000
-	Tittle.TextXAlignment = Enum.TextXAlignment.Left
-	Tittle.TextYAlignment = Enum.TextYAlignment.Bottom
+	Title.Name = "Title"
+	Title.Parent = Notification
+	Title.BackgroundTransparency = 1
+	Title.Position = UDim2.new(0.0177, 0, 0.0385, 0)
+	Title.Size = UDim2.new(0, 199, 0, 14)
+	Title.FontFace = rubik
+	Title.Text = t.Title or "Notification"
+	Title.TextColor3 = Color3.fromRGB(194, 131, 183)
+	Title.TextSize = 14
+	Title.TextXAlignment = Enum.TextXAlignment.Left
+	Title.TextYAlignment = Enum.TextYAlignment.Bottom
 
 	Content.Name = "Content"
 	Content.Parent = Notification
-	Content.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Content.BackgroundTransparency = 1.000
-	Content.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	Content.BorderSizePixel = 0
-	Content.Position = UDim2.new(0.040954791, 0, 0.350898653, 0)
+	Content.BackgroundTransparency = 1
+	Content.Position = UDim2.new(0.04095, 0, 0.3509, 0)
 	Content.Size = UDim2.new(0, 242, 0, 57)
 	Content.FontFace = rubik
 	Content.Text = t.Content or "Default content"
 	Content.TextColor3 = Color3.fromRGB(94, 63, 89)
-	Content.TextSize = 14.000
+	Content.TextSize = 14
 	Content.TextWrapped = true
 	Content.TextXAlignment = Enum.TextXAlignment.Left
 	Content.TextYAlignment = Enum.TextYAlignment.Top
 
-	closebttn.Name = "closebttn"
-	closebttn.Parent = Notification
-	closebttn.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
-	closebttn.BorderColor3 = Color3.fromRGB(0, 0, 0)
-	closebttn.BorderSizePixel = 0
-	closebttn.AutoButtonColor = false
-	closebttn.Position = UDim2.new(0.894999981, 0, 0.0700000003, 0)
-	closebttn.Size = UDim2.new(0, 25, 0, 25)
-	closebttn.FontFace = rubik
-	closebttn.Text = "X"
-	closebttn.TextColor3 = Color3.fromRGB(235, 159, 221)
-	closebttn.TextSize = 14.000
+	CloseButton.Name = "CloseButton"
+	CloseButton.Parent = Notification
+	CloseButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
+	CloseButton.BorderSizePixel = 0
+	CloseButton.AutoButtonColor = false
+	CloseButton.Position = UDim2.new(0.895, 0, 0.07, 0)
+	CloseButton.Size = UDim2.new(0, 25, 0, 25)
+	CloseButton.FontFace = rubik
+	CloseButton.Text = "X"
+	CloseButton.TextColor3 = Color3.fromRGB(235, 159, 221)
+	CloseButton.TextSize = 14
 
-	str4.Parent = closebttn
-	str4.Color = Color3.fromRGB(91, 67, 100)
-	str4.Thickness = 1.3
-	str4.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+	Stroke1.Parent = CloseButton
+	Stroke1.Color = Color3.fromRGB(91, 67, 100)
+	Stroke1.Thickness = 1.3
+	Stroke1.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
-	closebttn.MouseEnter:Connect(function()
-		ts:Create(str4, TweenInfo.new(0.4), {Color = Color3.fromRGB(186, 139, 206)}):Play()
-		ts:Create(closebttn, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+	CloseButton.MouseEnter:Connect(function()
+		ts:Create(Stroke1, TweenInfo.new(0.4), {Color = Color3.fromRGB(186, 139, 206)}):Play()
+		ts:Create(CloseButton, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(255, 255, 255)}):Play()
 	end)
 
-	closebttn.MouseLeave:Connect(function()
-		ts:Create(str4, TweenInfo.new(0.4), {Color = Color3.fromRGB(91, 67, 100)}):Play()
-		ts:Create(closebttn, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(235, 159, 221)}):Play()
+	CloseButton.MouseLeave:Connect(function()
+		ts:Create(Stroke1, TweenInfo.new(0.4), {Color = Color3.fromRGB(91, 67, 100)}):Play()
+		ts:Create(CloseButton, TweenInfo.new(0.4), {TextColor3 = Color3.fromRGB(235, 159, 221)}):Play()
 	end)
 
 	UICorner.CornerRadius = UDim.new(0, 5)
-	UICorner.Parent = closebttn
-
-	UICorner_2.Parent = Notification
+	UICorner.Parent = CloseButton
+	UICorner2.Parent = Notification
 
 	local duration = t.Duration or 3.5
 
-	ts:Create(Notification, TweenInfo.new(0.5), {Position = UDim2.new(0.81, 0, 0.764779866 - offset, 0)}):Play()
+	ts:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0.8, 0, 0.764779866 - GetOffset(), 0)}):Play()
+	ts:Create(Notification, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut), {Position = UDim2.new(0.81, 0, 0.764779866 - GetOffset(), 0)}):Play()
 
-	closebttn.MouseButton1Click:Connect(function()
-		ts:Create(Notification, TweenInfo.new(0.3), {Position = UDim2.new(1.3, 0, 0.764779866 - offset, 0)}):Play()
-		task.wait(0.8)
+	CloseButton.MouseButton1Click:Connect(function()
+		ts:Create(Notification, TweenInfo.new(0.5), {Position = UDim2.new(1.3, 0, 0.764779866 - GetOffset(), 0)}):Play()
+
+		task.wait(0.5)
 		Notification:Destroy()
+
+		local offset = 0
+		for _, v in ipairs(Ventures:GetChildren()) do
+			if v:IsA("Frame") and v.Name == "Notification" then
+				ts:Create(v, TweenInfo.new(0.3), {Position = UDim2.new(0.81, 0, 0.764779866 - offset, 0)}):Play()
+				offset = offset + 0.13
+			end
+		end
 	end)
 
 	task.wait(duration)
 
-	local out = ts:Create(Notification, TweenInfo.new(0.5), {Position = UDim2.new(1.3, 0, 0.764779866 - offset, 0)})
+	local out = ts:Create(Notification, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Position = UDim2.new(1.3, 0, 0.764779866 - GetOffset(), 0)})
 	out:Play()
 
 	out.Completed:Wait()
@@ -189,6 +232,7 @@ local function fastnotify(ty)
 	end
 end
 
+--//Function:CreateWindow
 function lib:CreateWindow(tablew)
 	local tab = {}
 
@@ -196,7 +240,7 @@ function lib:CreateWindow(tablew)
 	if type(keysystem) == "table" then
 		local enabled, key = keysystem.Enabled or false, keysystem.Key or nil
 
-		if enabled and key ~= nil and players.LocalPlayer.UserId ~= 2343555344 then
+		if enabled and key ~= nil and not whitelisted and not run:IsStudio() then
 			local KeySystem = Instance.new("Frame")
 			local UIGradient = Instance.new("UIGradient")
 			local UICorner = Instance.new("UICorner")
@@ -440,13 +484,13 @@ function lib:CreateWindow(tablew)
 				close("in")
 				lib:Notify({
 					Title = "Ventures",
-					Content = "Press P to close the window"
+					Content = "Press ".. getscriptkeybind(false, keybind) .." to close the window"
 				})
 			else
 				close("out")
 				lib:Notify({
 					Title = "Ventures",
-					Content = "Press P to open the window"
+					Content = "Press ".. getscriptkeybind(false, keybind) .." to open the window"
 				})
 			end
 		end
@@ -1648,7 +1692,7 @@ function lib:CreateWindow(tablew)
 				OnChanged = function(self, ncalllback)
 					callback = ncalllback
 				end,
-				
+
 				SetValue = function(self, value)
 					if table.find(values, value) then
 						selectorname.Text = value
@@ -1660,7 +1704,7 @@ function lib:CreateWindow(tablew)
 						})
 					end
 				end,
-				
+
 				AddValue = function(self, value)
 					if type(value) == "string" then
 						table.insert(values, value)
