@@ -1,4 +1,5 @@
 --//Note: im currently going over a rewrite on the library, to change the instances names into pascal case ( i can understand stuff better  ) thats why stuff might not look the same.
+_G.UseAnimation = true
 
 --//Loaded Check
 if not game:IsLoaded() then
@@ -41,11 +42,11 @@ if not run:IsStudio() then
 	end
 end
 
-local function getscriptkeybind(invert, keyCode)
+local function getscriptkeybind(invert, keycode)
 	if invert then
-		return "Enum.KeyCode." .. keyCode:gsub(" ", ""):gsub("(%l)(%u)", "%1%2")
+		return "Enum.KeyCode." .. keycode:gsub(" ", ""):gsub("(%l)(%u)", "%1%2")
 	else
-		return keyCode.Name:gsub("(%u)", " %1"):sub(2)
+		return keycode.Name:gsub("(%u)", " %1"):sub(2)
 	end
 end
 
@@ -240,7 +241,8 @@ function lib:CreateWindow(tablew)
 	if type(keysystem) == "table" then
 		local enabled, key = keysystem.Enabled or false, keysystem.Key or nil
 
-		if enabled and key ~= nil and not whitelisted and not run:IsStudio() then
+		--//CreateWindow:KeySystem
+		if enabled and key ~= nil and not whitelisted then
 			local KeySystem = Instance.new("Frame")
 			local UIGradient = Instance.new("UIGradient")
 			local UICorner = Instance.new("UICorner")
@@ -261,158 +263,356 @@ function lib:CreateWindow(tablew)
 			local str7 = Instance.new("UIStroke")
 			local str8  = Instance.new("UIStroke")
 			local str9 = Instance.new("UIStroke")
+			local Loading = Instance.new("Frame")
+			local AnimationFrame = Instance.new("Frame")
+			local Square1 = Instance.new("Frame")
+			local UICorner = Instance.new("UICorner")
+			local UIListLayout = Instance.new("UIListLayout")
+			local Square2 = Instance.new("Frame")
+			local UICorner_2 = Instance.new("UICorner")
+			local Square3 = Instance.new("Frame")
+			local UICorner_3 = Instance.new("UICorner")
+			local Square4 = Instance.new("Frame")
+			local UICorner_4 = Instance.new("UICorner")
+			local MidFrame = Instance.new("Frame")
+			local UICorner_5 = Instance.new("UICorner")
+			local Logo = Instance.new("ImageLabel")
+			local UIGradient = Instance.new("UIGradient")
+			local Stroke2 = Instance.new("UIStroke")
 
-			KeySystem.Name = "KeySystem"
-			KeySystem.Parent = Ventures
-			KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
-			KeySystem.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
-			KeySystem.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			KeySystem.BackgroundTransparency = 0.09
-			KeySystem.BorderSizePixel = 0
-			KeySystem.Position = UDim2.new(0.488421053, 0, 1.3, 0) --  UDim2.new(0.488421053, 0, 0.494339615, 0)
-			KeySystem.Size = UDim2.new(0, 419, 0, 199)
+			if _G.UseAnimation then
 
-			str9.Parent = KeySystem
-			str9.Color = Color3.fromRGB(91, 67, 100)
-			str9.Thickness = 1.3
-			str9.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				Loading.Name = "Loading"
+				Loading.Parent = Ventures
+				Loading.BackgroundColor3 = Color3.new(1, 1, 1)
+				Loading.BackgroundTransparency = 1
+				Loading.BorderColor3 = Color3.new(0, 0, 0)
+				Loading.BorderSizePixel = 0
+				Loading.Position = UDim2.new(0.5, -223, 0.5, -147)
+				Loading.Size = UDim2.new(0, 446, 0, 295)
 
-			UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
-			UIGradient.Rotation = -90
-			UIGradient.Parent = KeySystem
+				AnimationFrame.Name = "AnimationFrame"
+				AnimationFrame.Parent = Loading
+				AnimationFrame.BackgroundColor3 = Color3.new(1, 1, 1)
+				AnimationFrame.BackgroundTransparency = 1
+				AnimationFrame.BorderColor3 = Color3.new(0, 0, 0)
+				AnimationFrame.BorderSizePixel = 0
+				AnimationFrame.Position = UDim2.new(0.5, -163, 0.5, -122)
+				AnimationFrame.Size = UDim2.new(0, 326, 0, 244)
 
-			UICorner.Parent = KeySystem
+				Square1.Name = "Square1"
+				Square1.Parent = nil
+				Square1.BackgroundColor3 = Color3.new(0.152941, 0.113725, 0.168627)
+				Square1.BorderColor3 = Color3.new(0, 0, 0)
+				Square1.BorderSizePixel = 0
+				Square1.Position = UDim2.new(0, 0, 0.5, -50)
+				Square1.Size = UDim2.new(0, 50, 0, 50)
 
-			TextBox.Parent = KeySystem
-			TextBox.AnchorPoint = Vector2.new(0.5, 0)
-			TextBox.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
-			TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			TextBox.BorderSizePixel = 0
-			TextBox.Position = UDim2.new(0.5, 0, 0.707000017, 0)
-			TextBox.Size = UDim2.new(0, 287, 0, 27)
-			TextBox.FontFace = rubik
-			TextBox.PlaceholderColor3 = Color3.fromRGB(98, 66, 92)
-			TextBox.PlaceholderText = "Input Your Key Here..."
-			TextBox.Text = ""
-			TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
-			TextBox.TextSize = 14.000
-			TextBox.TextXAlignment = Enum.TextXAlignment.Left
+				UICorner.Parent = Square1
 
-			str6.Parent = TextBox
-			str6.Color = Color3.fromRGB(91, 67, 100)
-			str6.Thickness = 1.3
-			str6.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				UIListLayout.Parent = AnimationFrame
+				UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+				UIListLayout.Wraps = false
+				UIListLayout.Padding = UDim.new(0, 0)
 
-			UICorner_2.CornerRadius = UDim.new(0, 5)
-			UICorner_2.Parent = TextBox
+				Square2.Name = "Square2"
+				Square2.Parent = nil
+				Square2.BackgroundColor3 = Color3.new(0.152941, 0.113725, 0.168627)
+				Square2.BorderColor3 = Color3.new(0, 0, 0)
+				Square2.BorderSizePixel = 0
+				Square2.Position = UDim2.new(0, 0, 0.5, -50)
+				Square2.Size = UDim2.new(0, 50, 0, 50)
 
-			UIPadding.Parent = TextBox
-			UIPadding.PaddingLeft = UDim.new(0, 8)
+				UICorner_2.Parent = Square2
 
-			TextLabel.Parent = KeySystem
-			TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			TextLabel.BackgroundTransparency = 1.000
-			TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			TextLabel.BorderSizePixel = 0
-			TextLabel.Position = UDim2.new(0.017699115, 0, 0.0384615399, 0)
-			TextLabel.Size = UDim2.new(0, 199, 0, 11)
-			TextLabel.FontFace = rubik
-			TextLabel.Text = "Ventures KeySystem"
-			TextLabel.TextColor3 = Color3.fromRGB(235, 159, 221)
-			TextLabel.TextSize = 14.000
-			TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+				Square3.Name = "Square3"
+				Square3.Parent = nil
+				Square3.BackgroundColor3 = Color3.new(0.152941, 0.113725, 0.168627)
+				Square3.BorderColor3 = Color3.new(0, 0, 0)
+				Square3.BorderSizePixel = 0
+				Square3.Position = UDim2.new(0, 0, 0.5, -50)
+				Square3.Size = UDim2.new(0, 50, 0, 50)
 
-			TextLabel_2.Parent = KeySystem
-			TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			TextLabel_2.BackgroundTransparency = 1.000
-			TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			TextLabel_2.BorderSizePixel = 0
-			TextLabel_2.Position = UDim2.new(0.157517895, 0, 0.842481434, 0)
-			TextLabel_2.Size = UDim2.new(0, 286, 0, 31)
-			TextLabel_2.FontFace = rubik
-			TextLabel_2.Text = "To get the key join our discord server, discord.gg/v3n"
-			TextLabel_2.TextColor3 = Color3.fromRGB(72, 49, 68)
-			TextLabel_2.TextSize = 11.000
+				UICorner_3.Parent = Square3
 
-			ImageLabel.Parent = KeySystem
-			ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			ImageLabel.BackgroundTransparency = 1.000
-			ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			ImageLabel.BorderSizePixel = 0
-			ImageLabel.Size = UDim2.new(1, 0, 1, 0)
-			ImageLabel.Image = "rbxassetid://138515717272375"
-			ImageLabel.ImageTransparency = 0.660
+				Square4.Name = "Square4"
+				Square4.Parent = nil
+				Square4.BackgroundColor3 = Color3.new(0.152941, 0.113725, 0.168627)
+				Square4.BorderColor3 = Color3.new(0, 0, 0)
+				Square4.BorderSizePixel = 0
+				Square4.Position = UDim2.new(0, 0, 0.5, -50)
+				Square4.Size = UDim2.new(0, 50, 0, 50)
 
-			UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
-			UIGradient_2.Rotation = -90
-			UIGradient_2.Parent = ImageLabel
+				UICorner_4.Parent = Square4
 
-			Frame.Parent = KeySystem
-			Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			Frame.BackgroundTransparency = 1.000
-			Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			Frame.BorderSizePixel = 0
-			Frame.Position = UDim2.new(0.711217165, 0, 0.0351758786, 0)
-			Frame.Size = UDim2.new(0, 116, 0, 25)
+				MidFrame.Name = "MidFrame"
+				MidFrame.Parent = Loading
+				MidFrame.BackgroundColor3 = Color3.new(0.152941, 0.113725, 0.168627)
+				MidFrame.BorderColor3 = Color3.new(0, 0, 0)
+				MidFrame.BorderSizePixel = 0
+				MidFrame.Position = UDim2.new(0.5, -50, 0.5, -50)
+				MidFrame.Size = UDim2.new(0, 100, 0, 100)
 
-			UIListLayout.Parent = Frame
-			UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-			UIListLayout.Padding = UDim.new(0, 5)
+				Stroke2.Color = Color3.fromRGB(62, 46, 68)
+				Stroke2.Thickness = 1.6
+				Stroke2.Parent = MidFrame
 
-			ImageButton.Parent = Frame
-			ImageButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
-			ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			ImageButton.BorderSizePixel = 0
-			ImageButton.Position = UDim2.new(0.75938803, 0, 0.0384615026, 0)
-			ImageButton.Size = UDim2.new(0, 25, 0, 25)
-			ImageButton.Image = "http://www.roblox.com/asset/?id=84828491431270"
-			ImageButton.ImageColor3 = Color3.fromRGB(235, 159, 221)
+				UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
+				UIGradient.Rotation = -90
+				UIGradient.Parent = MidFrame
 
-			str7.Parent = ImageButton
-			str7.Color = Color3.fromRGB(91, 67, 100)
-			str7.Thickness = 1.3
-			str7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				UICorner_5.Parent = MidFrame
 
-			UICorner_3.CornerRadius = UDim.new(0, 5)
-			UICorner_3.Parent = ImageButton
+				Logo.Name = "Logo"
+				Logo.Parent = Loading
+				Logo.BackgroundColor3 = Color3.new(1, 1, 1)
+				Logo.BackgroundTransparency = 1
+				Logo.BorderColor3 = Color3.new(0, 0, 0)
+				Logo.BorderSizePixel = 0
+				Logo.Position = UDim2.new(0.5, -50, 0.5, -50)
+				Logo.Size = UDim2.new(0, 100, 0, 100)
+				Logo.Image = "rbxassetid://138872283376721"
 
-			TextButton.Parent = Frame
-			TextButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
-			TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
-			TextButton.BorderSizePixel = 0
-			TextButton.Position = UDim2.new(0.918141603, 0, 0.0384615399, 0)
-			TextButton.Size = UDim2.new(0, 25, 0, 25)
-			TextButton.FontFace = rubik
-			TextButton.Text = "X"
-			TextButton.TextColor3 = Color3.fromRGB(235, 159, 221)
-			TextButton.TextSize = 14.000
+				local rr = ts:Create(UIListLayout, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Padding = UDim.new(0, 110)}):Play()
+				UIListLayout.Wraps = true
 
-			str8.Parent = TextButton
-			str8.Color = Color3.fromRGB(91, 67, 100)
-			str8.Thickness = 1.3
-			str8.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+				Square1.Parent = AnimationFrame
+				Square2.Parent = AnimationFrame
+				Square3.Parent = AnimationFrame
+				Square4.Parent = AnimationFrame
 
-			UICorner_4.CornerRadius = UDim.new(0, 5)
-			UICorner_4.Parent = TextButton
-
-			ts:Create(KeySystem, TweenInfo.new(0.3), {Position =  UDim2.new(0.488421053, 0, 0.494339615, 0)}):Play()
-
-			while KeySystem do
-				if TextBox.Text == key then
-					ts:Create(KeySystem, TweenInfo.new(0.3), {Position =  UDim2.new(0.488421053, 0, 1.3, 0)}):Play()
-					task.wait(0.8)
-					KeySystem:Destroy()
-					break
-				else
-
+				for _, v in pairs(AnimationFrame:GetChildren()) do
+					if v:IsA("Frame") then
+						local Stroke = Instance.new("UIStroke")
+						Stroke.Color = Color3.fromRGB(231, 170, 255)
+						Stroke.Thickness = 1.5
+						Stroke.Parent = v
+					end
 				end
-				task.wait(0.1)
+
+				local children = AnimationFrame:GetChildren()
+
+				for i = 1, 3 do
+					local rt1 = AnimationFrame.Rotation + 90
+					local rt2 = MidFrame.Rotation + 90
+					local rt3 = UIGradient.Rotation - 90
+
+					local r1 = ts:Create(AnimationFrame, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = rt1})
+					local r2 = ts:Create(MidFrame, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = rt2})
+
+					local r3 = ts:Create(UIListLayout, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Padding = UDim.new(0, 140)})
+					local r4 = ts:Create(UIListLayout, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Padding = UDim.new(0, 110)})
+
+					local r5 = ts:Create(UIGradient, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Rotation = rt3})
+
+					local r6 = ts:Create(Stroke2, TweenInfo.new(0.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Color = Color3.fromRGB(231, 170, 255)})
+					local r7 = ts:Create(Stroke2, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Color = Color3.fromRGB(62, 46, 68)})
+
+					r1:Play()
+
+					coroutine.wrap(function()
+						r3:Play()
+						task.wait(0.2)
+						r4:Play()
+					end)()
+
+					r1.Completed:Wait()
+					task.wait(0.3)
+
+					r2:Play()
+
+					coroutine.wrap(function()
+						r6:Play()
+						task.wait(0.35)
+						r7:Play()
+					end)()
+
+					r5:Play()
+					r2.Completed:Wait()
+					task.wait(0.3)
+				end
+
+				ts:Create(UIListLayout, TweenInfo.new(0.8, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut), {Padding = UDim.new(0, 0)}):Play()
+
+				ts:Create(Square1, TweenInfo.new(0.8), {BackgroundTransparency = 1}):Play()
+				ts:Create(Square2, TweenInfo.new(0.8), {BackgroundTransparency = 1}):Play()
+				ts:Create(Square3, TweenInfo.new(0.8), {BackgroundTransparency = 1}):Play()
+				ts:Create(Square4, TweenInfo.new(0.8), {BackgroundTransparency = 1}):Play()
+
+				task.wait(0.8)
+
+				Square1.Parent = nil
+				Square2.Parent = nil
+				Square3.Parent = nil
+				Square4.Parent = nil
+
+				task.wait(1.4)
+
+				ts:Create(Loading, TweenInfo.new(0.4), {Position = UDim2.new(0.5, -223, 1.5, -147)}):Play()
+				task.wait(0.5)
+
+				coroutine.wrap(function()
+					task.wait(0.5)
+					Loading:Destroy()
+				end)()
+
+			else
+
+				KeySystem.Name = "KeySystem"
+				KeySystem.Parent = Ventures
+				KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
+				KeySystem.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
+				KeySystem.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				KeySystem.BackgroundTransparency = 0.09
+				KeySystem.BorderSizePixel = 0
+				KeySystem.Position = UDim2.new(0.488421053, 0, 1.3, 0) --  UDim2.new(0.488421053, 0, 0.494339615, 0)
+				KeySystem.Size = UDim2.new(0, 419, 0, 199)
+
+				str9.Parent = KeySystem
+				str9.Color = Color3.fromRGB(91, 67, 100)
+				str9.Thickness = 1.3
+				str9.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
+				UIGradient.Rotation = -90
+				UIGradient.Parent = KeySystem
+
+				UICorner.Parent = KeySystem
+
+				TextBox.Parent = KeySystem
+				TextBox.AnchorPoint = Vector2.new(0.5, 0)
+				TextBox.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
+				TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextBox.BorderSizePixel = 0
+				TextBox.Position = UDim2.new(0.5, 0, 0.707000017, 0)
+				TextBox.Size = UDim2.new(0, 287, 0, 27)
+				TextBox.FontFace = rubik
+				TextBox.PlaceholderColor3 = Color3.fromRGB(98, 66, 92)
+				TextBox.PlaceholderText = "Input Your Key Here..."
+				TextBox.Text = ""
+				TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TextBox.TextSize = 14.000
+				TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+				str6.Parent = TextBox
+				str6.Color = Color3.fromRGB(91, 67, 100)
+				str6.Thickness = 1.3
+				str6.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UICorner_2.CornerRadius = UDim.new(0, 5)
+				UICorner_2.Parent = TextBox
+
+				UIPadding.Parent = TextBox
+				UIPadding.PaddingLeft = UDim.new(0, 8)
+
+				TextLabel.Parent = KeySystem
+				TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				TextLabel.BackgroundTransparency = 1.000
+				TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextLabel.BorderSizePixel = 0
+				TextLabel.Position = UDim2.new(0.017699115, 0, 0.0384615399, 0)
+				TextLabel.Size = UDim2.new(0, 199, 0, 11)
+				TextLabel.FontFace = rubik
+				TextLabel.Text = "Ventures KeySystem"
+				TextLabel.TextColor3 = Color3.fromRGB(235, 159, 221)
+				TextLabel.TextSize = 14.000
+				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+				TextLabel_2.Parent = KeySystem
+				TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				TextLabel_2.BackgroundTransparency = 1.000
+				TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextLabel_2.BorderSizePixel = 0
+				TextLabel_2.Position = UDim2.new(0.157517895, 0, 0.842481434, 0)
+				TextLabel_2.Size = UDim2.new(0, 286, 0, 31)
+				TextLabel_2.FontFace = rubik
+				TextLabel_2.Text = "To get the key join our discord server, discord.gg/v3n"
+				TextLabel_2.TextColor3 = Color3.fromRGB(72, 49, 68)
+				TextLabel_2.TextSize = 11.000
+
+				ImageLabel.Parent = KeySystem
+				ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				ImageLabel.BackgroundTransparency = 1.000
+				ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ImageLabel.BorderSizePixel = 0
+				ImageLabel.Size = UDim2.new(1, 0, 1, 0)
+				ImageLabel.Image = "rbxassetid://138515717272375"
+				ImageLabel.ImageTransparency = 0.660
+
+				UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
+				UIGradient_2.Rotation = -90
+				UIGradient_2.Parent = ImageLabel
+
+				Frame.Parent = KeySystem
+				Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Frame.BackgroundTransparency = 1.000
+				Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Frame.BorderSizePixel = 0
+				Frame.Position = UDim2.new(0.711217165, 0, 0.0351758786, 0)
+				Frame.Size = UDim2.new(0, 116, 0, 25)
+
+				UIListLayout.Parent = Frame
+				UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+				UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				UIListLayout.Padding = UDim.new(0, 5)
+
+				ImageButton.Parent = Frame
+				ImageButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
+				ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ImageButton.BorderSizePixel = 0
+				ImageButton.Position = UDim2.new(0.75938803, 0, 0.0384615026, 0)
+				ImageButton.Size = UDim2.new(0, 25, 0, 25)
+				ImageButton.Image = "http://www.roblox.com/asset/?id=84828491431270"
+				ImageButton.ImageColor3 = Color3.fromRGB(235, 159, 221)
+
+				str7.Parent = ImageButton
+				str7.Color = Color3.fromRGB(91, 67, 100)
+				str7.Thickness = 1.3
+				str7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UICorner_3.CornerRadius = UDim.new(0, 5)
+				UICorner_3.Parent = ImageButton
+
+				TextButton.Parent = Frame
+				TextButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
+				TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextButton.BorderSizePixel = 0
+				TextButton.Position = UDim2.new(0.918141603, 0, 0.0384615399, 0)
+				TextButton.Size = UDim2.new(0, 25, 0, 25)
+				TextButton.FontFace = rubik
+				TextButton.Text = "X"
+				TextButton.TextColor3 = Color3.fromRGB(235, 159, 221)
+				TextButton.TextSize = 14.000
+
+				str8.Parent = TextButton
+				str8.Color = Color3.fromRGB(91, 67, 100)
+				str8.Thickness = 1.3
+				str8.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UICorner_4.CornerRadius = UDim.new(0, 5)
+				UICorner_4.Parent = TextButton
+
+				ts:Create(KeySystem, TweenInfo.new(0.3), {Position =  UDim2.new(0.488421053, 0, 0.494339615, 0)}):Play()
+
+				while KeySystem do
+					if TextBox.Text == key then
+						ts:Create(KeySystem, TweenInfo.new(0.3), {Position =  UDim2.new(0.488421053, 0, 1.3, 0)}):Play()
+						task.wait(0.8)
+						KeySystem:Destroy()
+						break
+					else
+
+					end
+					task.wait(0.1)
+				end
 			end
 		end
 	end
 
+	--//CreateWindow:Main
 	local TabName2 = Instance.new("TextLabel")
 	local Holder = Instance.new("Frame")
 	local UICorner = Instance.new("UICorner")
@@ -465,39 +665,106 @@ function lib:CreateWindow(tablew)
 	str98.Thickness = 0
 	str98.Color = Color3.fromRGB(228, 201, 234)
 
+	local original = {}
+
+	local function saveoriginal(element)
+		if not original[element] then
+			if element:IsA("GuiObject") then
+				if element:IsA("TextLabel") or element:IsA("TextButton") then
+					original[element] = {TextTransparency = element.TextTransparency, BackgroundTransparency = element.BackgroundTransparency}
+				elseif element:IsA("ImageButton") or element:IsA("ImageLabel") then
+					original[element] = {ImageTransparency = element.ImageTransparency, BackgroundTransparency = element.BackgroundTransparency}
+				else
+					original[element] = {Transparency = element.Transparency}
+				end
+			elseif element:IsA("UIStroke") then
+				original[element] = {Transparency = element.Transparency}
+			end
+		end
+	end
+
 	local function close(way)
 		if way == "out" then
-			ts:Create(Holder, TweenInfo.new(0.3), {Position = UDim2.new(0.5,0,1.4,0)}):Play()
+			saveoriginal(Holder)
+			ts:Create(Holder, TweenInfo.new(0.4), {Transparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
+
+			for _, v in pairs(Holder:GetDescendants()) do
+				if v:IsA("GuiObject") or v:IsA("UIStroke") then
+					saveoriginal(v)
+					if v:IsA("TextLabel") or v:IsA("TextButton") then
+						ts:Create(v, TweenInfo.new(0.4), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
+					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
+						ts:Create(v, TweenInfo.new(0.4), {ImageTransparency = 1, BackgroundTransparency = 1}):Play()
+					else
+						ts:Create(v, TweenInfo.new(0.4), {Transparency = 1}):Play()
+					end
+				end
+			end
+			task.wait(0.5)
+
+			Holder.Visible = false
 		elseif way == "in" then
-			ts:Create(Holder, TweenInfo.new(0.3), {Position = UDim2.new(0.5,0,0.5,0)}):Play()
+			Holder.Size = UDim2.new(0, 0, 0, 0)
+			Holder.Transparency = 1
+			Holder.Visible = true
+
+			for _, v in pairs(Holder:GetDescendants()) do
+				if v:IsA("GuiObject") or v:IsA("UIStroke") then
+					if v:IsA("TextLabel") or v:IsA("TextButton") then
+						v.TextTransparency = original[v] and original[v].TextTransparency or 1
+						v.BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 1
+					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
+						v.ImageTransparency = original[v] and original[v].ImageTransparency or 1
+						v.BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 1
+					else
+						v.Transparency = original[v] and original[v].Transparency or 1
+					end
+				end
+			end
+
+			ts:Create(Holder, TweenInfo.new(0.4), {Transparency = 0, Size = UDim2.new(0, 961, 0, 520)}):Play()
+
+			for _, v in pairs(Holder:GetDescendants()) do
+				if v:IsA("GuiObject") or v:IsA("UIStroke") then
+					if v:IsA("TextLabel") or v:IsA("TextButton") then
+						ts:Create(v, TweenInfo.new(0.4), {TextTransparency = original[v] and original[v].TextTransparency or 0, BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 0}):Play()
+					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
+						ts:Create(v, TweenInfo.new(0.4), {ImageTransparency = original[v] and original[v].ImageTransparency or 0, BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 0}):Play()
+					else
+						ts:Create(v, TweenInfo.new(0.4), {Transparency = original[v] and original[v].Transparency or 0}):Play()
+					end
+				end
+			end
 		end
 	end
 
 	close("in")
 	local bool2 = true
 	local keybind = tablew.MinimizeKeybind or Enum.KeyCode.RightControl 
+
+	coroutine.wrap(function()
+		if keybind then
+			lib:Notify({
+				Title = "Ventures - StartUp",
+				Content = "Press " .. getscriptkeybind(false, keybind) .. " To Toggle The Ui!",
+			})
+		end
+	end)()
+
 	uis.InputBegan:Connect(function(input, gpe)
 		if input.KeyCode == keybind then
 			bool2 = not bool2
 
 			if bool2 then
 				close("in")
-				lib:Notify({
-					Title = "Ventures",
-					Content = "Press ".. getscriptkeybind(false, keybind) .." to close the window"
-				})
 			else
 				close("out")
-				lib:Notify({
-					Title = "Ventures",
-					Content = "Press ".. getscriptkeybind(false, keybind) .." to open the window"
-				})
 			end
 		end
 	end)
 
 	local dragging, inp, start, cpos, target
-	local speed = 0.2
+	local speed = 0.4
 
 	local function update(input)
 		local delta = input.Position - start
