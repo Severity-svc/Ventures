@@ -457,6 +457,155 @@ function lib:CreateWindow(tablew)
 					Loading:Destroy()
 				end)()
 
+				KeySystem.Name = "KeySystem"
+				KeySystem.Parent = Ventures
+				KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
+				KeySystem.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
+				KeySystem.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				KeySystem.BackgroundTransparency = 0.09
+				KeySystem.BorderSizePixel = 0
+				KeySystem.Position = UDim2.new(0.488421053, 0, 1.3, 0) --  UDim2.new(0.488421053, 0, 0.494339615, 0)
+				KeySystem.Size = UDim2.new(0, 419, 0, 199)
+
+				str9.Parent = KeySystem
+				str9.Color = Color3.fromRGB(91, 67, 100)
+				str9.Thickness = 1.3
+				str9.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
+				UIGradient.Rotation = -90
+				UIGradient.Parent = KeySystem
+
+				UICorner.Parent = KeySystem
+
+				TextBox.Parent = KeySystem
+				TextBox.AnchorPoint = Vector2.new(0.5, 0)
+				TextBox.BackgroundColor3 = Color3.fromRGB(31, 23, 34)
+				TextBox.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextBox.BorderSizePixel = 0
+				TextBox.Position = UDim2.new(0.5, 0, 0.707000017, 0)
+				TextBox.Size = UDim2.new(0, 287, 0, 27)
+				TextBox.FontFace = rubik
+				TextBox.PlaceholderColor3 = Color3.fromRGB(98, 66, 92)
+				TextBox.PlaceholderText = "Input Your Key Here..."
+				TextBox.Text = ""
+				TextBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+				TextBox.TextSize = 14.000
+				TextBox.TextXAlignment = Enum.TextXAlignment.Left
+
+				str6.Parent = TextBox
+				str6.Color = Color3.fromRGB(91, 67, 100)
+				str6.Thickness = 1.3
+				str6.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UICorner_2.CornerRadius = UDim.new(0, 5)
+				UICorner_2.Parent = TextBox
+
+				UIPadding.Parent = TextBox
+				UIPadding.PaddingLeft = UDim.new(0, 8)
+
+				TextLabel.Parent = KeySystem
+				TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				TextLabel.BackgroundTransparency = 1.000
+				TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextLabel.BorderSizePixel = 0
+				TextLabel.Position = UDim2.new(0.017699115, 0, 0.0384615399, 0)
+				TextLabel.Size = UDim2.new(0, 199, 0, 11)
+				TextLabel.FontFace = rubik
+				TextLabel.Text = "Ventures KeySystem"
+				TextLabel.TextColor3 = Color3.fromRGB(235, 159, 221)
+				TextLabel.TextSize = 14.000
+				TextLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+				TextLabel_2.Parent = KeySystem
+				TextLabel_2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				TextLabel_2.BackgroundTransparency = 1.000
+				TextLabel_2.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextLabel_2.BorderSizePixel = 0
+				TextLabel_2.Position = UDim2.new(0.157517895, 0, 0.842481434, 0)
+				TextLabel_2.Size = UDim2.new(0, 286, 0, 31)
+				TextLabel_2.FontFace = rubik
+				TextLabel_2.Text = "To get the key join our discord server, discord.gg/v3n"
+				TextLabel_2.TextColor3 = Color3.fromRGB(72, 49, 68)
+				TextLabel_2.TextSize = 11.000
+
+				ImageLabel.Parent = KeySystem
+				ImageLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				ImageLabel.BackgroundTransparency = 1.000
+				ImageLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ImageLabel.BorderSizePixel = 0
+				ImageLabel.Size = UDim2.new(1, 0, 1, 0)
+				ImageLabel.Image = "rbxassetid://138515717272375"
+				ImageLabel.ImageTransparency = 0.660
+
+				UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0.00, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))}
+				UIGradient_2.Rotation = -90
+				UIGradient_2.Parent = ImageLabel
+
+				Frame.Parent = KeySystem
+				Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				Frame.BackgroundTransparency = 1.000
+				Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Frame.BorderSizePixel = 0
+				Frame.Position = UDim2.new(0.711217165, 0, 0.0351758786, 0)
+				Frame.Size = UDim2.new(0, 116, 0, 25)
+
+				UIListLayout.Parent = Frame
+				UIListLayout.FillDirection = Enum.FillDirection.Horizontal
+				UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+				UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+				UIListLayout.Padding = UDim.new(0, 5)
+
+				ImageButton.Parent = Frame
+				ImageButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
+				ImageButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				ImageButton.BorderSizePixel = 0
+				ImageButton.Position = UDim2.new(0.75938803, 0, 0.0384615026, 0)
+				ImageButton.Size = UDim2.new(0, 25, 0, 25)
+				ImageButton.Image = "http://www.roblox.com/asset/?id=84828491431270"
+				ImageButton.ImageColor3 = Color3.fromRGB(235, 159, 221)
+
+				str7.Parent = ImageButton
+				str7.Color = Color3.fromRGB(91, 67, 100)
+				str7.Thickness = 1.3
+				str7.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UICorner_3.CornerRadius = UDim.new(0, 5)
+				UICorner_3.Parent = ImageButton
+
+				TextButton.Parent = Frame
+				TextButton.BackgroundColor3 = Color3.fromRGB(39, 29, 43)
+				TextButton.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextButton.BorderSizePixel = 0
+				TextButton.Position = UDim2.new(0.918141603, 0, 0.0384615399, 0)
+				TextButton.Size = UDim2.new(0, 25, 0, 25)
+				TextButton.FontFace = rubik
+				TextButton.Text = "X"
+				TextButton.TextColor3 = Color3.fromRGB(235, 159, 221)
+				TextButton.TextSize = 14.000
+
+				str8.Parent = TextButton
+				str8.Color = Color3.fromRGB(91, 67, 100)
+				str8.Thickness = 1.3
+				str8.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+				UICorner_4.CornerRadius = UDim.new(0, 5)
+				UICorner_4.Parent = TextButton
+
+				ts:Create(KeySystem, TweenInfo.new(0.3), {Position =  UDim2.new(0.488421053, 0, 0.494339615, 0)}):Play()
+
+				while KeySystem do
+					if TextBox.Text == key then
+						ts:Create(KeySystem, TweenInfo.new(0.3), {Position =  UDim2.new(0.488421053, 0, 1.3, 0)}):Play()
+						task.wait(0.8)
+						KeySystem:Destroy()
+						break
+					else
+
+					end
+					task.wait(0.1)
+				end
+
 			else
 
 				KeySystem.Name = "KeySystem"
