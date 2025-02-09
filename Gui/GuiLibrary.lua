@@ -1,5 +1,4 @@
 --//Note: im currently going over a rewrite on the library, to change the instances names into pascal case ( i can understand stuff better  ) thats why stuff might not look the same.
-_G.UseAnimation = true
 
 --//Loaded Check
 if not game:IsLoaded() then
@@ -31,7 +30,7 @@ end
 if not run:IsStudio() then
 	local ans = game:GetService("RbxAnalyticsService")
 
-	if ans and ans:GetClientId() then
+	if ans and ans:GetClientId() and not _G.V3nTestMode then
 		local hwid, whitelist = ans:GetClientId(), {"E234A003-18E6-4546-996E-CC216EEDAC75"}
 
 		for _, v in pairs(whitelist) do
