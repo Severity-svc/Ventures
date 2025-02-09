@@ -30,7 +30,7 @@ end
 if not run:IsStudio() then
 	local ans = game:GetService("RbxAnalyticsService")
 
-	if ans and ans:GetClientId() and not _G.V3nTestMode then
+	if ans and ans:GetClientId() and _G.V3nTestMode ~= true then
 		local hwid, whitelist = ans:GetClientId(), {"E234A003-18E6-4546-996E-CC216EEDAC75"}
 
 		for _, v in pairs(whitelist) do
