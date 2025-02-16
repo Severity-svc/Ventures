@@ -1936,6 +1936,14 @@ function lib:CreateWindow(tablew)
 				valuesholder.Size = UDim2.new(1, 0, #values * 1.36,0)
 			end
 
+			local function setotherindex(num)
+				for _, v in pairs(parent:GetChildren()) do
+					if v.Name == "dropdown" and v:IsA("Frame") and v ~= dropdown then
+						v.ZIndex = num
+					end
+				end
+			end
+
 			ImageButton.MouseButton1Click:Connect(function()
 				local open = not valuesholder.Visible
 				valuesholder.Visible = open
@@ -1943,9 +1951,11 @@ function lib:CreateWindow(tablew)
 				if open then
 					ts:Create(ImageButton, TweenInfo.new(0.2), {Rotation = 180}):Play()
 					parent.ZIndex = 1
+				 	setotherindex(1)
 				else
 					ts:Create(ImageButton, TweenInfo.new(0.2), {Rotation = 0}):Play()
 					parent.ZIndex = 0
+					setotherindex(2)
 				end
 			end)
 
