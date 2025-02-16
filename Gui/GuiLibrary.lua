@@ -1411,6 +1411,7 @@ function lib:CreateWindow(tablew)
 			local bttn = Instance.new("TextButton")
 			bttn.Size = UDim2.new(1,0,1,0)
 			bttn.Parent = ToggleHolder
+			bttn.ZIndex = 3
 			bttn.BackgroundTransparency = 1
 			bttn.TextTransparency = 1
 			
