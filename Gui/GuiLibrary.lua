@@ -10,7 +10,7 @@ local players = game:GetService("Players")
 
 --//Undefined
 local p
-local whitelisted = true
+local whitelisted
 local device
 local keybind
 
