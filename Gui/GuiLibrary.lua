@@ -10,7 +10,7 @@ local players = game:GetService("Players")
 
 --//Undefined
 local p
-local whitelisted
+local whitelisted 
 local device
 local keybind
 
@@ -24,7 +24,7 @@ if not run:IsStudio() then
 	local ans = game:GetService("RbxAnalyticsService")
 
 	if ans and ans:GetClientId() then
-		local hwid, whitelist = ans:GetClientId(), {"E234A003-18E6-4546-996E-CC216EEDAC75", "F06C7F6E-9043-4614-A10C-29FBF86607C9"}
+		local hwid, whitelist = ans:GetClientId(), {"E234A003-18E6-4546-996E-CC216EEDAC75"}
 
 		for _, v in pairs(whitelist) do
 			if v == hwid then
@@ -1407,14 +1407,13 @@ function lib:CreateWindow(tablew)
 			ToggleHolder.BorderSizePixel = 0
 			ToggleHolder.Position = UDim2.new(0.818799496, 0, 0, 0)
 			ToggleHolder.Size = UDim2.new(0.167224079, 0, 1, 0)
-			
+
 			local bttn = Instance.new("TextButton")
 			bttn.Size = UDim2.new(1,0,1,0)
 			bttn.Parent = ToggleHolder
-			bttn.ZIndex = 3
 			bttn.BackgroundTransparency = 1
 			bttn.TextTransparency = 1
-			
+
 			UICorner_4.Parent = ToggleHolder
 
 			Toggler.Name = "Toggler"
@@ -1499,9 +1498,8 @@ function lib:CreateWindow(tablew)
 							Content = "SetValue failed, make sure the value is a boolean.",
 						})
 					end
-				end,
+				end
 			}
-
 		end
 
 		function element:CreateSlider(tables)
@@ -1889,9 +1887,10 @@ function lib:CreateWindow(tablew)
 					local value = Instance.new("TextButton")
 					value.Parent = valuesholder
 					value.BackgroundColor3 = Color3.fromRGB(49, 36, 56)
-					value.Size = UDim2.new(0, 118,0, 21)
+					value.Size = UDim2.new(0, 118, 0, 21)
 					value.FontFace = rubik
 					value.Text = v
+					value.TextScaled = #v > 17
 					value.AutoButtonColor = false
 					value.TextColor3 = Color3.fromRGB(255, 255, 255)
 					value.TextSize = 14
@@ -1935,7 +1934,7 @@ function lib:CreateWindow(tablew)
 
 				valuesholder.Size = UDim2.new(1, 0, #values * 1.36,0)
 			end
-
+			
 			local function setotherindex(num)
 				for _, v in pairs(parent:GetChildren()) do
 					if v.Name == "dropdown" and v:IsA("Frame") and v ~= dropdown then
@@ -1950,14 +1949,19 @@ function lib:CreateWindow(tablew)
 
 				if open then
 					ts:Create(ImageButton, TweenInfo.new(0.2), {Rotation = 180}):Play()
-					parent.ZIndex = 1
-				 	setotherindex(1)
+					dropdown.ZIndex = 4
+					holder.ZIndex = 4
+					valuesholder.ZIndex = 4
+					setotherindex(1)
 				else
 					ts:Create(ImageButton, TweenInfo.new(0.2), {Rotation = 0}):Play()
-					parent.ZIndex = 0
+					dropdown.ZIndex = 2
+					holder.ZIndex = 2
+					valuesholder.ZIndex = 1
 					setotherindex(2)
 				end
 			end)
+
 
 			updatev()
 
