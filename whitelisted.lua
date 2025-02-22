@@ -1,5 +1,5 @@
 local whitelisted = {
- ["Severity"] = "E234A003-18E6-4546-996E-CC216EEDAC75",
+ ["Severity"] = "2406925f-e572-11ef-9c32-806e6f6e6963",
 }
 
 return whitelisted
