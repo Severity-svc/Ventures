@@ -36,4 +36,5 @@ else
 end
 
 if getgenv().queue_on_teleport then
- queue_on_teleport() end
+ queue_on_teleport("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/MainScript.lua") 
+end
