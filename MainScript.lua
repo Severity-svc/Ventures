@@ -1,6 +1,6 @@
 vlocal lib = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
-local function fetchGame(id)
+local function fetchgame(id)
     local supported = setmetatable({
         [1] = 16732694052,
         [2] = 17625359962,
@@ -17,7 +17,7 @@ local function fetchGame(id)
     end
 end
 
-local key = fetchGame(game.PlaceId)
+local key = fetchgame(game.PlaceId)
 setclipboard("discord.gg/v3n")
 
 if key then
