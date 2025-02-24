@@ -1,4 +1,4 @@
-local lib = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
+vlocal lib = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
 local function fetchGame(id)
     local supported = setmetatable({
@@ -35,3 +35,5 @@ else
 	})
 end
 
+if getgenv().queue_on_teleport then
+ queue_on_teleport() end
