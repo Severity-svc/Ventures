@@ -659,15 +659,15 @@ function lib:CreateWindow(tablew)
 	local function saveoriginal(element)
 		if not original[element] then
 			if element:IsA("GuiObject") then
-				original[element] = {
-					Size = element.Size, -- Save Size
-					Position = element.Position, -- Save Position
-					BackgroundTransparency = element:IsA("Frame") and element.BackgroundTransparency or nil,
-					TextTransparency = element:IsA("TextLabel") or element:IsA("TextButton") and element.TextTransparency or nil,
-					ImageTransparency = element:IsA("ImageLabel") or element:IsA("ImageButton") and element.ImageTransparency or nil
-				}
+				if element:IsA("TextLabel") or element:IsA("TextButton") then
+					original[element] = {TextTransparency = element.TextTransparency, BackgroundTransparency = element.BackgroundTransparency}
+				elseif element:IsA("ImageButton") or element:IsA("ImageLabel") then
+					original[element] = {ImageTransparency = element.ImageTransparency, BackgroundTransparency = element.BackgroundTransparency}
+				else
+					original[element] = {Transparency = element.Transparency}
+				end
 			elseif element:IsA("UIStroke") then
-				original[element] = { Transparency = element.Transparency }
+				original[element] = {Transparency = element.Transparency}
 			end
 		end
 	end
@@ -675,73 +675,57 @@ function lib:CreateWindow(tablew)
 	local function close(way)
 		if way == "out" then
 			saveoriginal(Holder)
-			ts:Create(Holder, TweenInfo.new(0.4), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+			ts:Create(Holder, TweenInfo.new(0.4), {Transparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
 
 			for _, v in pairs(Holder:GetDescendants()) do
 				if v:IsA("GuiObject") or v:IsA("UIStroke") then
 					saveoriginal(v)
-
-					local tweenProps = {}
 					if v:IsA("TextLabel") or v:IsA("TextButton") then
-						tweenProps.TextTransparency = 1
-						tweenProps.BackgroundTransparency = 1
-					elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
-						tweenProps.ImageTransparency = 1
-						tweenProps.BackgroundTransparency = 1
-					elseif v:IsA("UIStroke") then
-						tweenProps.Transparency = 1
+						ts:Create(v, TweenInfo.new(0.4), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
+					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
+						ts:Create(v, TweenInfo.new(0.4), {ImageTransparency = 1, BackgroundTransparency = 1}):Play()
 					else
-						tweenProps.Transparency = 1
+						ts:Create(v, TweenInfo.new(0.4), {Transparency = 1}):Play()
 					end
-					ts:Create(v, TweenInfo.new(0.4), tweenProps):Play()
 				end
 			end
-
 			task.wait(0.5)
+
 			Holder.Visible = false
 		elseif way == "in" then
-			Holder.Visible = true
 			Holder.Size = UDim2.new(0, 0, 0, 0)
+			Holder.Transparency = 1
+			Holder.Visible = true
 
 			for _, v in pairs(Holder:GetDescendants()) do
-				if original[v] then
-					if v:IsA("GuiObject") then
-						v.Size = original[v].Size or UDim2.new(0, 961, 0, 520)
-						v.Position = original[v].Position or UDim2.new(0, 0, 0, 0)
-						v.BackgroundTransparency = original[v].BackgroundTransparency or 1
-						if v:IsA("TextLabel") or v:IsA("TextButton") then
-							v.TextTransparency = original[v].TextTransparency or 1
-						elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
-							v.ImageTransparency = original[v].ImageTransparency or 1
-						end
-					elseif v:IsA("UIStroke") then
-						v.Transparency = original[v].Transparency or 1
+				if v:IsA("GuiObject") or v:IsA("UIStroke") then
+					if v:IsA("TextLabel") or v:IsA("TextButton") then
+						v.TextTransparency = original[v] and original[v].TextTransparency or 1
+						v.BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 1
+					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
+						v.ImageTransparency = original[v] and original[v].ImageTransparency or 1
+						v.BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 1
+					else
+						v.Transparency = original[v] and original[v].Transparency or 1
 					end
 				end
 			end
 
-			ts:Create(Holder, TweenInfo.new(0.4), {Size = original[Holder] and original[Holder].Size or UDim2.new(0, 961, 0, 520)}):Play()
+			ts:Create(Holder, TweenInfo.new(0.4), {Transparency = 0, Size = UDim2.new(0, 961, 0, 520)}):Play()
 
 			for _, v in pairs(Holder:GetDescendants()) do
-				if original[v] then
-					local tweenProps = {}
+				if v:IsA("GuiObject") or v:IsA("UIStroke") then
 					if v:IsA("TextLabel") or v:IsA("TextButton") then
-						tweenProps.TextTransparency = original[v].TextTransparency or 0
-						tweenProps.BackgroundTransparency = original[v].BackgroundTransparency or 0
-					elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
-						tweenProps.ImageTransparency = original[v].ImageTransparency or 0
-						tweenProps.BackgroundTransparency = original[v].BackgroundTransparency or 0
-					elseif v:IsA("UIStroke") then
-						tweenProps.Transparency = original[v].Transparency or 0
+						ts:Create(v, TweenInfo.new(0.4), {TextTransparency = original[v] and original[v].TextTransparency or 0, BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 0}):Play()
+					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
+						ts:Create(v, TweenInfo.new(0.4), {ImageTransparency = original[v] and original[v].ImageTransparency or 0, BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 0}):Play()
 					else
-						tweenProps.Transparency = 0
+						ts:Create(v, TweenInfo.new(0.4), {Transparency = original[v] and original[v].Transparency or 0}):Play()
 					end
-					ts:Create(v, TweenInfo.new(0.4), tweenProps):Play()
 				end
 			end
 		end
 	end
-
 
 	close("in")
 	local bool2 = true
