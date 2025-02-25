@@ -10,7 +10,7 @@ local players = game:GetService("Players")
 
 --//Undefined
 local p
-local whitelisted 
+local whitelisted
 local device
 local keybind
 
@@ -100,6 +100,7 @@ function lib:Notify(t)
 		ColorSequenceKeypoint.new(0.00, Color3.fromRGB(72, 72, 72)),
 		ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 255, 255))
 	}
+	
 	UIGradient.Rotation = -90
 	UIGradient.Parent = Notification
 
@@ -449,7 +450,6 @@ function lib:CreateWindow(tablew)
 					Loading:Destroy()
 				end)()
 			else
-
 				KeySystem.Name = "KeySystem"
 				KeySystem.Parent = Ventures
 				KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
@@ -659,15 +659,15 @@ function lib:CreateWindow(tablew)
 	local function saveoriginal(element)
 		if not original[element] then
 			if element:IsA("GuiObject") then
-				if element:IsA("TextLabel") or element:IsA("TextButton") then
-					original[element] = {TextTransparency = element.TextTransparency, BackgroundTransparency = element.BackgroundTransparency}
-				elseif element:IsA("ImageButton") or element:IsA("ImageLabel") then
-					original[element] = {ImageTransparency = element.ImageTransparency, BackgroundTransparency = element.BackgroundTransparency}
-				else
-					original[element] = {Transparency = element.Transparency}
-				end
+				original[element] = {
+					Size = element.Size, -- Save Size
+					Position = element.Position, -- Save Position
+					BackgroundTransparency = element:IsA("Frame") and element.BackgroundTransparency or nil,
+					TextTransparency = element:IsA("TextLabel") or element:IsA("TextButton") and element.TextTransparency or nil,
+					ImageTransparency = element:IsA("ImageLabel") or element:IsA("ImageButton") and element.ImageTransparency or nil
+				}
 			elseif element:IsA("UIStroke") then
-				original[element] = {Transparency = element.Transparency}
+				original[element] = { Transparency = element.Transparency }
 			end
 		end
 	end
@@ -675,57 +675,73 @@ function lib:CreateWindow(tablew)
 	local function close(way)
 		if way == "out" then
 			saveoriginal(Holder)
-			ts:Create(Holder, TweenInfo.new(0.4), {Transparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
+			ts:Create(Holder, TweenInfo.new(0.4), {Size = UDim2.new(0, 0, 0, 0)}):Play()
 
 			for _, v in pairs(Holder:GetDescendants()) do
 				if v:IsA("GuiObject") or v:IsA("UIStroke") then
 					saveoriginal(v)
+
+					local tweenProps = {}
 					if v:IsA("TextLabel") or v:IsA("TextButton") then
-						ts:Create(v, TweenInfo.new(0.4), {TextTransparency = 1, BackgroundTransparency = 1}):Play()
-					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
-						ts:Create(v, TweenInfo.new(0.4), {ImageTransparency = 1, BackgroundTransparency = 1}):Play()
+						tweenProps.TextTransparency = 1
+						tweenProps.BackgroundTransparency = 1
+					elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
+						tweenProps.ImageTransparency = 1
+						tweenProps.BackgroundTransparency = 1
+					elseif v:IsA("UIStroke") then
+						tweenProps.Transparency = 1
 					else
-						ts:Create(v, TweenInfo.new(0.4), {Transparency = 1}):Play()
+						tweenProps.Transparency = 1
 					end
+					ts:Create(v, TweenInfo.new(0.4), tweenProps):Play()
 				end
 			end
-			task.wait(0.5)
 
+			task.wait(0.5)
 			Holder.Visible = false
 		elseif way == "in" then
-			Holder.Size = UDim2.new(0, 0, 0, 0)
-			Holder.Transparency = 1
 			Holder.Visible = true
+			Holder.Size = UDim2.new(0, 0, 0, 0)
 
 			for _, v in pairs(Holder:GetDescendants()) do
-				if v:IsA("GuiObject") or v:IsA("UIStroke") then
-					if v:IsA("TextLabel") or v:IsA("TextButton") then
-						v.TextTransparency = original[v] and original[v].TextTransparency or 1
-						v.BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 1
-					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
-						v.ImageTransparency = original[v] and original[v].ImageTransparency or 1
-						v.BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 1
-					else
-						v.Transparency = original[v] and original[v].Transparency or 1
+				if original[v] then
+					if v:IsA("GuiObject") then
+						v.Size = original[v].Size or UDim2.new(0, 961, 0, 520)
+						v.Position = original[v].Position or UDim2.new(0, 0, 0, 0)
+						v.BackgroundTransparency = original[v].BackgroundTransparency or 1
+						if v:IsA("TextLabel") or v:IsA("TextButton") then
+							v.TextTransparency = original[v].TextTransparency or 1
+						elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
+							v.ImageTransparency = original[v].ImageTransparency or 1
+						end
+					elseif v:IsA("UIStroke") then
+						v.Transparency = original[v].Transparency or 1
 					end
 				end
 			end
 
-			ts:Create(Holder, TweenInfo.new(0.4), {Transparency = 0, Size = UDim2.new(0, 961, 0, 520)}):Play()
+			ts:Create(Holder, TweenInfo.new(0.4), {Size = original[Holder] and original[Holder].Size or UDim2.new(0, 961, 0, 520)}):Play()
 
 			for _, v in pairs(Holder:GetDescendants()) do
-				if v:IsA("GuiObject") or v:IsA("UIStroke") then
+				if original[v] then
+					local tweenProps = {}
 					if v:IsA("TextLabel") or v:IsA("TextButton") then
-						ts:Create(v, TweenInfo.new(0.4), {TextTransparency = original[v] and original[v].TextTransparency or 0, BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 0}):Play()
-					elseif v:IsA("ImageButton") or v:IsA("ImageLabel") then
-						ts:Create(v, TweenInfo.new(0.4), {ImageTransparency = original[v] and original[v].ImageTransparency or 0, BackgroundTransparency = original[v] and original[v].BackgroundTransparency or 0}):Play()
+						tweenProps.TextTransparency = original[v].TextTransparency or 0
+						tweenProps.BackgroundTransparency = original[v].BackgroundTransparency or 0
+					elseif v:IsA("ImageLabel") or v:IsA("ImageButton") then
+						tweenProps.ImageTransparency = original[v].ImageTransparency or 0
+						tweenProps.BackgroundTransparency = original[v].BackgroundTransparency or 0
+					elseif v:IsA("UIStroke") then
+						tweenProps.Transparency = original[v].Transparency or 0
 					else
-						ts:Create(v, TweenInfo.new(0.4), {Transparency = original[v] and original[v].Transparency or 0}):Play()
+						tweenProps.Transparency = 0
 					end
+					ts:Create(v, TweenInfo.new(0.4), tweenProps):Play()
 				end
 			end
 		end
 	end
+
 
 	close("in")
 	local bool2 = true
@@ -1660,14 +1676,14 @@ function lib:CreateWindow(tablew)
 					percent.Size = UDim2.new(percentv, 0, 1, 0)
 
 					value = math.floor(((min + ((max - min) * percentv)) / increment) + 0.5) * increment
-					numericvalue.Text = tostring(math.round(value))
-
+					numericvalue.Text = string.format("%." .. tostring(math.log10(1 / increment)) .. "f", value)
+					numericvalue.TextScaled = true
+					
 					if type(callmyback) == "function" then
 						callmyback(value)
 					end
 				end
 			end)
-
 		end
 
 		function element:CreateButton(tablebb)
@@ -1950,6 +1966,7 @@ function lib:CreateWindow(tablew)
 				if open then
 					ts:Create(ImageButton, TweenInfo.new(0.2), {Rotation = 180}):Play()
 					dropdown.ZIndex = 4
+					dropdown.Parent.ZIndex = 4
 					holder.ZIndex = 4
 					valuesholder.ZIndex = 4
 					setotherindex(1)
@@ -1957,6 +1974,7 @@ function lib:CreateWindow(tablew)
 					ts:Create(ImageButton, TweenInfo.new(0.2), {Rotation = 0}):Play()
 					dropdown.ZIndex = 2
 					holder.ZIndex = 2
+					dropdown.Parent.ZIndex = 1
 					valuesholder.ZIndex = 1
 					setotherindex(2)
 				end
@@ -2112,8 +2130,93 @@ function lib:CreateWindow(tablew)
 					end
 				end,
 			}
-
 		end
+		
+		function element:CreateKeyBindToggle(tablek)
+			local parent = holders[tablek.Parented or "1"]
+
+			local keybindkey = Instance.new("Frame")
+			local Keybindname = Instance.new("TextLabel")
+			local UIAspectRatioConstraint = Instance.new("UIAspectRatioConstraint")
+			local Keybind = Instance.new("TextButton")
+			local UIPadding = Instance.new("UIPadding")
+			local UIAspectRatioConstraint_2 = Instance.new("UIAspectRatioConstraint")
+			local UICorner = Instance.new("UICorner")
+			local UIGradient = Instance.new("UIGradient")
+
+			keybindkey.Name = "keybind key"
+			keybindkey.Parent = parent
+			keybindkey.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			keybindkey.BackgroundTransparency = 1.000
+			keybindkey.BorderSizePixel = 0
+			keybindkey.Position = UDim2.new(-0.057, 0, 0.156, 0)
+			keybindkey.Size = UDim2.new(0, 280, 0, 19)
+			keybindkey.ZIndex = 0
+
+			Keybindname.Name = "Keybindname"
+			Keybindname.Parent = keybindkey
+			Keybindname.BackgroundTransparency = 1.000
+			Keybindname.Size = UDim2.new(0.819, 0, 1, 0)
+			Keybindname.Font = Enum.Font.SourceSansBold
+			Keybindname.Text = tablek.Name or "Keybind"
+			Keybindname.TextColor3 = Color3.fromRGB(240, 255, 250)
+			Keybindname.TextSize = 17.000
+			Keybindname.TextXAlignment = Enum.TextXAlignment.Left
+
+			UIAspectRatioConstraint.Parent = Keybindname
+			UIAspectRatioConstraint.AspectRatio = 11.839
+
+			Keybind.Name = "Keybind"
+			Keybind.Parent = keybindkey
+			Keybind.BackgroundColor3 = Color3.fromRGB(46, 34, 52)
+			Keybind.BorderSizePixel = 0
+			Keybind.Position = UDim2.new(0.551, 0, 0, 0)
+			Keybind.Size = UDim2.new(0.431, 0, 1, 0)
+			Keybind.FontFace = rubik
+			Keybind.Text = typeof(tablek.DefaultKeybind) == "EnumItem" and tablek.DefaultKeybind.Name or tablek.DefaultKeybind
+			Keybind.TextColor3 = Color3.fromRGB(255, 255, 255)
+			Keybind.TextSize = 15.000
+			Keybind.TextXAlignment = Enum.TextXAlignment.Center
+
+			UIPadding.Parent = Keybind
+			UIPadding.PaddingLeft = UDim.new(0, 5)
+
+			UIAspectRatioConstraint_2.Parent = Keybind
+			UIAspectRatioConstraint_2.AspectRatio = 6.235
+
+			UICorner.CornerRadius = UDim.new(0, 6)
+			UICorner.Parent = Keybind
+			UIGradient.Parent = keybindkey
+
+			local current = tablek.DefaultKeybind
+			local isselecting = false
+
+			Keybind.MouseButton1Click:Connect(function()
+				print("js")
+				Keybind.Text = "Press any key..."
+				isselecting = true
+			end)
+
+			uis.InputBegan:Connect(function(input, gameProcessed)
+				if isselecting and not gameProcessed then
+					if input.UserInputType == Enum.UserInputType.Keyboard then
+						current = input.KeyCode
+						Keybind.Text = input.KeyCode.Name
+					elseif input.UserInputType == Enum.UserInputType.MouseButton1 or 
+						input.UserInputType == Enum.UserInputType.MouseButton2 then
+						current = input.UserInputType
+						Keybind.Text = input.UserInputType.Name
+					end
+					isselecting = false
+					Keybind:ReleaseFocus()
+				elseif input.KeyCode == current and not isselecting then
+					tablek.Callback()
+				end
+			end)
+
+			return keybindkey
+		end
+
 		return element
 	end
 	return tab
