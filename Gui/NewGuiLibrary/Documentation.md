@@ -19,6 +19,8 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 		Duration = 4,
 	})
 
+```
+
 ```lua
 --//Window ,Settings
 local Window, SettingAssync = Library:CreateWindiw({ 
