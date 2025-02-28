@@ -695,7 +695,7 @@ function Library:CreateWindow(Info1)
 	Title_1.Position = UDim2.new(0.0137195121, 0,0.5, -9)
 	Title_1.Size = UDim2.new(0, 228,0, 18)
 	Title_1.FontFace = FontType
-	Title_1.Text = Info1.TItle or "Ventures"
+	Title_1.Text = Info1.Title or "Ventures"
 	Title_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Title_1.TextSize = 14
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
