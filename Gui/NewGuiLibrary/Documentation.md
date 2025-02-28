@@ -12,6 +12,8 @@
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/GuiLibrary.lua'))()
 ```
 
+**Notification**
+
 ```lua
 --//Notification
 	Library:CreateNotification({
@@ -22,7 +24,7 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 
 ```
 
-**Window ,Settings**
+**Window, Settings**
 
 
 ```lua
@@ -37,7 +39,7 @@ local Window, SettingAssync = Library:CreateWindiw({
 })
 ```
 
-**Tabs **
+**Tabs**
 
 ```lua
 local Combat = Window:CreateTab({
