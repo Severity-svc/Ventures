@@ -28,7 +28,7 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 
 ```lua
 
-local Window, SettingAssync = Library:CreateWindiw({ 
+local Window, SettingAssync = Library:CreateWindow({ 
 	TItle = "Title",
 
 	Keysystem = {
