@@ -6,8 +6,9 @@
 ]]
 ```
 
+**Library Bootup**
+
 ```lua
---//Library Bootup
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/GuiLibrary.lua'))()
 ```
 
@@ -21,8 +22,11 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 
 ```
 
+**Window ,Settings**
+
+
 ```lua
---//Window ,Settings
+
 local Window, SettingAssync = Library:CreateWindiw({ 
 	TItle = "Title",
 
@@ -32,6 +36,8 @@ local Window, SettingAssync = Library:CreateWindiw({
 	}
 })
 ```
+
+**Tabs **
 
 ```lua
 local Combat = Window:CreateTab({
@@ -45,8 +51,10 @@ local Utility = Window:CreateTab({
 })
 ```
 
+**Toggles**
+
 ```lua
---//Toggle
+
 local Toggle1= Combat:CreateToggle({
 	Name = "Toggle1",
 	Description = "This toggle is used for something",--// Set to "" if you dont want descriptions
@@ -56,6 +64,8 @@ local Toggle1= Combat:CreateToggle({
 	end,
 })
 ```
+
+**Sliders**
 
 ```lua
 --//Slider
@@ -73,6 +83,8 @@ local Slider1 = Combat:CreateSlider({
 })
 ```
 
+**Dropdowns**
+
 ```lua
 --//Dropdown
 local Dropdown = Combat:CreateDropdown({
@@ -86,6 +98,8 @@ local Dropdown = Combat:CreateDropdown({
 })
 ```
 
+**Color Pickers**
+
 ```lua
 --//Color Picker
 local ColorPicker = Combat:CreateColorPicker({
@@ -98,12 +112,16 @@ local ColorPicker = Combat:CreateColorPicker({
 })
 ```
 
+**Sections**
+
 ```lua
 --//Section
 local Section = Combat:CreateSection({
 	Title = "Important Stuff, ( Trolling )"
 })
 ```
+
+**Inputs**
 
 ```lua
 --// Input
@@ -121,6 +139,8 @@ local Input = Combat:CreateInput({
 })
 ```
 
+**Keybinds**
+
 ```lua
 --//Keybind
 local Keybind = Combat:CreateKeybind({
@@ -133,6 +153,8 @@ local Keybind = Combat:CreateKeybind({
 })
 ```
 
+**Buttons**
+
 ```lua
 --//Button
 local Button = Combat:CreateButton({
@@ -143,6 +165,8 @@ local Button = Combat:CreateButton({
 	end,
 })
 ```
+
+**Misc**
 
 ```lua
 --//In case you dont want AutoButtonColor
