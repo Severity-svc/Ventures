@@ -264,7 +264,7 @@ function Library:SetAutoButtonColor(value)
 end
 
 --//Init, Window
-function Library:CreateWindiw(Info1)
+function Library:CreateWindow(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
 	local Bool = true
 	local Tabs = {}
