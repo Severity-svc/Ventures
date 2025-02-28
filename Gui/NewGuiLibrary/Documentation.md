@@ -1,11 +1,17 @@
+```
 --[[
  // For people that want to use our lib
  // If you do please dm me first (sentrysvc on discord )
  // :uwuh:
 ]]
+```
 
+```lua
+--//Library Bootup
 local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/GuiLibrary.lua'))()
+```
 
+```lua
 --//Notification
 	Library:CreateNotification({
 		Title = "Ventures - StartUp ",
@@ -13,7 +19,7 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 		Duration = 4,
 	})
 
-```
+```lua
 --//Window ,Settings
 local Window, SettingAssync = Library:CreateWindiw({ 
 	TItle = "Title",
@@ -37,7 +43,7 @@ local Utility = Window:CreateTab({
 })
 ```
 
-```
+```lua
 --//Toggle
 local Toggle1= Combat:CreateToggle({
 	Name = "Toggle1",
@@ -49,7 +55,7 @@ local Toggle1= Combat:CreateToggle({
 })
 ```
 
-```
+```lua
 --//Slider
 local Slider1 = Combat:CreateSlider({
 	Name = "WalkSpeed Changer",
@@ -65,7 +71,7 @@ local Slider1 = Combat:CreateSlider({
 })
 ```
 
-```
+```lua
 --//Dropdown
 local Dropdown = Combat:CreateDropdown({
 	Name = "Dropdown",
@@ -77,7 +83,8 @@ local Dropdown = Combat:CreateDropdown({
 	end,
 })
 ```
-```
+
+```lua
 --//Color Picker
 local ColorPicker = Combat:CreateColorPicker({
 	Name = "ColorPicker",
@@ -89,13 +96,14 @@ local ColorPicker = Combat:CreateColorPicker({
 })
 ```
 
-```
+```lua
 --//Section
 local Section = Combat:CreateSection({
 	Title = "Important Stuff, ( Trolling )"
 })
 ```
-```
+
+```lua
 --// Input
 local Input = Combat:CreateInput({
 	Name = "Input Thing",
@@ -110,7 +118,8 @@ local Input = Combat:CreateInput({
 	end,
 })
 ```
-```
+
+```lua
 --//Keybind
 local Keybind = Combat:CreateKeybind({
 	Name = "Keybind",
@@ -121,7 +130,8 @@ local Keybind = Combat:CreateKeybind({
 	end,
 })
 ```
-```
+
+```lua
 --//Button
 local Button = Combat:CreateButton({
 	Name = "Button",
@@ -132,12 +142,12 @@ local Button = Combat:CreateButton({
 })
 ```
 
-```
+```lua
 --//In case you dont want AutoButtonColor
 Library:SetAutoButtonColor(false)
 ```
 
-```
+```lua
 --//Activates the settings tab, for gui functionality and looks, and configs
 SettingAssync:StartupSettings()
 ```
