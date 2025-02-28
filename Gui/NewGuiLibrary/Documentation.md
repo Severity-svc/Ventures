@@ -13,6 +13,7 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 		Duration = 4,
 	})
 
+```
 --//Window ,Settings
 local Window, SettingAssync = Library:CreateWindiw({ 
 	TItle = "Title",
@@ -22,7 +23,9 @@ local Window, SettingAssync = Library:CreateWindiw({
 		Key = "Key"
 	}
 })
+```
 
+```lua
 local Combat = Window:CreateTab({
 	Name = "Combat Tab",
 	Icon = "swords",--// Icons are from lucide.dev 
@@ -32,7 +35,9 @@ local Utility = Window:CreateTab({
 	Name = "Utility Tab",
 	Icon = "swords",
 })
+```
 
+```
 --//Toggle
 local Toggle1= Combat:CreateToggle({
 	Name = "Toggle1",
@@ -42,7 +47,9 @@ local Toggle1= Combat:CreateToggle({
 		print("value : ", bool)
 	end,
 })
+```
 
+```
 --//Slider
 local Slider1 = Combat:CreateSlider({
 	Name = "WalkSpeed Changer",
@@ -56,7 +63,9 @@ local Slider1 = Combat:CreateSlider({
 		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
 	end,
 })
+```
 
+```
 --//Dropdown
 local Dropdown = Combat:CreateDropdown({
 	Name = "Dropdown",
@@ -67,7 +76,8 @@ local Dropdown = Combat:CreateDropdown({
 		print(value)
 	end,
 })
-
+```
+```
 --//Color Picker
 local ColorPicker = Combat:CreateColorPicker({
 	Name = "ColorPicker",
@@ -77,24 +87,15 @@ local ColorPicker = Combat:CreateColorPicker({
 		print(tostring(color))
 	end,
 })
+```
+
+```
 --//Section
 local Section = Combat:CreateSection({
 	Title = "Important Stuff, ( Trolling )"
 })
-
-local Slider1 = Combat:CreateSlider({
-	Name = "WalkSpeed Changer",
-	Description = "Changes Your Walkspeed",
-	MaxValue = 100,
-	MinValue = 1,
-	Default = 16,
-	Increment = 1,
-	Callback = function(value)
-		print(value)
-		--game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = value
-	end,
-})
-
+```
+```
 --// Input
 local Input = Combat:CreateInput({
 	Name = "Input Thing",
@@ -108,7 +109,8 @@ local Input = Combat:CreateInput({
 		print(value)
 	end,
 })
-
+```
+```
 --//Keybind
 local Keybind = Combat:CreateKeybind({
 	Name = "Keybind",
@@ -118,7 +120,8 @@ local Keybind = Combat:CreateKeybind({
 		print("Js")
 	end,
 })
-
+```
+```
 --//Button
 local Button = Combat:CreateButton({
 	Name = "Button",
@@ -127,9 +130,14 @@ local Button = Combat:CreateButton({
 		print("clicked")
 	end,
 })
+```
 
---//In case you dont want button colors
+```
+--//In case you dont want AutoButtonColor
 Library:SetAutoButtonColor(false)
+```
 
+```
 --//Activates the settings tab, for gui functionality and looks, and configs
 SettingAssync:StartupSettings()
+```
