@@ -1495,7 +1495,7 @@ function Library:CreateWindow(Info1)
 				SetValue = function(self, value)
 					if type(value) == "boolean" then
 						coroutine.wrap(function()
-							local Success, Error = pcall(function() Callback(Bool) end)
+							local Success, Error = pcall(function() Callback(value) end)
 							if not Success then
 								Library:FastNotify("Toggle Error", tostring(Error))
 							end
