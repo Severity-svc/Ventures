@@ -2385,6 +2385,14 @@ function Library:CreateWindow(Info1)
 			DropdownName_1.TextColor3 = Color3.fromRGB(255,255,255)
 			DropdownName_1.TextSize = 14
 			DropdownName_1.TextXAlignment = Enum.TextXAlignment.Left
+			
+			if Info9.Default ~= nil then
+				local Success, Error = pcall(function() Callback(Values[Info9.Default]) end)
+				
+				if not Success then
+					Library:FastNotify("Dropdown Error", tostring(Error))
+				end
+			end
 
 			local function UpdateDropdown()
 				for _, v in pairs(ValuesHolder_1:GetChildren()) do
