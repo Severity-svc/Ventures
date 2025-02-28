@@ -4,7 +4,7 @@
  // :uwuh:
 ]]
 
-local Library =
+local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/GuiLibrary.lua'))()
 
 --//Notification
 	Library:CreateNotification({
