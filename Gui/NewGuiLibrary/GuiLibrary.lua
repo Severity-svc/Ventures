@@ -6,7 +6,7 @@
 
 --//StartUp
 local Library = {}
-local Lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/Lucide%20Icons.lua'))()  --require(script.Parent:WaitForChild("Lucide"))
+local Lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/Lucide%20Icons.lua'))()--require(script.Parent:WaitForChild("Lucide"))
 local FontType = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 local Ventures = Instance.new("ScreenGui")
 
@@ -26,7 +26,9 @@ local GlobalDescriptionColor = Color3.fromRGB(94,94,94)
 local FolderName = "Ventures"
 local GuiName = FolderName .. "/GuiLibrary"
 local SettingsPath = GuiName .. "/Settings.lua"
-local GlobalValues = {}
+local GlobalValues = {
+
+}
 
 --//Services
 local Players = game:GetService("Players")
@@ -245,14 +247,6 @@ function Library:FastNotify(Counted, Content)
 	})
 end
 
- function Library:SetAutoButtonColor(value)
-	for _, v in next, Ventures:GetDescendants() do
-		if v:IsA("TextButton") or v:IsA("ImageButton") then
-			v.AutoButtonColor = value
-		end
-	end
-end
-
 if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 	Library:CreateNotification({
 		Title = "Ventures",
@@ -261,12 +255,365 @@ if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 	})
 end
 
+function Library:SetAutoButtonColor(value)
+	for _, v in next, Ventures:GetDescendants() do
+		if v:IsA("TextButton") or v:IsA("ImageButton") then
+			v.AutoButtonColor = value
+		end
+	end
+end
+
 --//Init, Window
 function Library:CreateWindiw(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
 	local Bool = true
 	local Tabs = {}
 	local SettingAssync = {}
+	local Keysystem = Info1.Keysystem
+
+	--// Init, Keysystem
+	if Keysystem.Enabled and Keysystem.Key ~= nil or "" then
+		local KeySystem = Instance.new("Frame")
+		local UICorner_1 = Instance.new("UICorner")
+		local UIStroke_1 = Instance.new("UIStroke")
+		local Title_1 = Instance.new("TextLabel")
+		local DiscordButton_1 = Instance.new("ImageButton")
+		local UICorner_2 = Instance.new("UICorner")
+		local UIStroke_2 = Instance.new("UIStroke")
+		local CloseButton_1 = Instance.new("ImageButton")
+		local UICorner_3 = Instance.new("UICorner")
+		local UIStroke_3 = Instance.new("UIStroke")
+		local MinimizeButton_1 = Instance.new("ImageButton")
+		local UICorner_4 = Instance.new("UICorner")
+		local UIStroke_4 = Instance.new("UIStroke")
+		local TextBox_1 = Instance.new("TextBox")
+		local UIStroke_5 = Instance.new("UIStroke")
+		local UICorner_5 = Instance.new("UICorner")
+		local UIPadding_1 = Instance.new("UIPadding")
+		local Info_1 = Instance.new("TextLabel")
+		local Glow_1 = Instance.new("ImageLabel")
+
+		KeySystem.Name = "KeySystem"
+		KeySystem.Parent = Ventures
+		KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
+		KeySystem.BackgroundColor3 = Color3.fromRGB(17,17,17)
+		KeySystem.BorderColor3 = Color3.fromRGB(0,0,0)
+		KeySystem.BorderSizePixel = 0
+		KeySystem.Position = UDim2.new(0.5, 0,0.5, 0)
+		KeySystem.Size = UDim2.new(0, 526,0, 211)
+
+		UICorner_1.Parent = KeySystem
+		UICorner_1.CornerRadius = UDim.new(0,5)
+
+		UIStroke_1.Parent = KeySystem
+		UIStroke_1.Color = Color3.fromRGB(49,49,49)
+		UIStroke_1.Thickness = 1
+
+		Title_1.Name = "Title"
+		Title_1.Parent = KeySystem
+		Title_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+		Title_1.BackgroundTransparency = 1
+		Title_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		Title_1.BorderSizePixel = 0
+		Title_1.Position = UDim2.new(0.0137195662, 0,0.0734597147, -9)
+		Title_1.Size = UDim2.new(0, 228,0, 18)
+		Title_1.FontFace = FontType
+		Title_1.Text = "Ventures - Keysystem"
+		Title_1.TextColor3 = Color3.fromRGB(255,255,255)
+		Title_1.TextSize = 14
+		Title_1.TextXAlignment = Enum.TextXAlignment.Left
+
+		DiscordButton_1.Name = "DiscordButton"
+		DiscordButton_1.Parent = KeySystem
+		DiscordButton_1.Active = true
+		DiscordButton_1.AnchorPoint = Vector2.new(0.5, 0)
+		DiscordButton_1.BackgroundColor3 = Color3.fromRGB(65,65,65)
+		DiscordButton_1.BackgroundTransparency = 0.7099999785423279
+		DiscordButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		DiscordButton_1.BorderSizePixel = 0
+		DiscordButton_1.Position = UDim2.new(0.893795371, -19,0.234597161, -46)
+		DiscordButton_1.Size = UDim2.new(0, 24,0, 24)
+		DiscordButton_1.Image = "http://www.roblox.com/asset/?id=84828491431270"
+
+		UICorner_2.Parent = DiscordButton_1
+		UICorner_2.CornerRadius = UDim.new(0,4)
+
+		UIStroke_2.Parent = DiscordButton_1
+		UIStroke_2.Color = Color3.fromRGB(50,50,50)
+		UIStroke_2.Thickness = 1
+
+		CloseButton_1.Name = "CloseButton"
+		CloseButton_1.Parent = KeySystem
+		CloseButton_1.Active = true
+		CloseButton_1.AnchorPoint = Vector2.new(0.5, 0)
+		CloseButton_1.BackgroundColor3 = Color3.fromRGB(65,65,65)
+		CloseButton_1.BackgroundTransparency = 0.7099999785423279
+		CloseButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		CloseButton_1.BorderSizePixel = 0
+		CloseButton_1.Position = UDim2.new(1.02471483, -31,0.234597161, -46)
+		CloseButton_1.Size = UDim2.new(0, 24,0, 24)
+		CloseButton_1.Image = "http://www.roblox.com/asset/?id=132261474823036"
+
+		UICorner_3.Parent = CloseButton_1
+		UICorner_3.CornerRadius = UDim.new(0,4)
+
+		UIStroke_3.Parent = CloseButton_1
+		UIStroke_3.Color = Color3.fromRGB(50,50,50)
+		UIStroke_3.Thickness = 1
+
+		MinimizeButton_1.Name = "MinimizeButton"
+		MinimizeButton_1.Parent = KeySystem
+		MinimizeButton_1.Active = true
+		MinimizeButton_1.AnchorPoint = Vector2.new(0.5, 0)
+		MinimizeButton_1.BackgroundColor3 = Color3.fromRGB(65,65,65)
+		MinimizeButton_1.BackgroundTransparency = 0.7099999785423279
+		MinimizeButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		MinimizeButton_1.BorderSizePixel = 0
+		MinimizeButton_1.Position = UDim2.new(0.967307925, -29,0.234597161, -46)
+		MinimizeButton_1.Size = UDim2.new(0, 24,0, 24)
+		MinimizeButton_1.Image = "http://www.roblox.com/asset/?id=132261474823036"
+
+		UICorner_4.Parent = MinimizeButton_1
+		UICorner_4.CornerRadius = UDim.new(0,4)
+
+		UIStroke_4.Parent = MinimizeButton_1
+		UIStroke_4.Color = Color3.fromRGB(50,50,50)
+		UIStroke_4.Thickness = 1
+
+		TextBox_1.Parent = KeySystem
+		TextBox_1.Active = true
+		TextBox_1.BackgroundColor3 = Color3.fromRGB(26,26,26)
+		TextBox_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		TextBox_1.BorderSizePixel = 0
+		TextBox_1.CursorPosition = -1
+		TextBox_1.Position = UDim2.new(0.178707227, 0,0.65876776, 0)
+		TextBox_1.Size = UDim2.new(0, 338,0, 38)
+		TextBox_1.Font = Enum.Font.SourceSansBold
+		TextBox_1.PlaceholderColor3 = Color3.fromRGB(178,178,178)
+		TextBox_1.PlaceholderText = "Input Your Key In Here..."
+		TextBox_1.Text = ""
+		TextBox_1.TextColor3 = Color3.fromRGB(255,255,255)
+		TextBox_1.TextSize = 14
+		TextBox_1.TextXAlignment = Enum.TextXAlignment.Left
+
+		UIStroke_5.Parent = TextBox_1
+		UIStroke_5.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+		UIStroke_5.Color = Color3.fromRGB(49,49,49)
+		UIStroke_5.Thickness = 1
+
+		UICorner_5.Parent = TextBox_1
+		UICorner_5.CornerRadius = UDim.new(0,5)
+
+		UIPadding_1.Parent = TextBox_1
+		UIPadding_1.PaddingLeft = UDim.new(0,5)
+
+		Info_1.Name = "Info"
+		Info_1.Parent = KeySystem
+		Info_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+		Info_1.BackgroundTransparency = 1
+		Info_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		Info_1.BorderSizePixel = 0
+		Info_1.Position = UDim2.new(0.178707227, 0,0.921800971, -9)
+		Info_1.Size = UDim2.new(0, 338,0, 18)
+		Info_1.FontFace = FontType
+		Info_1.Text = "To Get The Key You Must join Our Discord Server. Discord.gg/v3n"
+		Info_1.TextColor3 = Color3.fromRGB(74,74,74)
+		Info_1.TextSize = 11
+
+		Glow_1.Name = "Glow"
+		Glow_1.Parent = KeySystem
+		Glow_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+		Glow_1.BackgroundTransparency = 1
+		Glow_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		Glow_1.BorderSizePixel = 0
+		Glow_1.Position = UDim2.new(-0.100000009, 0,-0.100000001, 0)
+		Glow_1.Size = UDim2.new(1.20000005, 0,1.20000005, 0)
+		Glow_1.ZIndex = 0
+		Glow_1.Image = "rbxassetid://8992230677"
+		Glow_1.ImageColor3 = Color3.fromRGB(0,0,0)
+		Glow_1.ImageTransparency = 0.7699999809265137
+
+		MinimizeButton_1.MouseEnter:Connect(function()
+			local Stroke = MinimizeButton_1:FindFirstChild("UIStroke")
+			if Stroke then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(113, 113, 113)}):Play()
+			end
+		end)
+
+		MinimizeButton_1.MouseLeave:Connect(function()
+			local Stroke = MinimizeButton_1:FindFirstChild("UIStroke")
+			if Stroke then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(50,50,50)}):Play()
+			end
+		end)
+
+		DiscordButton_1.MouseEnter:Connect(function()
+			local Stroke = DiscordButton_1:FindFirstChild("UIStroke")
+			if Stroke then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(113, 113, 113)}):Play()
+			end
+		end)
+
+		DiscordButton_1.MouseLeave:Connect(function()
+			local Stroke = DiscordButton_1:FindFirstChild("UIStroke")
+			if Stroke then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(50,50,50)}):Play()
+			end
+		end)
+
+		CloseButton_1.MouseEnter:Connect(function()
+			local Stroke = CloseButton_1:FindFirstChild("UIStroke")
+			if Stroke then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(113, 113, 113)}):Play()
+			end
+		end)
+
+		CloseButton_1.MouseLeave:Connect(function()
+			local Stroke = CloseButton_1:FindFirstChild("UIStroke")
+			if Stroke then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(50,50,50)}):Play()
+			end
+		end)
+
+		TextBox_1.Focused:Connect(function()
+			TweenService:Create(UIStroke_5, TweenInfo.new(0.3), {Color = Color3.fromRGB(118, 118, 118)}):Play()
+		end)
+
+		TextBox_1.FocusLost:Connect(function()
+			TweenService:Create(UIStroke_5, TweenInfo.new(0.3), {Color = Color3.fromRGB(50,50,50)}):Play()
+		end)
+
+		CloseButton_1.MouseButton1Click:Connect(function()
+			KeySystem:Destroy()
+		end)
+
+		--//yes skidded from the window drag 
+		local IsDragging = false
+		local Input
+		local Start, CurrentPosition, TargetPosition = nil 
+		local Speed = 0.5
+
+		local function UpdateDrag(input)
+			local Delta = input.Position - Start
+			TargetPosition = UDim2.new(
+				CurrentPosition.X.Scale,
+				CurrentPosition.X.Offset + Delta.X,
+				CurrentPosition.Y.Scale,
+				CurrentPosition.Y.Offset + Delta.Y
+			)
+		end
+
+		RunService.RenderStepped:Connect(function()
+			if TargetPosition and IsDragging and not IsInColorFrameDrag then
+				KeySystem.Position = UDim2.new(
+					KeySystem.Position.X.Scale,
+					KeySystem.Position.X.Offset + (TargetPosition.X.Offset - KeySystem.Position.X.Offset) * Speed,
+					KeySystem.Position.Y.Scale,
+					KeySystem.Position.Y.Offset + (TargetPosition.Y.Offset - KeySystem.Position.Y.Offset) * Speed
+				)
+			end
+		end)
+
+		KeySystem.InputBegan:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				IsDragging = true
+				Start = input.Position
+				CurrentPosition = KeySystem.Position
+				IsDragging = CurrentPosition
+
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then
+						IsDragging = false
+					end
+				end)
+			end
+		end)
+
+		KeySystem.InputChanged:Connect(function(input)
+			if IsDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+				Input = input
+			end
+		end)
+
+		UserInputService.InputChanged:Connect(function(input)
+			if input == Input and IsDragging then
+				UpdateDrag(input)
+			end
+		end)
+
+
+		local IsMinimized = false
+		MinimizeButton_1.MouseButton1Click:Connect(function()
+			IsMinimized = not IsMinimized
+
+			if IsMinimized then
+				for _, v in next, KeySystem:GetDescendants() do
+					if v:IsA("UIStroke") and not (v.Parent.Name == "CloseButton" or v.Parent.Name == "MinimizeButton" or v.Parent.Name == "DiscordButton" or v.Parent == KeySystem) then
+						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 1}):Play()
+					elseif v:IsA("TextLabel") and v.Name ~= "Title" then
+						TweenService:Create(v, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+					end
+				end
+
+				TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0, 526, 0, 37)}):Play()
+				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.018, 0, 0.479, -9)}):Play()
+
+				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
+					BackgroundTransparency = 1,
+					TextTransparency = 1
+				}):Play()
+
+				coroutine.wrap(function()
+					task.wait(0.3)
+					TextBox_1.Visible = false
+				end)()
+
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.024, -31, 0.234, -2.5)}):Play()
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.893, -18, 0.234, -2.5)}):Play()
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -29, 0.234, -2.5)}):Play()
+
+			else
+				for _, v in next, KeySystem:GetDescendants() do
+					if v:IsA("UIStroke") then
+						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 0}):Play()
+					elseif v:IsA("TextLabel") and v.Name ~= "Title" then
+						TweenService:Create(v, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+					end
+				end
+
+				TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0, 526,0, 211)}):Play()
+				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.0137195662, 0,0.0734597147, -9)}):Play()
+
+				TextBox_1.Visible = true
+
+				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
+					BackgroundTransparency = 0,
+					TextTransparency = 0
+				}):Play()
+
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.02471483, -31,0.234597161, -46)}):Play()
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.893795371, -19,0.234597161, -46)}):Play()
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967307925, -29,0.234597161, -46)}):Play()
+			end
+		end)
+
+
+		local Key = Keysystem.Key 
+
+		while KeySystem do
+			if TextBox_1.Text:find(Key) then
+				TweenService:Create(KeySystem, TweenInfo.new(0.2), {Position = UDim2.new(KeySystem.Position.X.Scale, KeySystem.Position.X.Offset, KeySystem.Position.Y.Scale - 0.05,KeySystem.Position.Y.Offset)}):Play()
+				task.wait(0.2)
+				TweenService:Create(KeySystem, TweenInfo.new(0.4), {Position = UDim2.new(KeySystem.Position.X.Scale,  KeySystem.Position.X.Offset, 1.2,KeySystem.Position.Y.Offset)}):Play()
+
+				task.wait(1)
+				KeySystem:Destroy()
+				break
+			else
+			end
+			task.wait(0.1)
+		end
+	end
 
 	local MainFrame_1 = Instance.new("Frame")
 	local UICorner_1 = Instance.new("UICorner")
@@ -589,6 +936,12 @@ function Library:CreateWindiw(Info1)
 	Rank_1.TextColor3 = RankColor or Color3.fromRGB(76,102,96)
 	Rank_1.TextSize = 14
 	Rank_1.TextXAlignment = Enum.TextXAlignment.Left
+
+	Library:CreateNotification({
+		Title = "Ventures - Startup",
+		Content = "Press ".. MinimizeKeybind.Name .." To Close the Gui",
+		Duration = 3,
+	})
 
 	local IsDragging = false
 	local Input
@@ -2557,7 +2910,7 @@ function Library:CreateWindiw(Info1)
 
 			if not isfile(SettingsPath) then
 				writefile(SettingsPath, "{}")
-				
+
 			else
 				local Data = readfile(SettingsPath)
 				local Success, Loaded = pcall(function()
@@ -2616,10 +2969,9 @@ function Library:CreateWindiw(Info1)
 		MainFrame_1.BackgroundColor3 = GlobalValues["Main Frame Color"]
 	end
 
-		return Tabs, SettingAssync
+	return Tabs, SettingAssync
 end
 
 Library:SetAutoButtonColor(false)
 
 return Library
-
