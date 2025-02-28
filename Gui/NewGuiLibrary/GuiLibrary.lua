@@ -272,7 +272,7 @@ function Library:CreateWindow(Info1)
 	local Keysystem = Info1.Keysystem
 
 	--// Init, Keysystem
-	if Keysystem.Enabled and Keysystem.Key ~= nil or "" then
+	if Keysystem.Enabled and Keysystem.Key ~= nil and Rank == "Member" then
 		local KeySystem = Instance.new("Frame")
 		local UICorner_1 = Instance.new("UICorner")
 		local UIStroke_1 = Instance.new("UIStroke")
