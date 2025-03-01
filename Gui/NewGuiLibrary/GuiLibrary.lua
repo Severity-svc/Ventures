@@ -911,7 +911,7 @@ function Library:CreateWindow(Info1)
 		Display_1.Text = WhitelistedName
 	end
 
-	if #LocalPlayer.DisplayName > 14 then
+	if #LocalPlayer.DisplayName > 14 and Rank == "Member" then
 		Display_1.TextScaled = true
 	end
 
