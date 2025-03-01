@@ -933,7 +933,7 @@ function Library:CreateWindow(Info1)
 	Username_1.TextXAlignment = Enum.TextXAlignment.Left
 
 	if #LocalPlayer.Name > 14 then
-		Display_1.TextScaled = true
+		Username_1.TextScaled = true
 	end
 	
 	Username_1:GetPropertyChangedSignal("Text"):Connect(function()
