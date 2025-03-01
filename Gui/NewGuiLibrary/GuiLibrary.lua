@@ -904,6 +904,10 @@ function Library:CreateWindow(Info1)
 	Display_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Display_1.TextSize = 14
 	Display_1.TextXAlignment = Enum.TextXAlignment.Left
+
+	if #LocalPlayer.DisplayName > 14 then
+		Display_1.TextScaled = true
+	end
 	
 	Display_1:GetPropertyChangedSignal("Text"):Connect(function()
 		if #Display_1.Text > 14 then
@@ -927,6 +931,10 @@ function Library:CreateWindow(Info1)
 	Username_1.TextColor3 = Color3.fromRGB(102,102,102)
 	Username_1.TextSize = 11
 	Username_1.TextXAlignment = Enum.TextXAlignment.Left
+
+	if #LocalPlayer.Name > 14 then
+		Display_1.TextScaled = true
+	end
 	
 	Username_1:GetPropertyChangedSignal("Text"):Connect(function()
 		if #Username_1.Text > 16 then
