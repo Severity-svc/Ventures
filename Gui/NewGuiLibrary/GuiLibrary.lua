@@ -26,9 +26,7 @@ local GlobalDescriptionColor = Color3.fromRGB(94,94,94)
 local FolderName = "Ventures"
 local GuiName = FolderName .. "/GuiLibrary"
 local SettingsPath = GuiName .. "/Settings.lua"
-local GlobalValues = {
-
-}
+local GlobalValues = {}
 
 --//Services
 local Players = game:GetService("Players")
@@ -906,6 +904,14 @@ function Library:CreateWindow(Info1)
 	Display_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Display_1.TextSize = 14
 	Display_1.TextXAlignment = Enum.TextXAlignment.Left
+	
+	Display_1:GetPropertyChangedSignal("Text"):Connect(function()
+		if #Display_1.Text > 14 then
+			Display_1.TextScaled = true
+		else
+			Display_1.TextScaled = false
+		end
+	end)
 
 	Username_1.Name = "Username"
 	Username_1.Parent = UserProfile_1
@@ -921,6 +927,14 @@ function Library:CreateWindow(Info1)
 	Username_1.TextColor3 = Color3.fromRGB(102,102,102)
 	Username_1.TextSize = 11
 	Username_1.TextXAlignment = Enum.TextXAlignment.Left
+	
+	Username_1:GetPropertyChangedSignal("Text"):Connect(function()
+		if #Username_1.Text > 16 then
+			Username_1.TextScaled = true
+		else
+			Username_1.TextScaled = false
+		end
+	end)
 
 	Rank_1.Name = "Rank"
 	Rank_1.Parent = UserProfile_1
