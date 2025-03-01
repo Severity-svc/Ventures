@@ -2408,7 +2408,7 @@ function Library:CreateWindow(Info1)
 			DropdownName_1.TextSize = 14
 			DropdownName_1.TextXAlignment = Enum.TextXAlignment.Left
 			
-			if Info9.Default ~= nil then
+			if Info9.Default ~= nil and Info9.CallbackOnDefault then
 				local Success, Error = pcall(function() Callback(Values[Info9.Default]) end)
 				
 				if not Success then
