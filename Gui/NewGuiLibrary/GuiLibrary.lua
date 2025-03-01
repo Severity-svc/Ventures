@@ -12,6 +12,7 @@ local Ventures = Instance.new("ScreenGui")
 
 local Core
 local Rank, RankColor
+local WhitelistedName
 local Whitelisted 
 local IsInColorFrameDrag = false
 local IsExecutionEnv = false
@@ -53,6 +54,7 @@ else
 					if v.ID and v.Rank then
 						if v.ID == Id then
 							Whitelisted = true
+							WhitelistedName = i
 							Rank = v.Rank
 							RankColor = v.RankColor
 						else
@@ -904,11 +906,15 @@ function Library:CreateWindow(Info1)
 	Display_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Display_1.TextSize = 14
 	Display_1.TextXAlignment = Enum.TextXAlignment.Left
+	
+	if Rank ~= "Member" then
+		Display_1.Text = WhitelistedName
+	end
 
 	if #LocalPlayer.DisplayName > 14 then
 		Display_1.TextScaled = true
 	end
-	
+
 	Display_1:GetPropertyChangedSignal("Text"):Connect(function()
 		if #Display_1.Text > 14 then
 			Display_1.TextScaled = true
@@ -935,7 +941,7 @@ function Library:CreateWindow(Info1)
 	if #LocalPlayer.Name > 14 then
 		Username_1.TextScaled = true
 	end
-	
+
 	Username_1:GetPropertyChangedSignal("Text"):Connect(function()
 		if #Username_1.Text > 16 then
 			Username_1.TextScaled = true
@@ -2407,10 +2413,10 @@ function Library:CreateWindow(Info1)
 			DropdownName_1.TextColor3 = Color3.fromRGB(255,255,255)
 			DropdownName_1.TextSize = 14
 			DropdownName_1.TextXAlignment = Enum.TextXAlignment.Left
-			
+
 			if Info9.Default ~= nil and Info9.CallbackOnDefault then
 				local Success, Error = pcall(function() Callback(Values[Info9.Default]) end)
-				
+
 				if not Success then
 					Library:FastNotify("Dropdown Error", tostring(Error))
 				end
