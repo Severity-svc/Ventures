@@ -8,7 +8,7 @@ local whitelisted = {
 	["Retard"] = {
 		["Rank"] = "Beta Tester (slave),
 		["RankColor"] = Color3.fromRGB(255,255,255),
-		["ID"] = "D0541B82-1DD5-46BA-9FAD-FD98DDBCC750"
+		["ID"] = "D0541B82-1DD5-46BA-9FAD-FD98DDBCC750",
 	},
 }
 
