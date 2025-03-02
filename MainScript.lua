@@ -8,6 +8,7 @@ local function fetchgame(id)
     local supported = setmetatable({
         [1] = 16732694052,
         [2] = 17625359962,
+	[2] = 301549746,
     }, {
         __index = function()
             return nil
@@ -29,6 +30,8 @@ if key then
   loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/16732694052%20.lua'))()
     elseif key == 2 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/17625359962.lua"))()
+	elseif key == 2 then
+ 	 loadstring(game:HttpGet("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/301549746.lua"))()
   end
 else
     lib:Notify({
