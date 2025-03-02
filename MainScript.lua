@@ -30,7 +30,7 @@ if key then
   loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/16732694052%20.lua'))()
     elseif key == 2 then
     loadstring(game:HttpGet("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/17625359962.lua"))()
-	elseif key == 2 then
+	elseif key == 3 then
  	 loadstring(game:HttpGet("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Profiles/301549746.lua"))()
   end
 else
