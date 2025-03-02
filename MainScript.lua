@@ -8,7 +8,7 @@ local function fetchgame(id)
     local supported = setmetatable({
         [1] = 16732694052,
         [2] = 17625359962,
-	[2] = 301549746,
+	[3] = 301549746,
     }, {
         __index = function()
             return nil
