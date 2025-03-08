@@ -6,32 +6,44 @@
 
 --//StartUp
 local Library = {}
-local Lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/Lucide%20Icons.lua'))()--require(script.Parent:WaitForChild("Lucide"))
+local Lucide 
 local FontType = Font.new("rbxasset://fonts/families/Ubuntu.json", Enum.FontWeight.Bold, Enum.FontStyle.Normal)
 local Ventures = Instance.new("ScreenGui")
 
 local Core
-local Rank, RankColor
+local Rank
+local RankColor
 local WhitelistedName
 local Whitelisted 
 local IsInColorFrameDrag = false
 local IsExecutionEnv = false
 
---//Global Values ( they arent that global)
-local GlobalSliderSpeed = 0.2
-local GlobalToggleSpeed = 0.3
-local GlobalDebounce = false
-local GlobalDescriptionColor = Color3.fromRGB(94,94,94)
+--//Config Vars
+local GlobalValues = {
+	GlobalSliderSpeed = 0.2,
+	GlobalToggleSpeed = 0.3,
+	GlobalDebounce = false,
+	GlobalMainGuiColor = {17,17,17},
+	GlobalDescriptionColor = {94, 94, 94},
+	GlobalGuiDragSpeed = 0.5,
+	GlobalMinimizeKeybind = "RightControl"
+}
 
---//Config Usage
 local FolderName = "Ventures"
 local GuiName = FolderName .. "/GuiLibrary"
 local SettingsPath = GuiName .. "/Settings.lua"
-local GlobalValues = {}
+local ConfigP = FolderName .. "/Config"
+local Toggles = ConfigP .. "/Toggles.lua"
+local Sliders = ConfigP .. "/Sliders.lua"
+local Colors = ConfigP .. "/Colors.lua"
+local Keybinds = ConfigP .. "/Keybinds.lua"
+local Inputs = ConfigP .. "/Inputs.lua"
+local DropdownsP = ConfigP .. "/Dropdowns.lua"
 
 --//Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 
@@ -40,30 +52,95 @@ local LocalPlayer = Players.LocalPlayer
 --//Whitelisting, Parenting
 if RunService:IsStudio() then
 	Core = LocalPlayer:WaitForChild("PlayerGui")
+	Lucide = require(script.Parent:WaitForChild("Lucide"))
 else
+	Lucide =  loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/Lucide%20Icons.lua'))()
 	Core = game:GetService("CoreGui")
 	local Analystics = game:GetService("RbxAnalyticsService")
+
+	if not isfolder(FolderName) then
+		makefolder(FolderName)
+	end
+	if not isfolder(GuiName) then
+		makefolder(GuiName)
+	end
+	if not isfolder(ConfigP) then
+		makefolder(ConfigP)
+	end
+
+	if not isfile(Toggles) then
+		writefile(Toggles, "{}")
+	end
+	if not isfile(Sliders) then
+		writefile(Sliders, "{}")
+	end
+	if not isfile(Colors) then
+		writefile(Colors, "{}")
+	end
+	if not isfile(Keybinds) then
+		writefile(Keybinds, "{}")
+	end
+	if not isfile(DropdownsP) then
+		writefile(DropdownsP, "{}")
+	end
+	if not isfile(Inputs) then
+		writefile(Inputs, "{}")
+	end
+
+	local function SaveGlobals()
+		local success, json = pcall(function()
+			return HttpService:JSONEncode(GlobalValues)
+		end)
+
+		if success then
+			writefile(SettingsPath, json)
+		end
+	end
+
+	local function LoadGlobals()
+		if isfile(SettingsPath) then
+			local Success, Data = pcall(function()
+				return HttpService:JSONDecode(readfile(SettingsPath))
+			end)
+
+			if Success and type(Data) == "table" then
+				for i, v in pairs(Data) do
+					if GlobalValues[i] ~= nil then
+						GlobalValues[i] = v
+					end
+				end
+			end
+		end
+	end
+
+	LoadGlobals()
+
+	task.spawn(function()
+		while true do
+			SaveGlobals()
+			task.wait(5)
+		end
+	end)
 
 	if Analystics then
 		IsExecutionEnv = true
 		local Id, Whitelist = Analystics:GetClientId(), loadstring(game:HttpGet("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Whitelisted.lua"))()
 
 		if Whitelist then
-			for i, v in next, Whitelist do
-				if type(v) == "table" then
-					if v.ID and v.Rank then
-						if v.ID == Id then
-							Whitelisted = true
-							WhitelistedName = i
-							Rank = v.Rank
-							RankColor = v.RankColor
-						else
-							Whitelisted = false
-							Rank = "Member"
-						end
-					end
+			for i, v in pairs(Whitelist) do
+
+				if v.ID == Id then
+					Whitelisted = true
+					WhitelistedName = i
+					Rank = v.Rank
+					RankColor = v.RankColor
+					break
 				end
 			end
+		end
+
+		if not Whitelisted then
+			Rank = "Member"
 		end
 	end
 end
@@ -93,148 +170,164 @@ local function GetIconFromLucide(Name)
 	end
 end
 
+local function SaveFlag(Path, Name, Value)
+	local Data = readfile(Path)
+	local Success, Flag = pcall(function()
+		return HttpService:JSONDecode(Data)
+	end)
+
+	if Success then
+		Flag[Name] = Value
+		local JSON = HttpService:JSONEncode(Flag)
+		writefile(Path, JSON)
+	end
+end
+
+local function GetFlags(FilePath)
+	local Data = ""
+	if isfile(FilePath) then
+		Data = readfile(FilePath)
+	else
+		return {}
+	end
+	local Success, Flags = pcall(function()
+		return HttpService:JSONDecode(Data)
+	end)
+	if Success then
+		return Flags
+	else
+		return {}
+	end
+end
+
 --//Init, Notification
 function Library:CreateNotification(Info)
-	local Duration = Info.Duration or 5
-
-	local Notification_1 = Instance.new("Frame")
-	local Title_2 = Instance.new("TextLabel")
-	local Content_1 = Instance.new("TextLabel")
-	local CloseButton_2 = Instance.new("ImageButton")
-	local UICorner_29 = Instance.new("UICorner")
-	local UICorner_2 = Instance.new("UICorner")
-	local UIGradient_1 = Instance.new("UIGradient")
-	local UIGradient_2 = Instance.new("UIGradient")
-	local UIStroke_1 = Instance.new("UIStroke")
+	local Offfset = 0
+	local Duration = Info.Duration or 4
 
 	local function GetOffset()
-		local Offset = 0
-
-		for _, v in pairs(Ventures:GetChildren()) do
-			if v.Name == "Notification" and v:IsA("Frame") then
-				Offset = Offset + 0.115
+		for _, v in next, Ventures:GetChildren() do
+			if v.Name == "Notification" then
+				Offfset = Offfset + 0.12
 			end
 		end
-		return Offset
+
+		return Offfset
 	end
 
-	Notification_1.Name = "Notification"
-	Notification_1.Parent = Ventures
-	Notification_1.BackgroundColor3 = Color3.fromRGB(17,17,17)
-	Notification_1.BackgroundTransparency = 0.15
-	Notification_1.BorderColor3 = Color3.fromRGB(0,0,0)
-	Notification_1.BorderSizePixel = 0
-	Notification_1.Position = UDim2.new(1.3, 0, 0.86, 0)--//UDim2.new(0.850079477, 0,0.87823832, 0)
-	Notification_1.Size = UDim2.new(0, 235,0, 75)
+	local Notification = Instance.new("Frame")
+	local UICorner_1 = Instance.new("UICorner")
+	local UICorner_2 = Instance.new("UICorner")
+	local UIStroke_1 = Instance.new("UIStroke")
+	local Title_1 = Instance.new("TextLabel")
+	local Content_1 = Instance.new("TextLabel")
+	local CloseButton_1 = Instance.new("TextButton")
+	local UIGradient = Instance.new("UIGradient")
 
-	Notification_1.Position = UDim2.new(1.3, 0, 0.86 - GetOffset(), 0)
+	Notification.Name = "Notification"
+	Notification.Parent = Ventures
+	Notification.BackgroundColor3 = Color3.fromRGB(9, 9, 9)
+	Notification.BackgroundTransparency = 0.15000000596046448
+	Notification.BorderColor3 = Color3.fromRGB(0,0,0)
+	Notification.BorderSizePixel = 0
+	Notification.Position = UDim2.new(0.844, 0,0.974 - GetOffset(), 0) --UDim2.new(0.843673944, 0,0.875647664, 0)
+	Notification.Size = UDim2.new(0, 242,0, 78)
 
-	Title_2.Name = "Title"
-	Title_2.Parent = Notification_1
-	Title_2.BackgroundColor3 = Color3.fromRGB(255,255,255)
-	Title_2.BackgroundTransparency = 1
-	Title_2.BorderColor3 = Color3.fromRGB(0,0,0)
-	Title_2.BorderSizePixel = 0
-	Title_2.Position = UDim2.new(0.0307409409, 0,0.113333337, -9)
-	Title_2.Size = UDim2.new(0, 205,0, 18)
-	Title_2.FontFace = FontType
-	Title_2.RichText = true
-	Title_2.Text = Info.Title or "Ventures"
-	Title_2.TextColor3 = Color3.fromRGB(255,255,255)
-	Title_2.TextSize = 12
-	Title_2.TextXAlignment = Enum.TextXAlignment.Left
-	Title_2.TextYAlignment = Enum.TextYAlignment.Bottom
+	UIGradient.Parent = Notification
+	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(113, 113, 113)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))}
+	UIGradient.Rotation = -90
+
+	UICorner_1.Parent = Notification
+	UICorner_1.CornerRadius = UDim.new(0,5)
+
+	UIStroke_1.Parent = Notification
+	UIStroke_1.Color = Color3.fromRGB(79,79,79)
+	UIStroke_1.Transparency = 1
+	UIStroke_1.Thickness = 1.2999999523162842
+
+	Title_1.Name = "Title"
+	Title_1.Parent = Notification
+	Title_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Title_1.BackgroundTransparency = 1
+	Title_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Title_1.BorderSizePixel = 0
+	Title_1.Position = UDim2.new(0.05, -6,0.035, -1)
+	Title_1.Size = UDim2.new(0, 47,0, 17)
+	Title_1.TextXAlignment = Enum.TextXAlignment.Left
+	Title_1.FontFace = FontType
+	Title_1.Text = Info.Title or  "Ventures"
+	Title_1.TextColor3 = Color3.fromRGB(255,255,255)
+	Title_1.TextTransparency = 1
+	Title_1.TextSize = 12.5
 
 	Content_1.Name = "Content"
-	Content_1.Parent = Notification_1
+	Content_1.Parent = Notification
 	Content_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
 	Content_1.BackgroundTransparency = 1
 	Content_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	Content_1.BorderSizePixel = 0
-	Content_1.Position = UDim2.new(0.0307409409, 0,0.460000008, -9)
-	Content_1.Size = UDim2.new(0, 205,0, 43)
+	Content_1.Position = UDim2.new(0.0454545468, -2,0.298120737, -1)
+	Content_1.Size = UDim2.new(0, 224,0, 48)
 	Content_1.FontFace = FontType
-	Content_1.RichText = true
 	Content_1.Text = Info.Content or ""
 	Content_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Content_1.TextSize = 12
+	Content_1.TextTransparency = 1
 	Content_1.TextWrapped = true
 	Content_1.TextXAlignment = Enum.TextXAlignment.Left
 	Content_1.TextYAlignment = Enum.TextYAlignment.Top
 
-	CloseButton_2.Name = "CloseButton"
-	CloseButton_2.Parent = Notification_1
-	CloseButton_2.Active = true
-	CloseButton_2.BackgroundColor3 = Color3.fromRGB(42,42,42)
-	CloseButton_2.BackgroundTransparency = 1
-	CloseButton_2.BorderColor3 = Color3.fromRGB(0,0,0)
-	CloseButton_2.BorderSizePixel = 0
-	CloseButton_2.Position = UDim2.new(0.90200001, 0,0.0399999991, 0)
-	CloseButton_2.Size = UDim2.new(0, 20,0, 20)
-	CloseButton_2.Image = "http://www.roblox.com/asset/?id=132261474823036"
+	CloseButton_1.Name = "CloseButton"
+	CloseButton_1.Parent = Notification
+	CloseButton_1.Active = true
+	CloseButton_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	CloseButton_1.BackgroundTransparency = 1
+	CloseButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	CloseButton_1.BorderSizePixel = 0
+	CloseButton_1.Position = UDim2.new(0.88429755, 0,0.0352941193, 0)
+	CloseButton_1.Size = UDim2.new(0, 20,0, 20)
+	CloseButton_1.Font = Enum.Font.SourceSansBold
+	CloseButton_1.Text = "x"
+	CloseButton_1.TextTransparency = 1
+	CloseButton_1.TextColor3 = Color3.fromRGB(255,255,255)
+	CloseButton_1.TextScaled = true
+	CloseButton_1.TextSize = 14
+	CloseButton_1.TextWrapped = true
 
-	UICorner_29.Parent = CloseButton_2
-	UICorner_29.CornerRadius = UDim.new(0,4)
-
-	UICorner_2.Parent = Notification_1
+	UICorner_2.Parent = CloseButton_1
 	UICorner_2.CornerRadius = UDim.new(0,5)
 
-	UIGradient_1.Parent = Notification_1
-	UIGradient_1.Enabled = false
-	UIGradient_1.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))}
-
-	UIStroke_1.Parent = Notification_1
-	UIStroke_1.Color = Color3.fromRGB(255,255,255)
-	UIStroke_1.Thickness = 1
-
-	UIGradient_2.Parent = UIStroke_1
-	UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(0, 0, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))}
-
-	coroutine.wrap(function()
-		local Entrance = TweenService:Create(Notification_1, TweenInfo.new(0.4), {Position = UDim2.new(0.84, 0, 0.878 - GetOffset(), 0)})
-		Entrance:Play()
-
-		Entrance.Completed:Connect(function()
-			local Hop = TweenService:Create(Notification_1, TweenInfo.new(0.15), {Position = UDim2.new(0.85, 0, 0.878 - GetOffset(), 0)})
-			Hop:Play()
-		end)
-
-		local Rotating = TweenService:Create(UIGradient_2, TweenInfo.new(Duration, Enum.EasingStyle.Linear, Enum.EasingDirection.InOut), {Rotation = 360})
-		Rotating:Play()
-
-		CloseButton_2.MouseButton1Click:Connect(function()
-			Notification_1:Destroy()
-		end)
-
-		if GlobalDebounce then return end
-		GlobalDebounce = true
-		task.wait(0.3)
-		GlobalDebounce = false
-
-		task.wait(Duration)
-
-		local Hop2 = TweenService:Create(Notification_1, TweenInfo.new(0.2), {Position = UDim2.new(0.84, 0, 0.878 - GetOffset(), 0)})
-		Hop2:Play()
-
-		Hop2.Completed:Wait()
-
-		local Exit = TweenService:Create(Notification_1, TweenInfo.new(0.4), {Position = UDim2.new(1.3, 0, Notification_1.Position.Y.Scale, 0)})
-		Exit:Play()
-
-		Exit.Completed:Connect(function()
-			Notification_1:Destroy()
-		end)
-
-		while Notification_1 do
-			task.wait(0.1)
+	Ventures.ChildRemoved:Connect(function(child)
+		if child.Name == "Notification" then
 			local Offset = 0
 			for _, v in ipairs(Ventures:GetChildren()) do
-				if v:IsA("Frame") and v.Name == "Notification" then
-					TweenService:Create(v, TweenInfo.new(0.3), {Position = UDim2.new(0.84, 0, 0.878 - Offset, 0)}):Play()
-					Offset = Offset + 0.115
+				if v.Name == "Notification" then
+					TweenService:Create(v, TweenInfo.new(0.3), {Position = UDim2.new(0.844, 0, 0.875647664 - Offset, 0)}):Play()
+					Offset = Offset + 0.12
 				end
 			end
 		end
+	end)
+
+	coroutine.wrap(function()
+		--//Entrance
+		TweenService:Create(Notification, TweenInfo.new(0.3), {BackgroundTransparency = 0.15}):Play()
+		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 0}):Play()
+		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+		task.wait(Duration)
+
+		--//Exit
+		TweenService:Create(Notification, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
+		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+
+		task.wait(0.3)
+		Notification:Destroy()
 	end)()
 end
 
@@ -491,7 +584,7 @@ function Library:CreateWindow(Info1)
 		local IsDragging = false
 		local Input
 		local Start, CurrentPosition, TargetPosition = nil 
-		local Speed = 0.5
+		local Speed = GlobalValues.GlobalGuiDragSpeed
 
 		local function UpdateDrag(input)
 			local Delta = input.Position - Start
@@ -906,12 +999,12 @@ function Library:CreateWindow(Info1)
 	Display_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Display_1.TextSize = 14
 	Display_1.TextXAlignment = Enum.TextXAlignment.Left
-	
+
 	if Rank ~= "Member" then
-		Display_1.Text = WhitelistedName
+		Display_1.Text = WhitelistedName or ""
 	end
 
-	if #LocalPlayer.DisplayName > 14 and Rank == "Member" then
+	if #LocalPlayer.DisplayName > 14 then
 		Display_1.TextScaled = true
 	end
 
@@ -974,7 +1067,7 @@ function Library:CreateWindow(Info1)
 	local IsDragging = false
 	local Input
 	local Start, CurrentPosition, TargetPosition = nil 
-	local Speed = 0.5
+	local Speed = GlobalValues.GlobalGuiDragSpeed
 
 	local function UpdateDrag(input)
 		local Delta = input.Position - Start
@@ -1367,8 +1460,11 @@ function Library:CreateWindow(Info1)
 
 		--//Init, Toggle
 		function Elements:CreateToggle(Info3)
+			local SelfActions = {}
+
 			local Callback = Info3.Callback
 			local Bool = Info3.Default or false
+			local Flag = Info3.Flag or ""
 
 			local Toggle_1 = Instance.new("Frame")
 			local UICorner_7 = Instance.new("UICorner")
@@ -1384,7 +1480,7 @@ function Library:CreateWindow(Info1)
 			local Button_3 = Instance.new("TextButton")
 			local UIGradient_4 = Instance.new("UIGradient")
 
-			Toggle_1.Name = Info3.Name or "Toggle"
+			Toggle_1.Name = Info3.Flag or "Toggle"
 			Toggle_1.Parent = TabContainer_1
 			Toggle_1.BackgroundColor3 = Color3.fromRGB(66,66,66)
 			Toggle_1.BackgroundTransparency = 0.6000000238418579
@@ -1413,7 +1509,7 @@ function Library:CreateWindow(Info1)
 			ToggleDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ToggleDescription_1.FontFace = FontType
 			ToggleDescription_1.Text = Info3.Description or "ipsum dolor ist semen allah and toate cele"
-			ToggleDescription_1.TextColor3  = GlobalDescriptionColor
+			ToggleDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			ToggleDescription_1.TextSize = 14
 			ToggleDescription_1.TextWrapped = true
 			ToggleDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -1479,13 +1575,13 @@ function Library:CreateWindow(Info1)
 
 			if Info3.Default then
 				if Info3.Default == true then
-					TweenService:Create(UIStroke_4, TweenInfo.new(GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
+					TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 				else
-					TweenService:Create(UIStroke_4, TweenInfo.new(GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
+					TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 				end
 
 				coroutine.wrap(function()
@@ -1500,14 +1596,16 @@ function Library:CreateWindow(Info1)
 				Button_3.MouseButton1Click:Connect(function()
 					Bool = not Bool
 
+					SaveFlag(Toggles, Flag, Bool)
+
 					if Bool then
-						TweenService:Create(UIStroke_4, TweenInfo.new(GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
+						TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 					else
-						TweenService:Create(UIStroke_4, TweenInfo.new(GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
+						TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 					end
 
 					coroutine.wrap(function()
@@ -1519,7 +1617,7 @@ function Library:CreateWindow(Info1)
 				end)
 			end
 
-			return {
+			SelfActions =  {
 				SetValue = function(self, value)
 					if type(value) == "boolean" then
 						coroutine.wrap(function()
@@ -1530,13 +1628,13 @@ function Library:CreateWindow(Info1)
 						end)()
 
 						if value == true then
-							TweenService:Create(UIStroke_4, TweenInfo.new(GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
+							TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 						else
-							TweenService:Create(UIStroke_4, TweenInfo.new(GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
+							TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 						end
 					else
 						Library:CreateNotification({
@@ -1547,10 +1645,23 @@ function Library:CreateWindow(Info1)
 					end
 				end
 			}
+
+			local Flags = GetFlags(Toggles)
+
+			for i, v in next, Flags do
+				if i == Flag and v ~= nil then
+					SelfActions:SetValue(v)
+				end
+			end
+
+			return SelfActions
 		end
 
 		--//Init, Slider
 		function Elements:CreateSlider(Info4)
+			local SelfActions = {}
+
+			local Flag = Info4.Flag or ""
 			local Callback = Info4.Callback
 			local Default, MaxValue, MinValue, Increment = Info4.Default, Info4.MaxValue, Info4.MinValue, Info4.Increment
 
@@ -1599,7 +1710,7 @@ function Library:CreateWindow(Info1)
 			SliderDescription_1.Size = UDim2.new(0, 265,0, 38)
 			SliderDescription_1.FontFace = FontType
 			SliderDescription_1.Text = Info4.Description or ""
-			SliderDescription_1.TextColor3  = GlobalDescriptionColor
+			SliderDescription_1.TextColor3 = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			SliderDescription_1.TextSize = 14
 			SliderDescription_1.TextWrapped = true
 			SliderDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -1737,8 +1848,10 @@ function Library:CreateWindow(Info1)
 					Value = math.floor(((MinValue + ((MaxValue - MinValue) * percentv)) / Increment) + 0.5) * Increment
 					ValueInput_1.Text = string.format("%." .. tostring(math.log10(1 / Increment)) .. "f", Value)
 
-					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.5, 0)})
-					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
+					SaveFlag(Sliders, Flag, Value)
+
+					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.5, 0)})
+					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
 
 					Tween1:Play()
 					Tween2:Play()
@@ -1754,7 +1867,7 @@ function Library:CreateWindow(Info1)
 				end
 			end)
 
-			return {
+			SelfActions =  {
 				SetValue = function(self, value)
 					value = math.clamp(value, MinValue, MaxValue)
 					local percentv = (value - MinValue) / (MaxValue - MinValue)
@@ -1762,8 +1875,8 @@ function Library:CreateWindow(Info1)
 					Value = value
 					ValueInput_1.Text = string.format("%." .. tostring(math.log10(1 / Increment)) .. "f", Value)
 
-					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(percentv, 0, 0.5, 0)})
-					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
+					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(percentv, 0, 0.5, 0)})
+					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
 
 					Tween1:Play()
 					Tween2:Play()
@@ -1778,6 +1891,16 @@ function Library:CreateWindow(Info1)
 					end
 				end,
 			}
+
+			local Flags = GetFlags(Sliders)
+
+			for i, v in next, Flags do
+				if i == Flag and v ~= nil then
+					SelfActions:SetValue(v)
+				end
+			end
+
+			return SelfActions
 		end
 		--//Init, Section
 		function Elements:CreateSection(Info5)
@@ -1800,6 +1923,9 @@ function Library:CreateWindow(Info1)
 
 		--//Init, Input
 		function Elements:CreateInput(Info6)
+			local SelfActions = {}
+
+			local Flag = Info6.Flag or ""
 			local Default = Info6.Default or "Text"
 			local Placeholder = Info6.Placeholder or "Text"
 			local Callback = Info6.Callback
@@ -1849,7 +1975,7 @@ function Library:CreateWindow(Info1)
 			InputDescription_1.Size = UDim2.new(0, 300,0, 38)
 			InputDescription_1.FontFace = FontType
 			InputDescription_1.Text = Info6.Description or ""
-			InputDescription_1.TextColor3  = GlobalDescriptionColor
+			InputDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			InputDescription_1.TextSize = 14
 			InputDescription_1.TextWrapped = true
 			InputDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -1924,6 +2050,7 @@ function Library:CreateWindow(Info1)
 							if Number then
 								coroutine.wrap(function()
 									local Success, Error = pcall(function() Callback(Number) end)
+									SaveFlag(Inputs, Flag, Number)
 									if not Success then
 										Library:FastNotify("Input Error", tostring(Error))
 									end
@@ -1934,6 +2061,7 @@ function Library:CreateWindow(Info1)
 						else
 							coroutine.wrap(function()
 								local Success, Error = pcall(function() Callback(Input_1.Text) end)
+								SaveFlag(Inputs, Flag, Input_1.Text)
 								if not Success then
 									Library:FastNotify("Input Error", tostring(Error))
 								end
@@ -1942,7 +2070,7 @@ function Library:CreateWindow(Info1)
 					end
 				end)
 
-				return {
+				SelfActions =  {
 					SetValue = function(self, value)
 						Input_1.Text = value
 						if Callback then
@@ -1958,10 +2086,23 @@ function Library:CreateWindow(Info1)
 			else
 				Library:FastNotify("Input Error", "Use a function for callback!")
 			end
+
+			local Flags = GetFlags(Inputs)
+
+			for i, v in next, Flags do
+				if i == Flag and v ~= nil then
+					SelfActions:SetValue(v)
+				end
+			end
+
+			return SelfActions
 		end
 
 		--//Init, Keybind
 		function Elements:CreateKeybind(Info7)
+			local SelfActions = {}
+
+			local Flag = Info7.Flag or ""
 			local CurrentKeybind = Info7.Default or Enum.KeyCode.RightControl
 			local IsSelecting = false
 			local Callback = Info7.Callback
@@ -1977,6 +2118,7 @@ function Library:CreateWindow(Info1)
 			local UIStroke_11 = Instance.new("UIStroke")
 			local UICorner_20 = Instance.new("UICorner")
 			local KeybindName_1 = Instance.new("TextLabel")
+			local SpecialUiList = Instance.new("UIListLayout")
 
 			Keybind_1.Name = Info7.Name or "Keybind"
 			Keybind_1.Parent = TabContainer_1
@@ -2011,7 +2153,7 @@ function Library:CreateWindow(Info1)
 			KeybindDescription_1.Size = UDim2.new(0, 340,0, 38)
 			KeybindDescription_1.FontFace = FontType
 			KeybindDescription_1.Text = Info7.Description or ""
-			KeybindDescription_1.TextColor3  = GlobalDescriptionColor
+			KeybindDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			KeybindDescription_1.TextSize = 14
 			KeybindDescription_1.TextWrapped = true
 			KeybindDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2026,7 +2168,6 @@ function Library:CreateWindow(Info1)
 			KeybindHolder_1.Position = UDim2.new(0.780627549, 0,0.227272734, 0)
 			KeybindHolder_1.Size = UDim2.new(0, 85,0, 35)
 
-			local SpecialUiList = Instance.new("UIListLayout")
 			SpecialUiList.Parent = KeybindHolder_1
 			SpecialUiList.VerticalAlignment = Enum.VerticalAlignment.Center
 			SpecialUiList.HorizontalAlignment = Enum.HorizontalAlignment.Right
@@ -2084,7 +2225,7 @@ function Library:CreateWindow(Info1)
 			TweenService:Create(Keybind_2, TweenInfo.new(0.3), {Position = UDim2.new(0, 85 - Keybind_2.Position.X.Offset, 0,0)}):Play()
 
 			UserInputService.InputBegan:Connect(function(input, procesed)
-				if IsSelecting then
+				if IsSelecting and not procesed then
 					if input.UserInputType == Enum.UserInputType.Keyboard then
 						CurrentKeybind = input.KeyCode
 						Keybind_2.Text = input.KeyCode.Name
@@ -2097,6 +2238,7 @@ function Library:CreateWindow(Info1)
 				elseif input.KeyCode == CurrentKeybind and not IsSelecting then
 					coroutine.wrap(function()
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
+						SaveFlag(Keybinds, Flag, CurrentKeybind)
 						if not Success then
 							Library:FastNotify("Keybind Error", tostring(Error))
 						end
@@ -2104,12 +2246,43 @@ function Library:CreateWindow(Info1)
 				elseif input.UserInputType == CurrentKeybind and not IsSelecting then
 					coroutine.wrap(function()
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
+						SaveFlag(Keybinds, Flag, CurrentKeybind)
 						if not Success then
 							Library:FastNotify("Keybind Error", tostring(Error))
 						end
 					end)()
 				end
 			end)
+
+			SelfActions = {
+				SetKeybind = function(self, NewKeybind)
+					CurrentKeybind = NewKeybind
+
+					if typeof(NewKeybind) == "EnumItem" then
+						Keybind_2.Text = NewKeybind.Name
+					else
+						Keybind_2.Text = tostring(NewKeybind)
+					end
+
+					if Callback then
+						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
+						if not Success then
+							Library:FastNotify("Keybind Error", tostring(Error))
+						end
+					end
+					SaveFlag(Keybinds, Flag, CurrentKeybind)
+				end
+			}
+
+			local Flags = GetFlags(Keybinds)
+
+			for i, v in next, Flags do
+				if i == Flag and v ~= nil then
+					SelfActions:SetKeybind(v)
+				end
+			end
+
+			return SelfActions
 		end
 
 		--//Init, Button
@@ -2158,7 +2331,7 @@ function Library:CreateWindow(Info1)
 			ButtonDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ButtonDescription_1.FontFace = FontType
 			ButtonDescription_1.Text = Info8.Description or ""
-			ButtonDescription_1.TextColor3  = GlobalDescriptionColor
+			ButtonDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			ButtonDescription_1.TextSize = 14
 			ButtonDescription_1.TextWrapped = true
 			ButtonDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2270,8 +2443,12 @@ function Library:CreateWindow(Info1)
 
 		--//init, dropdown
 		function Elements:CreateDropdown(Info9)
+			local SelfActions = {}
+
+			local Flag = Info9.Flag or ""
 			local Callback = Info9.Callback
 			local Values = Info9.Values or {}
+			local CallbackOnDefault = Info9.CallbackOnDefault or false
 
 			local Dropdown_1 = Instance.new("Frame")
 			local UICorner_21 = Instance.new("UICorner")
@@ -2325,7 +2502,7 @@ function Library:CreateWindow(Info1)
 			DropdownDescription_1.Size = UDim2.new(0, 340,0, 38)
 			DropdownDescription_1.FontFace = FontType
 			DropdownDescription_1.Text = Info9.Description or ""
-			DropdownDescription_1.TextColor3  = GlobalDescriptionColor
+			DropdownDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			DropdownDescription_1.TextSize = 14
 			DropdownDescription_1.TextWrapped = true
 			DropdownDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2414,7 +2591,7 @@ function Library:CreateWindow(Info1)
 			DropdownName_1.TextSize = 14
 			DropdownName_1.TextXAlignment = Enum.TextXAlignment.Left
 
-			if Info9.Default ~= nil and Info9.CallbackOnDefault then
+			if Info9.Default ~= nil and CallbackOnDefault then
 				local Success, Error = pcall(function() Callback(Values[Info9.Default]) end)
 
 				if not Success then
@@ -2472,6 +2649,8 @@ function Library:CreateWindow(Info1)
 
 					Value_1.MouseButton1Click:Connect(function()
 						DropdownButton_1.Text = v
+
+						SaveFlag(DropdownsP, Flag, v)
 						coroutine.wrap(function()
 							local Success, Error = pcall(function() Callback(v) end)
 							if not Success then
@@ -2500,7 +2679,7 @@ function Library:CreateWindow(Info1)
 
 			UpdateDropdown()
 
-			return {
+			SelfActions = {
 				SetValue = function(self, value)
 					if table.find(Values, value) then
 						DropdownButton_1.Text = value
@@ -2526,9 +2705,22 @@ function Library:CreateWindow(Info1)
 					UpdateDropdown()
 				end,
 			}
+
+			local Flags = GetFlags(DropdownsP)
+
+			for i, v in next, Flags do
+				if i == Flag and v ~= nil then
+					SelfActions:SetValue(v)
+				end
+			end
+
+			return SelfActions
 		end
 
 		function Elements:CreateColorPicker(Info10)
+			local SelfActions = {}
+
+			local Flag = Info10.Flag or ""
 			local Callback = Info10.Callback
 			local Default = Info10.Default
 
@@ -2593,7 +2785,7 @@ function Library:CreateWindow(Info1)
 			ColorPickerDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ColorPickerDescription_1.FontFace = FontType
 			ColorPickerDescription_1.Text = Info10.Description or ""
-			ColorPickerDescription_1.TextColor3  = GlobalDescriptionColor
+			ColorPickerDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
 			ColorPickerDescription_1.TextSize = 14
 			ColorPickerDescription_1.TextWrapped = true
 			ColorPickerDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2620,6 +2812,11 @@ function Library:CreateWindow(Info1)
 			ColorFrame_1.BorderSizePixel = 0
 			ColorFrame_1.Position = UDim2.new(0.874,0,0.136,0) --//UDim2.new(0.878587067, 0,0.0485588275, 0)
 			ColorFrame_1.Size = UDim2.new(0, 47,0, 47)
+
+			local ManualStroke = Instance.new("UIStroke")
+			ManualStroke.Parent = ColorFrame_1
+			ManualStroke.Thickness = 1.3
+			ManualStroke.Color = Color3.fromRGB(255, 255, 255)
 
 			UICorner_2.Parent = ColorFrame_1
 			UICorner_2.CornerRadius = UDim.new(0,5)
@@ -2758,7 +2955,6 @@ function Library:CreateWindow(Info1)
 				return Color3.fromHSV(Hue, Saturation, Value)
 			end
 
-
 			local function SetDefaultColor(DefaultColor)
 				local H, S, V = DefaultColor:ToHSV()
 				local DefaultX = (1 - H) * ColorPickingHolder_1.AbsoluteSize.X 
@@ -2770,6 +2966,7 @@ function Library:CreateWindow(Info1)
 				DarknessFrame.BackgroundColor3 = DefaultColor
 
 				local Success, Error = pcall(function() Callback(DefaultColor) end)
+				SaveFlag(Colors, Flag, DefaultColor)
 				if not Success then
 					Library:FastNotify("ColorPicker Error: ", tostring(Error))
 				end
@@ -2786,6 +2983,7 @@ function Library:CreateWindow(Info1)
 				DarknessFrame.BackgroundColor3 = NewColor
 
 				local Success, Error = pcall(function() Callback(NewColor) end)
+				SaveFlag(Colors, Flag, NewColor)
 				if not Success then
 					Library:FastNotify("ColorPicker Error: ", tostring(Error))
 				end
@@ -2844,170 +3042,110 @@ function Library:CreateWindow(Info1)
 				SetDefaultColor(Default)
 			end
 
+			SelfActions = {
+				SetColor = function(self, Color)
+					if typeof(Color) == "Color3" then
+						SetDefaultColor(Default)
+					end
+				end,
+			}
+
+			local Flags = GetFlags(Colors)
+
+			for i, v in next, Flags do
+				if i == Flag and v ~= nil then
+					SelfActions:SetColor(Color3.fromRGB(v.R * 255, v.G * 255, v.B * 255))
+				end
+			end
+
+			return SelfActions
 		end
 		return Elements
 	end
 
 	--//Init, Settings
 	function SettingAssync:StartupSettings()
-		local SettingsTab = Tabs:CreateTab({
-			Name = "Settings", 
+		local Settings = Tabs:CreateTab({
+			Name = "Settings",
 			Icon = "settings",
 		})
-		SettingsTab:CreateKeybind({
-			Name = "Minimize Keybind",
-			Description = "Changes the minimization keybind to the input key",
-			Default = GlobalValues["Minimize Keybind"] or Enum.KeyCode.RightControl,
-			Callback = function(NewKeybind)
-				GlobalValues["Minimize Keybind"] = NewKeybind
-				MinimizeKeybind = NewKeybind
+
+		local MinimizeKeybind = Settings:CreateKeybind({
+			Name = "Gui Minimize Keybind", 
+			Description = "Changes The Keybind For Minimizing The Gui",
+			Default = Enum.KeyCode[GlobalValues.GlobalMinimizeKeybind],
+			Callback = function(Keybind)
+				GlobalValues.GlobalMinimizeKeybind = Keybind.Name
+
+				MinimizeKeybind = Enum.KeyCode[GlobalValues.GlobalMinimizeKeybind]
 			end,
 		})
 
-		SettingsTab:CreateSlider({
-			Name = "Gui Drag Speed",
-			Description = "Changes The Speed Of The Ui Drag",
+		local GuiDragSpeed = Settings:CreateSlider({
+			Name = "Gui Dragging Speed",
+			Description = "Changes How Powerful The Dragging Speed Is",
+			Default = GlobalValues.GlobalGuiDragSpeed,
+			MinValue = 0,
 			MaxValue = 2,
-			MinValue = 0,
-			Default = GlobalValues["Gui Drag Speed"] or 0.4,
 			Increment = 0.01,
 			Callback = function(value)
-				GlobalValues["Gui Drag Speed"] = value
-				Speed = value
-			end,
+				GlobalValues.GlobalGuiDragSpeed = value
+
+				Speed = GlobalValues.GlobalGuiDragSpeed
+			end
 		})
 
-		SettingsTab:CreateSlider({
-			Name = "Slider Drag Speed",
-			Description = "Changes The Speed Of The Slider Drag",
-			MaxValue = 1,
+		local SliderAnimationSpeed = Settings:CreateSlider({
+			Name  = "Slider Animation Speed",
+			Description = "Changes How Fast The Slider Animation Is",
+			Default = GlobalValues.GlobalSliderSpeed,
 			MinValue = 0,
-			Default = GlobalValues["Slider Drag Speed"] or 0.2,
-			Increment = 0.01,
-			Callback = function(value)
-				GlobalValues["Slider Drag Speed"] = value
-				GlobalSliderSpeed = value
-			end,
-		})
-
-		SettingsTab:CreateSlider({
-			Name = "Toggle Animate Speed",
-			Description = "Changes The Speed Of The Toggle Animation",
 			MaxValue = 2,
-			MinValue = 0,
-			Default = GlobalValues["Toggle Animation Speed"] or 0.3,
 			Increment = 0.01,
 			Callback = function(value)
-				GlobalValues["Toggle Animation Speed"] = value
-				GlobalToggleSpeed = value
-			end,
+				GlobalValues.GlobalSliderSpeed = value
+			end
 		})
 
-		if GlobalValues["DescriptionColor"] then
-			for _, v in next, Container_1:GetDescendants() do
-				if v.Name:find("Description") and v:IsA("TextLabel") then
-					v.TextColor3 = GlobalValues["DescriptionColor"]
-				end
-			end
-		end
-
-		SettingsTab:CreateSection({Title = "Gui Appearences"})
-
-		SettingsTab:CreateSlider({
-			Name = "Main Frame Transparency",
-			Description = "Changes The Speed Of The Ui Drag",
-			MaxValue = 1,
+		local ToggleAnimationSpeed = Settings:CreateSlider({
+			Name  = "Toggle Animation Speed",
+			Description = "Changes How Fast The Toggle Animation Is",
+			Default = GlobalValues.GlobalToggleSpeed,
 			MinValue = 0,
-			Default = MainFrame_1.Transparency,
+			MaxValue = 2,
 			Increment = 0.01,
 			Callback = function(value)
-				GlobalValues["Main Frame Transparency"] = value
-				MainFrame_1.Transparency = value
-			end,
+				GlobalValues.GlobalToggleSpeed = value
+			end
 		})
 
-		SettingsTab:CreateColorPicker({
-			Name = "Main Frame Color",
-			Description = "Changes The Color of the MainFrame",
-			Default = MainFrame_1.BackgroundColor3,
-			Callback = function(color) 
-				MainFrame_1.BackgroundColor3 = color
-			end,
+		local Section = Settings:CreateSection({
+			Title = "GuiAppearence"
 		})
 
-		if isfolder and makefolder and isfile and writefile and readfile then
-			if not isfolder(FolderName) then
-				makefolder(FolderName)
-			end
+		local MainGuiColor = Settings:CreateColorPicker({
+			Name = "Main Gui Color",
+			Description = "Changes The Color Of The MainGui",
+			Default = Color3.fromRGB(unpack(GlobalValues.GlobalMainGuiColor)),
+			Callback = function(Color)
+				GlobalValues.GlobalMainGuiColor = {Color.R * 255, Color.G * 255, Color.B * 255}
 
-			if not isfolder(GuiName) then
-				makefolder(GuiName)
-			end
-
-			if not isfile(SettingsPath) then
-				writefile(SettingsPath, "{}")
-
-			else
-				local Data = readfile(SettingsPath)
-				local Success, Loaded = pcall(function()
-					return game:GetService("HttpService"):JSONDecode(Data)
-				end)
-
-				if Success then
-					GlobalValues = Data
-				end
-			end
-		end
-
-		local function SaveSettings()
-			if #GlobalValues > 0 then
-				local Data = game:GetService("HttpService"):JSONEncode(GlobalValues)
-				writefile(SettingsPath, Data)
-			end
-		end
-
-		task.spawn(function()
-			while true do
-				task.wait(5)
-				SaveSettings()
-			end
-		end)
-
-		SettingsTab:CreateColorPicker({
-			Name = "Description Text Color",
-			Description = "Changes The Color of the Descriptions Texts",
-			Default = GlobalValues["DescriptionColor"] or GlobalDescriptionColor,
-			Callback = function(color) 
-				GlobalValues["DescriptionColor"] = color
-
-				for _, v in next, Container_1:GetDescendants() do
-					if v.Name:find("Description") and v:IsA("TextLabel") then
-						v.TextColor3 = color
-					end
-				end
+				MainFrame_1.BackgroundColor3 = Color
 			end,
 		})
-
-		if GlobalValues["DescriptionColor"] then
-			for _, v in next, Container_1:GetDescendants() do
-				if v.Name:find("Description") and v:IsA("TextLabel") then
-					v.TextColor3 = GlobalValues["DescriptionColor"]
-				end
-			end
-		end
 	end
-
-	if GlobalValues["Main Frame Transparency"] then
-		MainFrame_1.Transparency = GlobalValues["Main Frame Transparency"]
-	end
-
-	if GlobalValues["Main Frame Color"] then
-		MainFrame_1.BackgroundColor3 = GlobalValues["Main Frame Color"]
-	end
-
 	return Tabs, SettingAssync
 end
 
 Library:SetAutoButtonColor(false)
+
+UserInputService.InputBegan:Connect(function(input, gpe)
+	if input.KeyCode == Enum.KeyCode.N and not gpe then
+		Library:CreateNotification({
+			Title = "Ventures",
+			Content = "Ventures Started!",
+		})
+	end
+end)
 
 return Library
