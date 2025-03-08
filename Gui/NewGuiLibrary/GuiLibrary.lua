@@ -3139,13 +3139,4 @@ end
 
 Library:SetAutoButtonColor(false)
 
-UserInputService.InputBegan:Connect(function(input, gpe)
-	if input.KeyCode == Enum.KeyCode.N and not gpe then
-		Library:CreateNotification({
-			Title = "Ventures",
-			Content = "Ventures Started!",
-		})
-	end
-end)
-
 return Library
