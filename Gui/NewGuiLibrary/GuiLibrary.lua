@@ -1680,15 +1680,13 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(Toggles)
-			end
-
-			for i, v in next, Flags do
-				if i == Flag and v ~= nil then
-					SelfActions:SetValue(v)
+			local Flags = GetFlags(Toggles)
+				for i, v in next, Flags do
+					if i == Flag and v ~= nil then
+						SelfActions:SetValue(v)
+					end
 				end
 			end
-
 			return SelfActions
 		end
 
