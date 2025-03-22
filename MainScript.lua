@@ -1,9 +1,5 @@
 local lib = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 
-if getgenv().queue_on_teleport then
- queue_on_teleport("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/MainScript.lua") 
-end
-
 local function fetchgame(id)
     local supported = setmetatable({
         [1] = 16732694052,
@@ -41,3 +37,5 @@ else
 		Duration = 3 
 	})
 end
+
+ queue_on_teleport("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/MainScript.lua") 
