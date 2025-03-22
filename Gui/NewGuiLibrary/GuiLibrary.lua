@@ -827,7 +827,7 @@ function Library:CreateWindow(Info1)
 	TopBarLine_1.BackgroundTransparency = 0
 	TopBarLine_1.BorderSizePixel = 0
 	TopBarLine_1.Position = UDim2.new(0, 0,1, 0)
-	TopBarLine_1.Size = UDim2.new(1, 0,0.0199999996, 0)
+	TopBarLine_1.Size = UDim2.new(1, 0,0.021, 0)
 
 	CloseButton_1.Name = "CloseButton"
 	CloseButton_1.Parent = TopBar_1
