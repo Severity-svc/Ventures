@@ -8,6 +8,7 @@
 local Library = {}
 local Lucide 
 local FontType = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
+local BoldFontType = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
 local Ventures = Instance.new("ScreenGui")
 
 local Core
@@ -200,7 +201,68 @@ local function GetFlags(FilePath)
 	end
 end
 
+--//Other Usefull stuff
+function Library:FastNotify(Counted, Content)
+	Library:CreateNotification({
+		Title = "Ventures - ".. Counted .. " ",
+		Content = Content,
+		Duration = 4,
+	})
+end
+
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+	Library:CreateNotification({
+		Title = "Ventures",
+		Content = "mobile device detected, ventures is a bit more limited on mobile",
+		Duration = 4
+	})
+end
+
+local function CreateShadow(Parent, SizeX, SizeY, Transparency)
+	local SizeXR = SizeX or 1.74
+	local SizeYR = SizeY or 1.4
+	local ImgTransparency = Transparency or 0.33
+
+	local Shadow = Instance.new("Frame")
+	local Image_1 = Instance.new("ImageLabel")
+
+	Shadow.Name = "Shadow"
+	Shadow.Parent = Parent
+	Shadow.AnchorPoint = Vector2.new(0.5, 0.5)
+	Shadow.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Shadow.BackgroundTransparency = 1
+	Shadow.BorderColor3 = Color3.fromRGB(0,0,0)
+	Shadow.BorderSizePixel = 0
+	Shadow.Position = UDim2.new(0.5, 0,0.5, 0)
+	Shadow.Size = UDim2.new(1, 35,1, 35)
+	Shadow.ZIndex = 0
+
+	Image_1.Name = "Image"
+	Image_1.Parent = Shadow
+	Image_1.AnchorPoint = Vector2.new(0.5, 0.5)
+	Image_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Image_1.BackgroundTransparency = 1
+	Image_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Image_1.BorderSizePixel = 0
+	Image_1.Position = UDim2.new(0.5, 0,0.5, 0)
+	Image_1.Size = UDim2.new(SizeXR, 0,SizeYR, 0)
+	Image_1.Image = "rbxassetid://5587865193"
+	Image_1.ImageColor3 = Color3.fromRGB(20,20,20)
+	Image_1.ImageTransparency = ImgTransparency
+
+	return Image_1
+end
+
 --//Init, Notification
+function Library:SetAutoButtonColor(value)
+	for _, v in next, Ventures:GetDescendants() do
+		if v:IsA("TextButton") or v:IsA("ImageButton") then
+			v.AutoButtonColor = value
+		end
+	end
+end
+
+
 function Library:CreateNotification(Info)
 	local Offfset = 0
 	local CommonOffset = 0.08
@@ -231,15 +293,17 @@ function Library:CreateNotification(Info)
 	Notification.BackgroundTransparency = 0.15000000596046448
 	Notification.BorderColor3 = Color3.fromRGB(0,0,0)
 	Notification.BorderSizePixel = 0
-	Notification.Position = UDim2.new(0.844, 0,0.974 - GetOffset(), 0) --UDim2.new(0.843673944, 0,0.875647664, 0)
-	Notification.Size = UDim2.new(0, 235,0, 53) 
+	Notification.Position = UDim2.new(0.867, 0,0.974 - GetOffset(), 0) --UDim2.new(0.843673944, 0,0.875647664, 0)
+	Notification.Size = UDim2.new(0, 235,0, 66) 
+
+	local Shadow = CreateShadow(Notification,1.5,1.1,0.5)
 
 	UIGradient.Parent = Notification
 	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(113, 113, 113)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))}
 	UIGradient.Rotation = -90
 
 	UICorner_1.Parent = Notification
-	UICorner_1.CornerRadius = UDim.new(0,5)
+	UICorner_1.CornerRadius = UDim.new(0,10)
 
 	UIStroke_1.Parent = Notification
 	UIStroke_1.Color = Color3.fromRGB(79,79,79)
@@ -252,7 +316,7 @@ function Library:CreateNotification(Info)
 	Title_1.BackgroundTransparency = 1
 	Title_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	Title_1.BorderSizePixel = 0
-	Title_1.Position = UDim2.new(0.05, -8,0.035, 0)
+	Title_1.Position = UDim2.new(0.03, -1,0.035, 0)
 	Title_1.Size = UDim2.new(0, 47,0, 17)
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
 	Title_1.FontFace = FontType
@@ -267,7 +331,7 @@ function Library:CreateNotification(Info)
 	Content_1.BackgroundTransparency = 1
 	Content_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	Content_1.BorderSizePixel = 0
-	Content_1.Position = UDim2.new(0.028, -2,0.43, 0) --{0.028, -2},{0.43, -1}
+	Content_1.Position = UDim2.new(0.028, -1,0.43, -6) --{0.028, -2},{0.43, -1}
 	Content_1.Size = UDim2.new(0, 224,0, 48)
 	Content_1.FontFace = FontType
 	Content_1.Text = Info.Content or ""
@@ -303,7 +367,7 @@ function Library:CreateNotification(Info)
 			local Offset = 0
 			for _, v in ipairs(Ventures:GetChildren()) do
 				if v.Name == "Notification" then
-					TweenService:Create(v, TweenInfo.new(0.3), {Position = UDim2.new(0.844, 0, 0.875647664 - Offset, 0)}):Play()
+					TweenService:Create(v, TweenInfo.new(0.3), {Position = UDim2.new(0.867, 0, 0.875647664 - Offset, 0)}):Play()
 					Offset = Offset + CommonOffset
 				end
 			end
@@ -317,6 +381,7 @@ function Library:CreateNotification(Info)
 		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+		TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.5}):Play()
 
 		task.wait(Duration)
 
@@ -326,35 +391,11 @@ function Library:CreateNotification(Info)
 		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
 		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
 		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
 
 		task.wait(0.3)
 		Notification:Destroy()
 	end)()
-end
-
---//Other Usefull stuff
-function Library:FastNotify(Counted, Content)
-	Library:CreateNotification({
-		Title = "Ventures - ".. Counted .. " ",
-		Content = Content,
-		Duration = 4,
-	})
-end
-
-if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-	Library:CreateNotification({
-		Title = "Ventures",
-		Content = "mobile device detected, ventures is a bit more limited on mobile",
-		Duration = 4
-	})
-end
-
-function Library:SetAutoButtonColor(value)
-	for _, v in next, Ventures:GetDescendants() do
-		if v:IsA("TextButton") or v:IsA("ImageButton") then
-			v.AutoButtonColor = value
-		end
-	end
 end
 
 --//Init, Window
@@ -397,8 +438,10 @@ function Library:CreateWindow(Info1)
 		KeySystem.Position = UDim2.new(0.5, 0,0.5, 0)
 		KeySystem.Size = UDim2.new(0, 432,0, 155)
 
+		local Shadow = CreateShadow(KeySystem, 1.6, 1.5, 0.6)
+
 		UICorner_1.Parent = KeySystem
-		UICorner_1.CornerRadius = UDim.new(0,5)
+		UICorner_1.CornerRadius = UDim.new(0,10)
 
 		UIStroke_1.Parent = KeySystem
 		UIStroke_1.Color = Color3.fromRGB(49,49,49)
@@ -498,7 +541,7 @@ function Library:CreateWindow(Info1)
 		UIStroke_5.Thickness = 1
 
 		UICorner_5.Parent = TextBox_1
-		UICorner_5.CornerRadius = UDim.new(0,5)
+		UICorner_5.CornerRadius = UDim.new(0,10)
 
 		UIPadding_1.Parent = TextBox_1
 		UIPadding_1.PaddingLeft = UDim.new(0,5)
@@ -568,6 +611,7 @@ function Library:CreateWindow(Info1)
 
 		CloseButton_1.MouseButton1Click:Connect(function()
 			KeySystem:Destroy()
+			Ventures:Destroy()
 		end)
 
 		--//yes skidded from the window drag 
@@ -640,6 +684,8 @@ function Library:CreateWindow(Info1)
 
 				TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0, 526, 0, 37)}):Play()
 				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.018, 0, 0.479, -9)}):Play()
+				
+				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.78}):Play()
 
 				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
 					BackgroundTransparency = 1,
@@ -668,6 +714,8 @@ function Library:CreateWindow(Info1)
 				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.0137195662, 0,0.0734597147, -9)}):Play()
 
 				TextBox_1.Visible = true
+				
+				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.6}):Play()
 
 				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
 					BackgroundTransparency = 0.71,
@@ -719,6 +767,8 @@ function Library:CreateWindow(Info1)
 					BackgroundTransparency = 1,
 					TextTransparency = 1
 				}):Play()
+				
+				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
 
 				coroutine.wrap(function()
 					task.wait(0.3)
@@ -768,6 +818,8 @@ function Library:CreateWindow(Info1)
 	local FrameHolder_1 = Instance.new("Frame")
 	local MinimizeText = Instance.new("TextLabel")
 
+	CreateShadow(MainFrame_1, 1.74, 1.4, 0.48)
+
 	MainFrame_1.Name = "MainFrame"
 	MainFrame_1.Parent = Ventures
 	MainFrame_1.BackgroundColor3 = Color3.fromRGB(17,17,17)
@@ -778,7 +830,7 @@ function Library:CreateWindow(Info1)
 	MainFrame_1.Size = UDim2.new(0, 656,0, 460)
 
 	UICorner_1.Parent = MainFrame_1
-	UICorner_1.CornerRadius = UDim.new(0,5)
+	UICorner_1.CornerRadius = UDim.new(0,10)
 
 	UIStroke_1.Parent = MainFrame_1
 	UIStroke_1.Color = Color3.fromRGB(66,66,66)
@@ -827,7 +879,7 @@ function Library:CreateWindow(Info1)
 	TopBarLine_1.BackgroundTransparency = 0
 	TopBarLine_1.BorderSizePixel = 0
 	TopBarLine_1.Position = UDim2.new(0, 0,1, 0)
-	TopBarLine_1.Size = UDim2.new(1, 0,0.021, 0)
+	TopBarLine_1.Size = UDim2.new(1, 0,0.04, 0)
 
 	CloseButton_1.Name = "CloseButton"
 	CloseButton_1.Parent = TopBar_1
@@ -974,9 +1026,9 @@ function Library:CreateWindow(Info1)
 	UserProfile_1.BorderSizePixel = 0
 	UserProfile_1.Position = UDim2.new(0.0137195121, 3,0.828260899, 0)
 	UserProfile_1.Size = UDim2.new(0, 160,0, 71)
-
+	
 	UICorner_27.Parent = UserProfile_1
-	UICorner_27.CornerRadius = UDim.new(0,5)
+	UICorner_27.CornerRadius = UDim.new(0,10)
 
 	UIStroke_17.Parent = UserProfile_1
 	UIStroke_17.Color = Color3.fromRGB(47,47,47)
@@ -986,17 +1038,19 @@ function Library:CreateWindow(Info1)
 	FrameHolder_1.Parent = UserProfile_1
 	FrameHolder_1.BackgroundColor3 = Color3.fromRGB(36,36,36)
 	FrameHolder_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	FrameHolder_1.ClipsDescendants = true
 	FrameHolder_1.BorderSizePixel = 0
 	FrameHolder_1.Position = UDim2.new(0.0250000004, 4,0.182999998, 0)
 	FrameHolder_1.Size = UDim2.new(0, 45,0, 45)
 
 	UserScreenshot_1.Name = "UserScreenshot"
-	UserScreenshot_1.Parent = UserProfile_1
+	UserScreenshot_1.Parent = FrameHolder_1
 	UserScreenshot_1.BackgroundColor3 = Color3.fromRGB(36,36,36)
+	UserScreenshot_1.AnchorPoint = Vector2.new(0.5,0.5)
 	UserScreenshot_1.BackgroundTransparency = 1
 	UserScreenshot_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	UserScreenshot_1.BorderSizePixel = 0
-	UserScreenshot_1.Position = UDim2.new(0.0375000015, 3,0.197183102, 0)
+	UserScreenshot_1.Position = UDim2.new(0.5, 0,0.5, -1)
 	UserScreenshot_1.Size = UDim2.new(0, 43,0, 43)
 	UserScreenshot_1.ZIndex = 2
 	UserScreenshot_1.Image =  Players:GetUserThumbnailAsync(LocalPlayer.UserId,Enum.ThumbnailType.HeadShot,Enum.ThumbnailSize.Size420x420)
@@ -1010,7 +1064,7 @@ function Library:CreateWindow(Info1)
 	UIGradient_d.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.925466)}
 
 	UICorner_28.Parent = FrameHolder_1
-	UICorner_28.CornerRadius = UDim.new(0,5)
+	UICorner_28.CornerRadius = UDim.new(0,10)
 
 	Display_1.Name = "Display"
 	Display_1.Parent = UserProfile_1
@@ -1188,6 +1242,7 @@ function Library:CreateWindow(Info1)
 
 	CloseButton_1.MouseButton1Click:Connect(function()
 		MainFrame_1:Destroy()
+		Ventures:Destroy()
 		Bool = false
 	end)
 
@@ -1226,7 +1281,7 @@ function Library:CreateWindow(Info1)
 		Tab2_1.Size = UDim2.new(1, 0, 0, 34)
 
 		UICorner_2.Parent = Tab2_1
-		UICorner_2.CornerRadius = UDim.new(0, 5)
+		UICorner_2.CornerRadius = UDim.new(0, 8)
 
 		TabIcon_1.Name = "TabIcon"
 		TabIcon_1.Parent = Tab2_1
@@ -1521,7 +1576,7 @@ function Library:CreateWindow(Info1)
 			Toggle_1.Size = UDim2.new(0, 453,0, 66)
 
 			UICorner_7.Parent = Toggle_1
-			UICorner_7.CornerRadius = UDim.new(0,5)
+			UICorner_7.CornerRadius = UDim.new(0,10)
 
 			UIStroke_3.Parent = Toggle_1
 			UIStroke_3.Color = Color3.fromRGB(74,74,74)
@@ -1680,13 +1735,15 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-			local Flags = GetFlags(Toggles)
+				local Flags = GetFlags(Toggles)
+
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
 						SelfActions:SetValue(v)
 					end
 				end
 			end
+
 			return SelfActions
 		end
 
@@ -1724,7 +1781,7 @@ function Library:CreateWindow(Info1)
 			Slider_1.Size = UDim2.new(0, 453,0, 66)
 
 			UICorner_13.Parent = Slider_1
-			UICorner_13.CornerRadius = UDim.new(0,5)
+			UICorner_13.CornerRadius = UDim.new(0,10)
 
 			UIStroke_7.Parent = Slider_1
 			UIStroke_7.Color = Color3.fromRGB(74,74,74)
@@ -2038,8 +2095,8 @@ function Library:CreateWindow(Info1)
 			Input_1.CursorPosition = -1
 			Input_1.Position = UDim2.new(0.310255557, 0,0, 0)
 			Input_1.Size = UDim2.new(0.676299095, 0,1, 0)
-			Input_1.Font = Enum.Font.SourceSansBold
-			Input_1.PlaceholderColor3 = Color3.fromRGB(126,126,126)
+			Input_1.FontFace = BoldFontType
+			Input_1.PlaceholderColor3 = Color3.fromRGB(180, 180, 180)
 			Input_1.PlaceholderText = Placeholder or "Input"
 			Input_1.Text = Default or "Input"
 			Input_1.TextColor3 = Color3.fromRGB(255,255,255)
@@ -2052,7 +2109,7 @@ function Library:CreateWindow(Info1)
 			UIStroke_2.Thickness = 1.2999999523162842
 
 			UICorner_2.Parent = Input_1
-			UICorner_2.CornerRadius = UDim.new(0,5)
+			UICorner_2.CornerRadius = UDim.new(0,10)
 
 			InputName_1.Name = "InputName"
 			InputName_1.Parent = Input
@@ -2163,7 +2220,7 @@ function Library:CreateWindow(Info1)
 			Keybind_1.Size = UDim2.new(0, 453,0, 66)
 
 			UICorner_19.Parent = Keybind_1
-			UICorner_19.CornerRadius = UDim.new(0,5)
+			UICorner_19.CornerRadius = UDim.new(0,10)
 
 			UIStroke_10.Parent = Keybind_1
 			UIStroke_10.Color = Color3.fromRGB(74,74,74)
@@ -2224,7 +2281,7 @@ function Library:CreateWindow(Info1)
 			UIStroke_11.Thickness = 1.2999999523162842
 
 			UICorner_20.Parent = Keybind_2
-			UICorner_20.CornerRadius = UDim.new(0,5)
+			UICorner_20.CornerRadius = UDim.new(0,10)
 
 			KeybindName_1.Name = "KeybindName"
 			KeybindName_1.Parent = Keybind_1
@@ -2248,13 +2305,13 @@ function Library:CreateWindow(Info1)
 			Keybind_2:GetPropertyChangedSignal("Text"):Connect(function()
 				local TextSize = Keybind_2.TextBounds.X
 
-				TweenService:Create(Keybind_2, TweenInfo.new(0.2), {Size = UDim2.new(0, TextSize + 12, Keybind_2.Size.Y.Scale, 0)}):Play()
+				TweenService:Create(Keybind_2, TweenInfo.new(0.2), {Size = UDim2.new(0, TextSize + 16, Keybind_2.Size.Y.Scale, 0)}):Play()
 				TweenService:Create(Keybind_2, TweenInfo.new(0.3), {Position = UDim2.new(0, 85 - Keybind_2.Position.X.Offset, 0,0)}):Play()
 			end)
 
 			local TextSize = Keybind_2.TextBounds.X
 
-			TweenService:Create(Keybind_2, TweenInfo.new(0.3), {Size = UDim2.new(0, TextSize + 12, Keybind_2.Size.Y.Scale, 0)}):Play()
+			TweenService:Create(Keybind_2, TweenInfo.new(0.3), {Size = UDim2.new(0, TextSize + 16, Keybind_2.Size.Y.Scale, 0)}):Play()
 			TweenService:Create(Keybind_2, TweenInfo.new(0.3), {Position = UDim2.new(0, 85 - Keybind_2.Position.X.Offset, 0,0)}):Play()
 
 			UserInputService.InputBegan:Connect(function(input, procesed)
@@ -2345,7 +2402,7 @@ function Library:CreateWindow(Info1)
 			Button_5.Size = UDim2.new(0, 453,0, 66)
 
 			UICorner_17.Parent = Button_5
-			UICorner_17.CornerRadius = UDim.new(0,5)
+			UICorner_17.CornerRadius = UDim.new(0,10)
 
 			UIStroke_8.Parent = Button_5
 			UIStroke_8.Color = Color3.fromRGB(74,74,74)
@@ -2411,7 +2468,7 @@ function Library:CreateWindow(Info1)
 			PickButton_1.TextSize = 14
 
 			UICorner_18.Parent = PickButton_1
-			UICorner_18.CornerRadius = UDim.new(0,5)
+			UICorner_18.CornerRadius = UDim.new(0,10)
 
 			UIStroke_9.Parent = PickButton_1
 			UIStroke_9.Color = Color3.fromRGB(108,108,108)
@@ -2512,7 +2569,7 @@ function Library:CreateWindow(Info1)
 			Dropdown_1.ZIndex = 2
 
 			UICorner_21.Parent = Dropdown_1
-			UICorner_21.CornerRadius = UDim.new(0,5)
+			UICorner_21.CornerRadius = UDim.new(0,10)
 
 			UIStroke_12.Parent = Dropdown_1
 			UIStroke_12.Color = Color3.fromRGB(74,74,74)
@@ -2597,7 +2654,7 @@ function Library:CreateWindow(Info1)
 			ValuesHolder_1.Visible = false
 
 			UICorner_23.Parent = ValuesHolder_1
-			UICorner_23.CornerRadius = UDim.new(0,5)
+			UICorner_23.CornerRadius = UDim.new(0,10)
 
 			UIStroke_14.Parent = ValuesHolder_1
 			UIStroke_14.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
@@ -2660,7 +2717,7 @@ function Library:CreateWindow(Info1)
 					Value_1.ZIndex = 2
 
 					UICorner_24.Parent = Value_1
-					UICorner_24.CornerRadius = UDim.new(0,5)
+					UICorner_24.CornerRadius = UDim.new(0,10)
 
 					UIStroke_15.Parent = Value_1
 					UIStroke_15.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
@@ -2795,7 +2852,7 @@ function Library:CreateWindow(Info1)
 			ColorPicker.Size = UDim2.new(0, 453,0,66)   --UDim2.new(0, 453,0, 205)
 
 			UICorner_c.Parent = ColorPicker
-			UICorner_c.CornerRadius = UDim.new(0,5)
+			UICorner_c.CornerRadius = UDim.new(0,10)
 
 			UIStroke_c.Parent = ColorPicker
 			UIStroke_c.Color = Color3.fromRGB(74,74,74)
@@ -2852,7 +2909,7 @@ function Library:CreateWindow(Info1)
 			ManualStroke.Color = Color3.fromRGB(255, 255, 255)
 
 			UICorner_2.Parent = ColorFrame_1
-			UICorner_2.CornerRadius = UDim.new(0,5)
+			UICorner_2.CornerRadius = UDim.new(0,10)
 
 			PickButton_1.Name = "PickButton"
 			PickButton_1.Parent = ColorFrame_1
@@ -2877,7 +2934,7 @@ function Library:CreateWindow(Info1)
 			ColorPickingHolder_1.BackgroundTransparency = 1 -- 0
 
 			UICorner_3.Parent = ColorPickingHolder_1
-			UICorner_3.CornerRadius = UDim.new(0,5)
+			UICorner_3.CornerRadius = UDim.new(0,10)
 
 			UIGradient_3.Parent = ColorPickingHolder_1
 			UIGradient_3.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 0, 1)), ColorSequenceKeypoint.new(0.166667, Color3.fromRGB(255, 0, 255)), ColorSequenceKeypoint.new(0.333333, Color3.fromRGB(0, 0, 255)), ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0, 255, 225)), ColorSequenceKeypoint.new(0.666667, Color3.fromRGB(0, 255, 0)), ColorSequenceKeypoint.new(0.833333, Color3.fromRGB(255, 255, 0)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 0, 0))}
@@ -3169,4 +3226,7 @@ function Library:CreateWindow(Info1)
 	end
 	return Tabs, SettingAssync
 end
+
+Library:SetAutoButtonColor(false)
+
 return Library
