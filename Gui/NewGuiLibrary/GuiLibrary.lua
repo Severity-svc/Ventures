@@ -586,7 +586,7 @@ function Library:CreateWindow(Info1)
 			)
 		end
 
-		RunService.RenderStepped:Connect(function()
+		RunService.Heartbeat:Connect(function()
 			if TargetPosition and IsDragging and not IsInColorFrameDrag then
 				KeySystem.Position = UDim2.new(
 					KeySystem.Position.X.Scale,
@@ -1106,7 +1106,7 @@ function Library:CreateWindow(Info1)
 		)
 	end
 
-	RunService.RenderStepped:Connect(function()
+	RunService.Heartbeat:Connect(function()
 		if TargetPosition and IsDragging and not IsInColorFrameDrag then
 			MainFrame_1.Position = UDim2.new(
 				MainFrame_1.Position.X.Scale,
@@ -1871,7 +1871,7 @@ function Library:CreateWindow(Info1)
 				end
 			end)
 
-			RunService.RenderStepped:Connect(function()
+			RunService.Heartbeat:Connect(function()
 				if IsDragging then
 					local Position = UserInputService:GetMouseLocation().X
 					local abss = Maximum_1.AbsolutePosition.X
