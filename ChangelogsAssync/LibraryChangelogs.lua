@@ -38,7 +38,8 @@ local ChangeLogs = Tabs:CreateTab({
 				AddedHeader = {
 					Title = "Added:",
 					Content = [[
-[+] Added Paragraaphs
+[+] Added Paragraphs
+[+] Added ChangeLogs
 [+] Added Mobile Device Detection
 [+] Added Headers And HeaderIcons
 [+] Added KeySystem TextBox Enter Animation
