@@ -265,7 +265,7 @@ end
 
 function Library:CreateNotification(Info)
 	local Offfset = 0
-	local CommonOffset = 0.08
+	local CommonOffset = 0.1
 	local Duration = Info.Duration or 4
 
 	local function GetOffset()
