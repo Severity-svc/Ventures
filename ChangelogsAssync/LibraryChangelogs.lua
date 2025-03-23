@@ -55,7 +55,7 @@
 					}
 				},
 
-	Paragraph = {
+	Paragraph2 = {
 					{
 						Name = "Library | Changelogs | 23.03.2025",
 						FixHeader = {
