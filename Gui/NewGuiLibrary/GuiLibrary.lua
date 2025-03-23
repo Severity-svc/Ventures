@@ -1457,7 +1457,6 @@ function Library:CreateWindow(Info1)
 		TabContainer_1.BorderSizePixel = 0
 		TabContainer_1.Size = UDim2.new(0, 473, 0, 421)
 		TabContainer_1.ClipsDescendants = true
-		TabContainer_1.AutomaticCanvasSize = Enum.AutomaticSize.None
 		TabContainer_1.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
 		TabContainer_1.CanvasPosition = Vector2.new(0, 0)
 		TabContainer_1.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
@@ -1467,6 +1466,7 @@ function Library:CreateWindow(Info1)
 		TabContainer_1.ScrollBarImageTransparency = 0
 		TabContainer_1.ScrollBarThickness = 0
 		TabContainer_1.ScrollingDirection = Enum.ScrollingDirection.XY
+		TabContainer_1.CanvasSize = UDim2.new(0, 473,0,0)
 		TabContainer_1.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
 		TabContainer_1.VerticalScrollBarInset = Enum.ScrollBarInset.None
 		TabContainer_1.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
@@ -3297,12 +3297,12 @@ function Library:CreateWindow(Info1)
 			Paragraph.BackgroundTransparency = 0.6
 			Paragraph.BorderSizePixel = 0
 			Paragraph.Position = UDim2.new(0, 0, 0.01, 0)
-			Paragraph.Size = UDim2.new(0, 453, 0, 0)
+			Paragraph.Size = UDim2.new(0, 453, 0, 5)
 			Paragraph.AutomaticSize = Enum.AutomaticSize.Y
 
 			UiPadding_3.Parent = Paragraph
-			UiPadding_3.PaddingBottom = UDim.new(0, 8)
-			UiPadding_3.PaddingTop = UDim.new(0, 2)
+			UiPadding_3.PaddingBottom = UDim.new(0, 20)
+			--UiPadding_3.PaddingTop = UDim.new(0, 2)
 
 			UiListLayout_3.Parent = Paragraph
 			UiListLayout_3.Padding = UDim.new(0, 10)
@@ -3331,6 +3331,7 @@ function Library:CreateWindow(Info1)
 			ParagraphTitle_1.TextColor3 = Color3.fromRGB(255, 255, 255)
 			ParagraphTitle_1.TextSize = 14
 			ParagraphTitle_1.TextXAlignment = Enum.TextXAlignment.Left
+			
 
 			UIGradient_2.Parent = Paragraph
 			UIGradient_2.Color = ColorSequence.new{
@@ -3358,6 +3359,7 @@ function Library:CreateWindow(Info1)
 				Header.BackgroundTransparency = Tableh.AccentTransparency or 0.8
 				Header.BorderSizePixel = 0
 				Header.Size = UDim2.new(0, 435, 0, 0)
+				Header.AutomaticSize = Enum.AutomaticSize.Y
 
 				if Tableh.UseShadowGrandient.Enabled then
 					local Grandient = Instance.new("UIGradient")
@@ -3365,22 +3367,6 @@ function Library:CreateWindow(Info1)
 					Grandient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 220, 207))}
 					Grandient.Rotation = 90
 				end
-
-				Header.ChildAdded:Connect(function()
-					task.spawn(function()
-						wait(0.05)
-						UpdateSize(Header, 435, 3, 5)
-					end)
-				end)
-
-				Header.ChildRemoved:Connect(function()
-					task.spawn(function()
-						wait(0.05)
-						UpdateSize(Header, 435, 3, 5)
-					end)
-				end)
-
-				UpdateSize(Header, 435, 3, 5)
 
 				ManualPadding.Parent = Header
 				ManualPadding.PaddingBottom = UDim.new(0, 8)
@@ -3396,7 +3382,7 @@ function Library:CreateWindow(Info1)
 				HeaderTitle.TextColor3 = Tableh.TitleAccentColor or Tableh.NameAccentColor or Color3.fromRGB(255, 255, 255)
 				HeaderTitle.TextSize = 14
 				HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
-
+			
 				HeaderContent.Name = "HeaderContent"
 				HeaderContent.Parent = Header
 				HeaderContent.BackgroundTransparency = 1
@@ -3409,9 +3395,10 @@ function Library:CreateWindow(Info1)
 				HeaderContent.TextWrapped = true
 				HeaderContent.TextXAlignment = Enum.TextXAlignment.Left
 				HeaderContent.TextYAlignment = Enum.TextYAlignment.Top
+				HeaderContent.Position = UDim2.new(0, 6, HeaderTitle.Position.Y.Offset + 0.15, HeaderTitle.Position.Y.Offset + 5)
 
-				local textSize = TextService:GetTextSize(HeaderContent.Text, HeaderContent.TextSize, Enum.Font.SourceSans, Vector2.new(HeaderContent.Size.X.Offset, math.huge))
-				HeaderContent.Size = UDim2.new(0, 421, 0, textSize.Y - 10)
+				local TextSize = TextService:GetTextSize(HeaderContent.Text, HeaderContent.TextSize, Enum.Font.SourceSans, Vector2.new(HeaderContent.Size.X.Offset, math.huge))
+				HeaderContent.Size = UDim2.new(0, 421, 0, TextSize.Y)
 
 				UICorner_2.Parent = Header
 				UICorner_2.CornerRadius = UDim.new(0, 10)
@@ -3425,6 +3412,15 @@ function Library:CreateWindow(Info1)
 				UIStroke_2.Thickness = 1
 
 				if Tableh.CustomImage then
+					HeaderContent.Size = Tableh.CustomImage.NewSize
+					HeaderContent.Position = Tableh.CustomImage.NewPos
+					task.spawn(function()
+						while true do
+							TweenService:Create(Header,TweenInfo.new(0.3), {Size = Tableh.CustomImage.NewHeaderSize}):Play()
+							task.wait(0.2)
+						end
+					end)
+
 					local ImageButton = Instance.new("ImageButton")
 					local UICorner_5 = Instance.new("UICorner")
 					local UIStroke_5 = Instance.new("UIStroke")
@@ -3433,14 +3429,16 @@ function Library:CreateWindow(Info1)
 					ImageButton.BackgroundColor3 = Tableh.CustomImage.BackgroundColor or Color3.fromRGB(255, 255, 255)
 					ImageButton.BackgroundTransparency = Tableh.CustomImage.BackgroundTransparency or 0
 					ImageButton.Size = UDim2.new(0, 57, 0, 57)
-					ImageButton.Position = UDim2.new(0.85, 0, 0, 8)
+					ImageButton.AnchorPoint = Vector2.new(0,0.5)
+					ImageButton.Position = UDim2.new(0.85, 0, 0.53, 0)
+					ImageButton.AutoButtonColor = false
 					ImageButton.Image = Tableh.CustomImage.Icon or ""
 
 					UICorner_5.Parent = ImageButton
-					UICorner_5.CornerRadius = UDim.new(0, 10)
+					UICorner_5.CornerRadius = Tableh.CustomImage.CornerRadius or UDim.new(0, 10)
 
 					UIStroke_5.Parent = ImageButton
-					UIStroke_5.Enabled = Tableh.CustomImage.Enabled or false
+					UIStroke_5.Enabled = Tableh.CustomImage.Stroke.Enabled or false
 					UIStroke_5.Color = Tableh.CustomImage.Stroke and Tableh.CustomImage.Stroke.Color or Color3.fromRGB(255, 255, 255)
 					UIStroke_5.Thickness = Tableh.CustomImage.Stroke and Tableh.CustomImage.Stroke.Thickness or 1
 					UIStroke_5.Transparency = Tableh.CustomImage.Stroke and Tableh.CustomImage.Stroke.Transparency or 0
@@ -3536,14 +3534,135 @@ function Library:CreateWindow(Info1)
 	end
 
 	function Library:ConnectChangelogService(Url)
+		local ExtraWrite = {}
+
+		local ChangeLogs = Tabs:CreateTab({
+			Name = "Ventures",
+			Icon = "pen",
+		})
+
+		local Socials = ChangeLogs:CreateParagraph({
+			Name = "Ventures | Socials",
+			Discord = {
+				Title = "Discord Server:",
+				Content = "In Our Discord Server We Post all Updates, Scripts And Keys (And Giveaways), Join It For  More Updates And Further Support",
+				TitleAccentColor = Color3.fromRGB(241, 241, 241),
+				ContentAccentColor = Color3.fromRGB(206, 206, 206),
+				AccentColor = Color3.fromRGB(119, 88, 163),
+				AccentTransparency = 0.6,
+				StrokeAccentColor = Color3.fromRGB(119, 88, 163),
+				UseShadowGrandient = { Enabled = true },
+				CustomImage = {
+					BackgroundColor = Color3.fromRGB(157, 101, 255),
+					BackgroundTransparency = 0.8,
+					Icon = "http://www.roblox.com/asset/?id=84828491431270",
+					NewSize = UDim2.new(0, 309,0, 42),
+					NewHeaderSize = UDim2.new(0, 435,0, 70),
+					NewPos = UDim2.new(0,6,0.269,0),
+					Callback = function() setclipboard("Discord.gg/v3n") end,
+					Stroke = {
+						Enabled = true,
+						Color = Color3.fromRGB(119, 88, 163),
+					}
+				}
+			},
+			Site = {
+				Title = "Our Official Site",
+				Content = "GetVentures.xyz Is Our Official Site, Where You Can Get Our Latest Cheats And Executor",
+				TitleAccentColor = Color3.fromRGB(241, 241, 241),
+				ContentAccentColor = Color3.fromRGB(206, 206, 206),
+				AccentColor = Color3.fromRGB(103, 65, 185),
+				AccentTransparency = 0.45,
+				StrokeAccentColor = Color3.fromRGB(98, 61, 176),
+				UseShadowGrandient = { Enabled = true },
+				CustomImage = {
+					BackgroundColor = Color3.fromRGB(221, 180, 255),
+					NewSize = UDim2.new(0, 309,0, 42),
+					NewPos = UDim2.new(0,6,0.269,0),
+					NewHeaderSize = UDim2.new(0, 435,0, 70),
+					BackgroundTransparency = 1,
+					Icon = "",
+					Callback = function() setclipboard("Discord.gg/v3n") end,
+					Stroke = {
+						Enabled = false,
+						Color = Color3.fromRGB(224, 175, 255),
+					}
+				}
+			},
+			Support = {
+				Title = "Need Support?",
+				Content = "In Case You Have Suggestion/Bug/Issue You Can Open a Ticket In Our Discord Server Or Dm sentrysvc (Or a Ventures Owner) on Discord.",
+				TitleAccentColor = Color3.fromRGB(241, 241, 241),
+				ContentAccentColor = Color3.fromRGB(206, 206, 206),
+				AccentColor = Color3.fromRGB(180, 75, 75),
+				AccentTransparency = 0.45,
+				StrokeAccentColor = Color3.fromRGB(180, 75, 75),
+				UseShadowGrandient = { Enabled = true },
+				CustomImage = {
+					BackgroundColor = Color3.fromRGB(221, 180, 255),
+					NewSize = UDim2.new(0, 309,0, 42),
+					NewPos = UDim2.new(0,6,0.269,0),
+					NewHeaderSize = UDim2.new(0, 435,0, 70),
+					BackgroundTransparency = 1,
+					Icon = "",
+					Callback = function() setclipboard("Discord.gg/v3n") end,
+					Stroke = {
+						Enabled = false,
+						Color = Color3.fromRGB(224, 175, 255),
+					}
+				}
+			}
+		})
+
 		if type(Url) == "string" and IsExecutionEnv then
-			loadstring(game:HttpGet(Url))()
+			local NewSec2 = ChangeLogs:CreateSection({
+				Title = "Library ChangeLogs",
+			})
+			local Write = loadstring(game:HttpGet(Url))()
+
+			for _, v in next, Write do
+				if type(v) == "table" then
+					for _, v2 in next, v do
+						local Paragraph = ChangeLogs:CreateParagraph({
+							Name = v2.Name,
+							FixHeader = v2.FixHeader,
+							AddedHeader = v2.AddedHeader,
+							ChangedHeader = v2.ChangedHeader,
+						})
+					end
+				end
+			end
+
+			function ExtraWrite:CreateChangeLog(Name, NewUrl)
+				local NewSec = ChangeLogs:CreateSection({
+					Title = Name,
+				})
+
+				if type(NewUrl) == "string" and IsExecutionEnv then
+					local NewWrite = loadstring(game:HttpGet(NewUrl))()
+					for _, v in next, NewWrite do
+						if type(v) == "table" then
+							for _, v2 in next, v do
+								local Paragraph = ChangeLogs:CreateParagraph({
+									Name = v2.Name,
+									FixHeader = v2.FixHeader,
+									AddedHeader = v2.AddedHeader,
+									ChangedHeader = v2.ChangedHeader,
+								})
+							end
+						end
+					end
+
+				end
+
+			end
 		end
+		return ExtraWrite
 	end
-	
+
 	return Tabs, SettingAssync
 end
 
 Library:SetAutoButtonColor(false)
---Library:ConnectChangelogService("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/ChangelogsAssync/LibraryChangelogs.lua")
+
 return Library
