@@ -1,5 +1,4 @@
--- This is the script hosted on GitHub
-Write = {
+local Write = {
     {
         Name = "Library | Changelogs | 23.03.2025",
         FixHeader = {
@@ -54,3 +53,5 @@ Write = {
         }
     }
 }
+
+return Write
