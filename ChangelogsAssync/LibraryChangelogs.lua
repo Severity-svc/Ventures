@@ -1,5 +1,4 @@
-local -- This is the script hosted on GitHub
-Write = {
+local Write = {
     Paragraph = { 
         {
             Name = "Library | Changelogs | 23.03.2025",
