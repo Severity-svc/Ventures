@@ -18,6 +18,7 @@ local WhitelistedName
 local Whitelisted 
 local IsInColorFrameDrag = false
 local IsExecutionEnv = false
+local IsMobileDevice = false
 
 --//Config Vars
 local GlobalValues = {
@@ -44,6 +45,7 @@ local DropdownsP = ConfigP .. "/Dropdowns.lua"
 --//Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
+local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -201,23 +203,6 @@ local function GetFlags(FilePath)
 	end
 end
 
---//Other Usefull stuff
-function Library:FastNotify(Counted, Content)
-	Library:CreateNotification({
-		Title = "Ventures - ".. Counted .. " ",
-		Content = Content,
-		Duration = 4,
-	})
-end
-
-if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
-	Library:CreateNotification({
-		Title = "Ventures",
-		Content = "mobile device detected, ventures is a bit more limited on mobile",
-		Duration = 4
-	})
-end
-
 local function CreateShadow(Parent, SizeX, SizeY, Transparency)
 	local SizeXR = SizeX or 1.74
 	local SizeYR = SizeY or 1.4
@@ -265,13 +250,13 @@ end
 
 function Library:CreateNotification(Info)
 	local Offfset = 0
-	local CommonOffset = 0.085
+	local CommonYOffset = 0.085
 	local Duration = Info.Duration or 4
 
 	local function GetOffset()
 		for _, v in next, Ventures:GetChildren() do
 			if v.Name == "Notification" then
-				Offfset = Offfset + CommonOffset
+				Offfset = Offfset + CommonYOffset
 			end
 		end
 
@@ -289,14 +274,14 @@ function Library:CreateNotification(Info)
 
 	Notification.Name = "Notification"
 	Notification.Parent = Ventures
-	Notification.BackgroundColor3 = Color3.fromRGB(9, 9, 9)
-	Notification.BackgroundTransparency = 0.15000000596046448
+	Notification.BackgroundColor3 = Color3.fromRGB(17,17,17)
+	Notification.BackgroundTransparency = 0.1
 	Notification.BorderColor3 = Color3.fromRGB(0,0,0)
 	Notification.BorderSizePixel = 0
 	Notification.Position = UDim2.new(0.867, 0,0.974 - GetOffset(), 0) --UDim2.new(0.843673944, 0,0.875647664, 0)
 	Notification.Size = UDim2.new(0, 235,0, 66) 
 
-	local Shadow = CreateShadow(Notification,1.5,1.1,0.5)
+	local Shadow = CreateShadow(Notification,1.2,1.1,0.5)
 
 	UIGradient.Parent = Notification
 	UIGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(113, 113, 113)), ColorSequenceKeypoint.new(1, Color3.fromRGB(255, 255, 255))}
@@ -335,7 +320,7 @@ function Library:CreateNotification(Info)
 	Content_1.Size = UDim2.new(0, 224,0, 48)
 	Content_1.FontFace = FontType
 	Content_1.Text = Info.Content or ""
-	Content_1.TextColor3 = Color3.fromRGB(255,255,255)
+	Content_1.TextColor3 = Color3.fromRGB(197, 197, 197)
 	Content_1.TextSize = 12
 	Content_1.TextTransparency = 1
 	Content_1.TextWrapped = true
@@ -354,7 +339,7 @@ function Library:CreateNotification(Info)
 	CloseButton_1.Font = Enum.Font.SourceSansBold
 	CloseButton_1.Text = "x"
 	CloseButton_1.TextTransparency = 1
-	CloseButton_1.TextColor3 = Color3.fromRGB(255,255,255)
+	CloseButton_1.TextColor3 = Color3.fromRGB(197, 197, 197)
 	CloseButton_1.TextScaled = true
 	CloseButton_1.TextSize = 14
 	CloseButton_1.TextWrapped = true
@@ -367,12 +352,46 @@ function Library:CreateNotification(Info)
 			local Offset = 0
 			for _, v in ipairs(Ventures:GetChildren()) do
 				if v.Name == "Notification" then
-					TweenService:Create(v, TweenInfo.new(0.3), {Position = UDim2.new(0.867, 0, 0.875647664 - Offset, 0)}):Play()
-					Offset = Offset + CommonOffset
+					TweenService:Create(v, TweenInfo.new(0.35), {Position = UDim2.new(0.867, 0, 0.875647664 - Offset, 0)}):Play()
+					Offset = Offset + CommonYOffset
 				end
 			end
 		end
 	end)
+
+	Ventures.ChildAdded:Connect(function(child)
+		if child.Name == "Notification" then
+			local Offset = 0
+			for _, v in ipairs(Ventures:GetChildren()) do
+				if v.Name == "Notification" then
+					TweenService:Create(v, TweenInfo.new(0.5), {Position = UDim2.new(0.867, 0, 0.875647664 - Offset, 0)}):Play()
+					Offset = Offset + CommonYOffset
+				end
+			end
+		end
+	end)
+
+	CloseButton_1.MouseEnter:Connect(function()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextColor3 = Color3.fromRGB(255,255,255)}):Play()
+	end)
+
+
+	CloseButton_1.MouseLeave:Connect(function()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextColor3 = Color3.fromRGB(186,196,196)}):Play()
+	end)
+
+	CloseButton_1.MouseButton1Click:Connect(function()
+		TweenService:Create(Notification, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
+		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+
+		task.wait(0.3)
+		Notification:Destroy()
+	end)
+
 
 	coroutine.wrap(function()
 		--//Entrance
@@ -398,16 +417,39 @@ function Library:CreateNotification(Info)
 	end)()
 end
 
+if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
+	IsMobileDevice = true
+	Library:CreateNotification({
+		Title = "Ventures",
+		Content = "mobile device detected, ventures is a bit more limited on mobile",
+		Duration = 4
+	})
+else
+	IsMobileDevice = false
+end
+
+function Library:FastNotify(Counted, Content)
+	Library:CreateNotification({
+		Title = "Ventures - ".. Counted .. " ",
+		Content = Content,
+		Duration = 4,
+	})
+end
+
 --//Init, Window
 function Library:CreateWindow(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
 	local Bool = true
 	local Tabs = {}
 	local SettingAssync = {}
+	local ChangelogAssync = {}
 	local Keysystem = Info1.Keysystem
 
 	--// Init, Keysystem
-	if Keysystem and Keysystem.Key ~= nil and Rank == "Member" then
+	if Keysystem and Keysystem.Key ~= nil and Keysystem.Enabled == true and Rank == "Member" then
+		local CommonYOffset = -31
+		local IsFocused = false
+
 		local KeySystem = Instance.new("Frame")
 		local UICorner_1 = Instance.new("UICorner")
 		local UIStroke_1 = Instance.new("UIStroke")
@@ -453,7 +495,7 @@ function Library:CreateWindow(Info1)
 		Title_1.BackgroundTransparency = 1
 		Title_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		Title_1.BorderSizePixel = 0
-		Title_1.Position = UDim2.new(0.0137195662, 0,0.0734597147, -9)
+		Title_1.Position = UDim2.new(0.0137195662, 0,0.0734597147, -8)
 		Title_1.Size = UDim2.new(0, 228,0, 18)
 		Title_1.FontFace = FontType
 		Title_1.Text = "Ventures - Keysystem"
@@ -469,7 +511,7 @@ function Library:CreateWindow(Info1)
 		DiscordButton_1.BackgroundTransparency = 0.7099999785423279
 		DiscordButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		DiscordButton_1.BorderSizePixel = 0
-		DiscordButton_1.Position = UDim2.new(0.893795371, -27,0.234597161, -32)
+		DiscordButton_1.Position = UDim2.new(0.893795371, -28,0.234597161, CommonYOffset)
 		DiscordButton_1.Size = UDim2.new(0, 24,0, 24)
 		DiscordButton_1.Image = "http://www.roblox.com/asset/?id=84828491431270"
 
@@ -488,7 +530,7 @@ function Library:CreateWindow(Info1)
 		CloseButton_1.BackgroundTransparency = 0.7099999785423279
 		CloseButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		CloseButton_1.BorderSizePixel = 0
-		CloseButton_1.Position = UDim2.new(1.02471483, -27,0.234597161, -32)
+		CloseButton_1.Position = UDim2.new(1.02471483, -29,0.234597161, CommonYOffset)
 		CloseButton_1.Size = UDim2.new(0, 24,0, 24)
 		CloseButton_1.Image = "http://www.roblox.com/asset/?id=132261474823036"
 
@@ -507,9 +549,9 @@ function Library:CreateWindow(Info1)
 		MinimizeButton_1.BackgroundTransparency = 0.7099999785423279
 		MinimizeButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		MinimizeButton_1.BorderSizePixel = 0
-		MinimizeButton_1.Position = UDim2.new(0.967307925, -30,0.234597161, -32)
+		MinimizeButton_1.Position = UDim2.new(0.967307925, -32,0.234597161, CommonYOffset)
 		MinimizeButton_1.Size = UDim2.new(0, 24,0, 24)
-		MinimizeButton_1.Image = "http://www.roblox.com/asset/?id=132261474823036"
+		MinimizeButton_1.Image = GetIconFromLucide("minus")
 
 		UICorner_4.Parent = MinimizeButton_1
 		UICorner_4.CornerRadius = UDim.new(0,4)
@@ -541,7 +583,7 @@ function Library:CreateWindow(Info1)
 		UIStroke_5.Thickness = 1
 
 		UICorner_5.Parent = TextBox_1
-		UICorner_5.CornerRadius = UDim.new(0,10)
+		UICorner_5.CornerRadius = UDim.new(0,8)
 
 		UIPadding_1.Parent = TextBox_1
 		UIPadding_1.PaddingLeft = UDim.new(0,5)
@@ -602,19 +644,89 @@ function Library:CreateWindow(Info1)
 		end)
 
 		TextBox_1.Focused:Connect(function()
-			TweenService:Create(UIStroke_5, TweenInfo.new(0.3), {Color = Color3.fromRGB(118, 118, 118)}):Play()
+			TweenService:Create(UIStroke_5, TweenInfo.new(0.2), {Color = Color3.fromRGB(118, 118, 118)}):Play()
+			TweenService:Create(TextBox_1, TweenInfo.new(0.3), {PlaceholderColor3 = Color3.fromRGB(235, 235, 235)}):Play()
+			IsFocused = true
 		end)
 
 		TextBox_1.FocusLost:Connect(function()
-			TweenService:Create(UIStroke_5, TweenInfo.new(0.3), {Color = Color3.fromRGB(50,50,50)}):Play()
+			TweenService:Create(UIStroke_5, TweenInfo.new(0.2), {Color = Color3.fromRGB(50,50,50)}):Play()
+			TweenService:Create(TextBox_1, TweenInfo.new(0.3), {PlaceholderColor3 = Color3.fromRGB(178,178,178)}):Play()
+			IsFocused = false
+		end)
+
+		TextBox_1.MouseEnter:Connect(function()
+			local Stroke = TextBox_1:FindFirstChild("UIStroke")
+			if Stroke and not IsFocused then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(77, 77, 77)}):Play()
+				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {PlaceholderColor3 = Color3.fromRGB(211, 211, 211)}):Play()
+			end
+		end)
+
+		TextBox_1.MouseLeave:Connect(function()
+			local Stroke = TextBox_1:FindFirstChild("UIStroke")
+			if Stroke and not IsFocused then
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(49, 49, 49)}):Play()
+				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {PlaceholderColor3 = Color3.fromRGB(178,178,178)}):Play()
+			end
+		end)
+
+
+		DiscordButton_1.MouseButton1Click:Connect(function()
+			Library:FastNotify("Discord Invite Copied!", "Copied Discord Invite, Make Sure To Join The Server For Key Changes And Updates!")
+
+			setclipboard("Discord.gg/v3n")
 		end)
 
 		CloseButton_1.MouseButton1Click:Connect(function()
+			for _, v in next, KeySystem:GetDescendants() do
+				if v:IsA("UIStroke") then
+					TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 1}):Play()
+				elseif v:IsA("TextLabel") and v.Name ~= "Title" then
+					TweenService:Create(v, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+				end
+			end
+
+			TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0, 0, 0, 0)}):Play()
+			TweenService:Create(KeySystem, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+
+			TweenService:Create(TextBox_1, TweenInfo.new(0.1), {
+				BackgroundTransparency = 1,
+				TextTransparency = 1
+			}):Play()
+
+			TweenService:Create(MinimizeButton_1, TweenInfo.new(0.1), {
+				BackgroundTransparency = 1,
+				ImageTransparency = 1
+			}):Play()
+
+			TweenService:Create(CloseButton_1, TweenInfo.new(0.1), {
+				BackgroundTransparency = 1,
+				ImageTransparency = 1
+			}):Play()
+
+			TweenService:Create(DiscordButton_1, TweenInfo.new(0.1), {
+				BackgroundTransparency = 1,
+				ImageTransparency = 1
+			}):Play()
+
+			TweenService:Create(Title_1, TweenInfo.new(0.1), {
+				BackgroundTransparency = 1,
+				TextTransparency = 1
+			}):Play()
+
+			TweenService:Create(Shadow, TweenInfo.new(0.1), {ImageTransparency = 1}):Play()
+
+			coroutine.wrap(function()
+				task.wait(0.1)
+				TextBox_1.Visible = false
+			end)()
+
+			task.wait(1)
 			KeySystem:Destroy()
 			Ventures:Destroy()
 		end)
 
-		--//yes skidded from the window drag 
 		local IsDragging = false
 		local Input
 		local Start, CurrentPosition, TargetPosition = nil 
@@ -674,6 +786,7 @@ function Library:CreateWindow(Info1)
 			IsMinimized = not IsMinimized
 
 			if IsMinimized then
+				--//Minimize On
 				for _, v in next, KeySystem:GetDescendants() do
 					if v:IsA("UIStroke") and not (v.Parent.Name == "CloseButton" or v.Parent.Name == "MinimizeButton" or v.Parent.Name == "DiscordButton" or v.Parent == KeySystem) then
 						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 1}):Play()
@@ -684,8 +797,8 @@ function Library:CreateWindow(Info1)
 
 				TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0, 526, 0, 37)}):Play()
 				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.018, 0, 0.479, -9)}):Play()
-				
-				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.78}):Play()
+
+				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.85}):Play()
 
 				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
 					BackgroundTransparency = 1,
@@ -693,15 +806,18 @@ function Library:CreateWindow(Info1)
 				}):Play()
 
 				coroutine.wrap(function()
-					task.wait(0.3)
+					task.wait(0.1)
 					TextBox_1.Visible = false
 				end)()
 
-				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.024, -31, 0.234, -2.5)}):Play()
-				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.893, -18, 0.234, -2.5)}):Play()
-				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -29, 0.234, -2.5)}):Play()
+
+
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.024, -31, 0.234, -3)}):Play()
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.893, -18, 0.234, -3)}):Play()
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -29, 0.234, -3)}):Play()
 
 			else
+				--//Minimize Off
 				for _, v in next, KeySystem:GetDescendants() do
 					if v:IsA("UIStroke") then
 						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 0}):Play()
@@ -711,10 +827,10 @@ function Library:CreateWindow(Info1)
 				end
 
 				TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0,432,0,155)}):Play()
-				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.0137195662, 0,0.0734597147, -9)}):Play()
+				TweenService:Create(Title_1, TweenInfo.new(0.3), {Position = UDim2.new(0.0137195662, 0,0.0734597147, -8)}):Play()
 
 				TextBox_1.Visible = true
-				
+
 				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.6}):Play()
 
 				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
@@ -722,9 +838,9 @@ function Library:CreateWindow(Info1)
 					TextTransparency = 0
 				}):Play()
 
-				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.02471483, -27,0.234597161, -32)}):Play()--{1.025, -27},{0.235, -32}
-				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.893795371, -27,0.234597161, -32)}):Play()--{0.894, -27},{0.235, -32}
-				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967307925, -30,0.234597161, -32)}):Play()--{0.967, -30},{0.235, -32}
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.02471483, -29,0.234597161, CommonYOffset)}):Play()--{1.025, -27},{0.235, -32}
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.893795371, -28,0.234597161, CommonYOffset)}):Play()--{0.894, -27},{0.235, -32}
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967307925, -32,0.234597161, CommonYOffset)}):Play()--{0.967, -30},{0.235, -32}
 			end
 		end)
 
@@ -743,32 +859,32 @@ function Library:CreateWindow(Info1)
 				TweenService:Create(KeySystem, TweenInfo.new(0.3), {Size = UDim2.new(0, 0, 0, 0)}):Play()
 				TweenService:Create(KeySystem, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 
-				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {
+				TweenService:Create(TextBox_1, TweenInfo.new(0.1), {
 					BackgroundTransparency = 1,
 					TextTransparency = 1
 				}):Play()
 
-				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.1), {
 					BackgroundTransparency = 1,
 					ImageTransparency = 1
 				}):Play()
 
-				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.1), {
 					BackgroundTransparency = 1,
 					ImageTransparency = 1
 				}):Play()
 
-				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.1), {
 					BackgroundTransparency = 1,
 					ImageTransparency = 1
 				}):Play()
 
-				TweenService:Create(Title_1, TweenInfo.new(0.3), {
+				TweenService:Create(Title_1, TweenInfo.new(0.1), {
 					BackgroundTransparency = 1,
 					TextTransparency = 1
 				}):Play()
-				
-				TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
+
+				TweenService:Create(Shadow, TweenInfo.new(0.1), {ImageTransparency = 1}):Play()
 
 				coroutine.wrap(function()
 					task.wait(0.3)
@@ -879,7 +995,7 @@ function Library:CreateWindow(Info1)
 	TopBarLine_1.BackgroundTransparency = 0
 	TopBarLine_1.BorderSizePixel = 0
 	TopBarLine_1.Position = UDim2.new(0, 0,1, 0)
-	TopBarLine_1.Size = UDim2.new(1, 0,0.04, 0)
+	TopBarLine_1.Size = UDim2.new(1, 0,0.03, 0)
 
 	CloseButton_1.Name = "CloseButton"
 	CloseButton_1.Parent = TopBar_1
@@ -1026,7 +1142,7 @@ function Library:CreateWindow(Info1)
 	UserProfile_1.BorderSizePixel = 0
 	UserProfile_1.Position = UDim2.new(0.0137195121, 3,0.828260899, 0)
 	UserProfile_1.Size = UDim2.new(0, 160,0, 71)
-	
+
 	UICorner_27.Parent = UserProfile_1
 	UICorner_27.CornerRadius = UDim.new(0,10)
 
@@ -1228,6 +1344,12 @@ function Library:CreateWindow(Info1)
 		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(74, 74, 74)}):Play()
 	end)
 
+	DiscordButton_1.MouseButton1Click:Connect(function()
+		Library:FastNotify("Discord Invite Copied!", "Copied Discord Invite, Make Sure To Join Us For More Updates!")
+
+		setclipboard("Discord.gg/v3n")
+	end)
+
 
 	MinimizeButton_1.MouseButton1Click:Connect(function()
 		Bool = not Bool
@@ -1348,6 +1470,7 @@ function Library:CreateWindow(Info1)
 		TabContainer_1.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
 		TabContainer_1.VerticalScrollBarInset = Enum.ScrollBarInset.None
 		TabContainer_1.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
+		TabContainer_1.AutomaticCanvasSize = Enum.AutomaticSize.Y 
 
 		ContainerName_1.Name = "ContainerName"
 		ContainerName_1.Parent = TabContainer_1
@@ -1371,52 +1494,6 @@ function Library:CreateWindow(Info1)
 		UIPadding_1.Parent = TabContainer_1
 		UIPadding_1.PaddingLeft = UDim.new(0, 10)
 		UIPadding_1.PaddingTop = UDim.new(0, 5)
-
-		local function UpdateCanvas()
-			local X, Y = 0, 0
-			local Last = nil
-			local layout = TabContainer_1:FindFirstChildOfClass("UIListLayout")
-
-			if layout then
-				Y = layout.AbsoluteContentSize.Y
-			else
-				for _, child in pairs(TabContainer_1:GetChildren()) do
-					if child:IsA("GuiObject") then
-						local childSize = child.AbsoluteSize
-						local childPos = child.AbsolutePosition - TabContainer_1.AbsolutePosition
-
-						local Right = childPos.X + childSize.X
-						local Bottom = childPos.Y + childSize.Y
-
-						X = math.max(X, Right)  
-						Y = math.max(Y, Bottom)
-
-						local DropdownHolder = child:FindFirstChild("DropdownHolder")
-						if DropdownHolder then
-							local ValueHolder = DropdownHolder:FindFirstChild("ValuesHolder")
-							if ValueHolder then
-								Y = Y + ValueHolder.AbsoluteSize.Y
-							end
-						end
-
-						Last = child
-					end
-				end
-			end
-
-			local SizeX = TabContainer_1.AbsoluteSize.X
-			local SizeY = TabContainer_1.AbsoluteSize.Y
-
-			local newCanvasSizeX = math.max(X, SizeX)
-			local newCanvasSizeY = math.max(Y + 100, SizeY)
-
-			TweenService:Create(TabContainer_1, TweenInfo.new(0.2), {
-				CanvasSize = UDim2.new(0, newCanvasSizeX, 0, newCanvasSizeY)
-			}):Play()
-		end
-
-		TabContainer_1.ChildAdded:Connect(UpdateCanvas)
-		TabContainer_1.ChildRemoved:Connect(UpdateCanvas)
 
 		local function GetFirstTab()
 			if #SideBar_1:GetChildren() > 1 then
@@ -1457,6 +1534,7 @@ function Library:CreateWindow(Info1)
 			SelectedTab = GetFirstTab()
 			local Container = GetContainer(SelectedTab.Name)
 			SelectedTab.BackgroundColor3 = Color3.fromRGB(65, 65, 65)
+			SelectedTab.BackgroundTransparency = 0.45
 
 			local Gradient, Stroke = SelectedTab:FindFirstChild("UIGradient"), SelectedTab:FindFirstChild("UIStroke")
 
@@ -1937,6 +2015,7 @@ function Library:CreateWindow(Info1)
 
 					Value = math.floor(((MinValue + ((MaxValue - MinValue) * percentv)) / Increment) + 0.5) * Increment
 					ValueInput_1.Text = string.format("%." .. tostring(math.log10(1 / Increment)) .. "f", Value)
+
 					if IsExecutionEnv then
 						SaveFlag(Sliders, Flag, Value)
 					end
@@ -1982,11 +2061,13 @@ function Library:CreateWindow(Info1)
 				end,
 			}
 
-			local Flags = GetFlags(Sliders)
+			if IsExecutionEnv then
+				local Flags = GetFlags(Sliders)
 
-			for i, v in next, Flags do
-				if i == Flag and v ~= nil then
-					SelfActions:SetValue(v)
+				for i, v in next, Flags do
+					if i == Flag and v ~= nil then
+						SelfActions:SetValue(v)
+					end
 				end
 			end
 
@@ -2140,7 +2221,9 @@ function Library:CreateWindow(Info1)
 							if Number then
 								coroutine.wrap(function()
 									local Success, Error = pcall(function() Callback(Number) end)
-									SaveFlag(Inputs, Flag, Number)
+									if IsExecutionEnv then
+										SaveFlag(Inputs, Flag, Number)
+									end
 									if not Success then
 										Library:FastNotify("Input Error", tostring(Error))
 									end
@@ -2151,7 +2234,9 @@ function Library:CreateWindow(Info1)
 						else
 							coroutine.wrap(function()
 								local Success, Error = pcall(function() Callback(Input_1.Text) end)
-								SaveFlag(Inputs, Flag, Input_1.Text)
+								if IsExecutionEnv then
+									SaveFlag(Inputs, Flag, Input_1.Text)
+								end
 								if not Success then
 									Library:FastNotify("Input Error", tostring(Error))
 								end
@@ -2177,11 +2262,13 @@ function Library:CreateWindow(Info1)
 				Library:FastNotify("Input Error", "Use a function for callback!")
 			end
 
-			local Flags = GetFlags(Inputs)
+			if IsExecutionEnv then
+				local Flags = GetFlags(Inputs)
 
-			for i, v in next, Flags do
-				if i == Flag and v ~= nil then
-					SelfActions:SetValue(v)
+				for i, v in next, Flags do
+					if i == Flag and v ~= nil then
+						SelfActions:SetValue(v)
+					end
 				end
 			end
 
@@ -2328,7 +2415,11 @@ function Library:CreateWindow(Info1)
 				elseif input.KeyCode == CurrentKeybind and not IsSelecting then
 					coroutine.wrap(function()
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
-						SaveFlag(Keybinds, Flag, CurrentKeybind)
+
+						if IsExecutionEnv then
+							SaveFlag(Keybinds, Flag, CurrentKeybind)
+						end
+
 						if not Success then
 							Library:FastNotify("Keybind Error", tostring(Error))
 						end
@@ -2336,7 +2427,11 @@ function Library:CreateWindow(Info1)
 				elseif input.UserInputType == CurrentKeybind and not IsSelecting then
 					coroutine.wrap(function()
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
-						SaveFlag(Keybinds, Flag, CurrentKeybind)
+
+						if IsExecutionEnv then
+							SaveFlag(Keybinds, Flag, CurrentKeybind)
+						end
+
 						if not Success then
 							Library:FastNotify("Keybind Error", tostring(Error))
 						end
@@ -2360,18 +2455,23 @@ function Library:CreateWindow(Info1)
 							Library:FastNotify("Keybind Error", tostring(Error))
 						end
 					end
-					SaveFlag(Keybinds, Flag, CurrentKeybind)
+
+					if IsExecutionEnv then
+						SaveFlag(Keybinds, Flag, CurrentKeybind)
+					end
+
 				end
 			}
 
-			local Flags = GetFlags(Keybinds)
+			if IsExecutionEnv then
+				local Flags = GetFlags(Keybinds)
 
-			for i, v in next, Flags do
-				if i == Flag and v ~= nil then
-					SelfActions:SetKeybind(v)
+				for i, v in next, Flags do
+					if i == Flag and v ~= nil then
+						SelfActions:SetKeybind(v)
+					end
 				end
 			end
-
 			return SelfActions
 		end
 
@@ -2740,7 +2840,10 @@ function Library:CreateWindow(Info1)
 					Value_1.MouseButton1Click:Connect(function()
 						DropdownButton_1.Text = v
 
-						SaveFlag(DropdownsP, Flag, v)
+						if IsExecutionEnv then
+							SaveFlag(DropdownsP, Flag, v)
+						end
+
 						coroutine.wrap(function()
 							local Success, Error = pcall(function() Callback(v) end)
 							if not Success then
@@ -2796,11 +2899,13 @@ function Library:CreateWindow(Info1)
 				end,
 			}
 
-			local Flags = GetFlags(DropdownsP)
+			if IsExecutionEnv then
+				local Flags = GetFlags(DropdownsP)
 
-			for i, v in next, Flags do
-				if i == Flag and v ~= nil then
-					SelfActions:SetValue(v)
+				for i, v in next, Flags do
+					if i == Flag and v ~= nil then
+						SelfActions:SetValue(v)
+					end
 				end
 			end
 
@@ -3030,8 +3135,6 @@ function Library:CreateWindow(Info1)
 					TweenService:Create(DarknessFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 					TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
 					TweenService:Create(WhiteOverlay_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
-
-					UpdateCanvas()
 				end
 				task.wait(0.3)
 				Debounce3 = false
@@ -3056,7 +3159,11 @@ function Library:CreateWindow(Info1)
 				DarknessFrame.BackgroundColor3 = DefaultColor
 
 				local Success, Error = pcall(function() Callback(DefaultColor) end)
-				SaveFlag(Colors, Flag, DefaultColor)
+
+				if IsExecutionEnv then
+					SaveFlag(Colors, Flag, DefaultColor)
+				end
+
 				if not Success then
 					Library:FastNotify("ColorPicker Error: ", tostring(Error))
 				end
@@ -3073,7 +3180,11 @@ function Library:CreateWindow(Info1)
 				DarknessFrame.BackgroundColor3 = NewColor
 
 				local Success, Error = pcall(function() Callback(NewColor) end)
-				SaveFlag(Colors, Flag, NewColor)
+
+				if IsExecutionEnv then
+					SaveFlag(Colors, Flag, NewColor)
+				end
+
 				if not Success then
 					Library:FastNotify("ColorPicker Error: ", tostring(Error))
 				end
@@ -3140,16 +3251,215 @@ function Library:CreateWindow(Info1)
 				end,
 			}
 
-			local Flags = GetFlags(Colors)
+			if IsExecutionEnv then
+				local Flags = GetFlags(Colors)
 
-			for i, v in next, Flags do
-				if i == Flag and v ~= nil then
-					SelfActions:SetColor(Color3.fromRGB(v.R * 255, v.G * 255, v.B * 255))
+				for i, v in next, Flags do
+					if i == Flag and v ~= nil then
+						SelfActions:SetColor(Color3.fromRGB(v.R * 255, v.G * 255, v.B * 255))
+					end
 				end
 			end
 
 			return SelfActions
 		end
+		function Elements:CreateParagraph(Tablep)
+			local Headers = {}
+
+			local function UpdateSize(Frame, XSize, Increment, Normalized)
+				local Increment2 = Increment or 5
+				local TotalHeight = Normalized or 10
+
+				for _, v in ipairs(Frame:GetChildren()) do
+					if v:IsA("GuiObject") then
+						TotalHeight = TotalHeight + v.AbsoluteSize.Y + 5
+					end
+				end
+
+
+				TotalHeight = TotalHeight + Increment2
+				Frame.Size = UDim2.new(0, XSize, 0, TotalHeight)
+			end
+
+
+			local Paragraph = Instance.new("Frame")
+			local UICorner_1 = Instance.new("UICorner")
+			local UIStroke_1 = Instance.new("UIStroke")
+			local UIGradient_1 = Instance.new("UIGradient")
+			local ParagraphTitle_1 = Instance.new("TextLabel")
+			local UIGradient_2 = Instance.new("UIGradient")
+			local UiListLayout_3 = Instance.new("UIListLayout")
+			local UiPadding_3 = Instance.new("UIPadding")
+
+			Paragraph.Name = "Paragraph"
+			Paragraph.Parent = TabContainer_1
+			Paragraph.BackgroundColor3 = Color3.fromRGB(66, 66, 66)
+			Paragraph.BackgroundTransparency = 0.6
+			Paragraph.BorderSizePixel = 0
+			Paragraph.Position = UDim2.new(0, 0, 0.01, 0)
+			Paragraph.Size = UDim2.new(0, 453, 0, 0)
+			Paragraph.AutomaticSize = Enum.AutomaticSize.Y
+
+			UiPadding_3.Parent = Paragraph
+			UiPadding_3.PaddingBottom = UDim.new(0, 8)
+			UiPadding_3.PaddingTop = UDim.new(0, 2)
+
+			UiListLayout_3.Parent = Paragraph
+			UiListLayout_3.Padding = UDim.new(0, 10)
+			UiListLayout_3.HorizontalAlignment = Enum.HorizontalAlignment.Center
+			UiListLayout_3.SortOrder = Enum.SortOrder.LayoutOrder
+
+			UICorner_1.Parent = Paragraph
+			UICorner_1.CornerRadius = UDim.new(0, 10)
+
+			UIStroke_1.Parent = Paragraph
+			UIStroke_1.Color = Color3.fromRGB(74, 74, 74)
+			UIStroke_1.Thickness = 1
+
+			UIGradient_1.Parent = UIStroke_1
+			UIGradient_1.Transparency = NumberSequence.new{
+				NumberSequenceKeypoint.new(0, 0), 
+				NumberSequenceKeypoint.new(1, 0.75)
+			}
+
+			ParagraphTitle_1.Name = "ParagraphTitle"
+			ParagraphTitle_1.Parent = Paragraph
+			ParagraphTitle_1.BackgroundTransparency = 1
+			ParagraphTitle_1.Size = UDim2.new(0, 442, 0, 18)
+			ParagraphTitle_1.FontFace = FontType
+			ParagraphTitle_1.Text = Tablep.Name or Tablep.Title or "Paragraph"
+			ParagraphTitle_1.TextColor3 = Color3.fromRGB(255, 255, 255)
+			ParagraphTitle_1.TextSize = 14
+			ParagraphTitle_1.TextXAlignment = Enum.TextXAlignment.Left
+
+			UIGradient_2.Parent = Paragraph
+			UIGradient_2.Color = ColorSequence.new{
+				ColorSequenceKeypoint.new(0, Color3.fromRGB(213, 213, 213)), 
+				ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 16, 16))
+			}
+			UIGradient_2.Transparency = NumberSequence.new{
+				NumberSequenceKeypoint.new(0, 0.33), 
+				NumberSequenceKeypoint.new(1, 0.79)
+			}
+
+			function Headers:AssignHeader(Tableh)
+				local Header = Instance.new("Frame")
+				local HeaderTitle = Instance.new("TextLabel")
+				local HeaderContent = Instance.new("TextLabel")
+				local UICorner_2 = Instance.new("UICorner")
+				local UIPadding_1 = Instance.new("UIPadding")
+				local UIStroke_2 = Instance.new("UIStroke")
+				local ManualList = Instance.new("UIListLayout")
+				local ManualPadding = Instance.new("UIPadding")
+
+				Header.Name = "Header"
+				Header.Parent = Paragraph
+				Header.BackgroundColor3 = Tableh.AccentColor or Color3.fromRGB(58, 58, 58)
+				Header.BackgroundTransparency = Tableh.AccentTransparency or 0.8
+				Header.BorderSizePixel = 0
+				Header.Size = UDim2.new(0, 435, 0, 0)
+
+				if Tableh.UseShadowGrandient.Enabled then
+					local Grandient = Instance.new("UIGradient")
+					Grandient.Parent = Header
+					Grandient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)), ColorSequenceKeypoint.new(1, Color3.fromRGB(220, 220, 207))}
+					Grandient.Rotation = 90
+				end
+
+				Header.ChildAdded:Connect(function()
+					task.spawn(function()
+						wait(0.05)
+						UpdateSize(Header, 435, 3, 5)
+					end)
+				end)
+
+				Header.ChildRemoved:Connect(function()
+					task.spawn(function()
+						wait(0.05)
+						UpdateSize(Header, 435, 3, 5)
+					end)
+				end)
+
+				UpdateSize(Header, 435, 3, 5)
+
+				ManualPadding.Parent = Header
+				ManualPadding.PaddingBottom = UDim.new(0, 8)
+				ManualPadding.PaddingTop = UDim.new(0, 2)
+
+				HeaderTitle.Name = "HeaderTitle"
+				HeaderTitle.Parent = Header
+				HeaderTitle.BackgroundTransparency = 1
+				HeaderTitle.Size = UDim2.new(0, 436, 0, 18)
+				HeaderTitle.Position = UDim2.new(0, 6, 0, 0)
+				HeaderTitle.FontFace = FontType
+				HeaderTitle.Text = Tableh.Title or "Header"
+				HeaderTitle.TextColor3 = Tableh.TitleAccentColor or Tableh.NameAccentColor or Color3.fromRGB(255, 255, 255)
+				HeaderTitle.TextSize = 14
+				HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+				HeaderContent.Name = "HeaderContent"
+				HeaderContent.Parent = Header
+				HeaderContent.BackgroundTransparency = 1
+				HeaderContent.Position = UDim2.new(0, 6, 0.15, 0)
+				HeaderContent.Size = UDim2.new(0, 421, 0, 42)
+				HeaderContent.FontFace = FontType
+				HeaderContent.Text = Tableh.Content or "Content"
+				HeaderContent.TextColor3 = Tableh.ContentAccentColor or Color3.fromRGB(227, 227, 227)
+				HeaderContent.TextSize = 14
+				HeaderContent.TextWrapped = true
+				HeaderContent.TextXAlignment = Enum.TextXAlignment.Left
+				HeaderContent.TextYAlignment = Enum.TextYAlignment.Top
+
+				local textSize = TextService:GetTextSize(HeaderContent.Text, HeaderContent.TextSize, Enum.Font.SourceSans, Vector2.new(HeaderContent.Size.X.Offset, math.huge))
+				HeaderContent.Size = UDim2.new(0, 421, 0, textSize.Y - 10)
+
+				UICorner_2.Parent = Header
+				UICorner_2.CornerRadius = UDim.new(0, 10)
+
+				UIPadding_1.Parent = Header
+				UIPadding_1.PaddingLeft = UDim.new(0, 7)
+				UIPadding_1.PaddingTop = UDim.new(0, 3)
+
+				UIStroke_2.Parent = Header
+				UIStroke_2.Color = Tableh.StrokeAccentColor or Color3.fromRGB(74, 74, 74)
+				UIStroke_2.Thickness = 1
+
+				if Tableh.CustomImage then
+					local ImageButton = Instance.new("ImageButton")
+					local UICorner_5 = Instance.new("UICorner")
+					local UIStroke_5 = Instance.new("UIStroke")
+
+					ImageButton.Parent = Header
+					ImageButton.BackgroundColor3 = Tableh.CustomImage.BackgroundColor or Color3.fromRGB(255, 255, 255)
+					ImageButton.BackgroundTransparency = Tableh.CustomImage.BackgroundTransparency or 0
+					ImageButton.Size = UDim2.new(0, 57, 0, 57)
+					ImageButton.Position = UDim2.new(0.85, 0, 0, 8)
+					ImageButton.Image = Tableh.CustomImage.Icon or ""
+
+					UICorner_5.Parent = ImageButton
+					UICorner_5.CornerRadius = UDim.new(0, 10)
+
+					UIStroke_5.Parent = ImageButton
+					UIStroke_5.Enabled = Tableh.CustomImage.Enabled or false
+					UIStroke_5.Color = Tableh.CustomImage.Stroke and Tableh.CustomImage.Stroke.Color or Color3.fromRGB(255, 255, 255)
+					UIStroke_5.Thickness = Tableh.CustomImage.Stroke and Tableh.CustomImage.Stroke.Thickness or 1
+					UIStroke_5.Transparency = Tableh.CustomImage.Stroke and Tableh.CustomImage.Stroke.Transparency or 0
+
+					if Tableh.CustomImage.Callback and type(Tableh.CustomImage.Callback) == "function" then
+						ImageButton.MouseButton1Click:Connect(Tableh.CustomImage.Callback)
+					end
+				end
+			end
+
+			for i, v in pairs(Tablep) do
+				if type(v) == "table" then
+					Headers:AssignHeader(v)
+				end
+			end
+
+			return Paragraph
+		end
+
 		return Elements
 	end
 
@@ -3224,9 +3534,16 @@ function Library:CreateWindow(Info1)
 			end,
 		})
 	end
+
+	function Library:ConnectChangelogService(Url)
+		if type(Url) == "string" and IsExecutionEnv then
+			loadstring(game:HttpGet(Url))()
+		end
+	end
+	
 	return Tabs, SettingAssync
 end
 
 Library:SetAutoButtonColor(false)
-
+--Library:ConnectChangelogService("https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/ChangelogsAssync/LibraryChangelogs.lua")
 return Library
