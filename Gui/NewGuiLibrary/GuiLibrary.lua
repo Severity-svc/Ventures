@@ -436,6 +436,226 @@ function Library:FastNotify(Counted, Content)
 	})
 end
 
+function Library:CreateStatUi(Tables)
+	local Elements = {}
+
+	local Stats = Instance.new("Frame")
+	local UICorner_1 = Instance.new("UICorner")
+	local UIStroke_1 = Instance.new("UIStroke")
+	local Shadow_1 = Instance.new("Frame")
+	local Image_1 = Instance.new("ImageLabel")
+	local Title_1 = Instance.new("TextLabel")
+	local Holder_1 = Instance.new("ScrollingFrame")
+	local UIListLayout_1 = Instance.new("UIListLayout")
+	local UIPadding_1 = Instance.new("UIPadding")
+
+	Stats.Name = "Stats"
+	Stats.Parent = Ventures
+	Stats.BackgroundColor3 = Color3.fromRGB(17,17,17)
+	Stats.BorderColor3 = Color3.fromRGB(0,0,0)
+	Stats.BorderSizePixel = 0
+	Stats.Position = UDim2.new(0.00813516881, 0,0.351966292, 0)
+	Stats.Size = UDim2.new(0, 204,0, 258)
+	Stats.ClipsDescendants = true
+
+	UICorner_1.Parent = Stats
+	UICorner_1.CornerRadius = UDim.new(0,10)
+
+	UIStroke_1.Parent = Stats
+	UIStroke_1.Color = Color3.fromRGB(49,49,49)
+	UIStroke_1.Thickness = 1
+
+	Shadow_1.Name = "Shadow"
+	Shadow_1.Parent = Stats
+	Shadow_1.AnchorPoint = Vector2.new(0.5, 0.5)
+	Shadow_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Shadow_1.BackgroundTransparency = 1
+	Shadow_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Shadow_1.BorderSizePixel = 0
+	Shadow_1.Position = UDim2.new(0.5, 0,0.5, 0)
+	Shadow_1.Size = UDim2.new(1, 35,1, 35)
+	Shadow_1.ZIndex = 0
+
+	Image_1.Name = "Image"
+	Image_1.Parent = Shadow_1
+	Image_1.AnchorPoint = Vector2.new(0.5, 0.5)
+	Image_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Image_1.BackgroundTransparency = 1
+	Image_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Image_1.BorderSizePixel = 0
+	Image_1.Position = UDim2.new(0.5, 0,0.5, 0)
+	Image_1.Size = UDim2.new(1.74000001, 0,1.39999998, 0)
+	Image_1.Image = "rbxassetid://5587865193"
+	Image_1.ImageColor3 = Color3.fromRGB(20,20,20)
+	Image_1.ImageTransparency = 0.47999998927116394
+
+	Title_1.Name = "Title"
+	Title_1.Parent = Stats
+	Title_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Title_1.BackgroundTransparency = 1
+	Title_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Title_1.BorderSizePixel = 0
+	Title_1.Position = UDim2.new(0.155876458, 0,0.0618318059, -9)
+	Title_1.Size = UDim2.new(0, 140,0, 18)
+	Title_1.FontFace = FontType
+	Title_1.Text = "Game Stats"
+	Title_1.TextColor3 = Color3.fromRGB(255,255,255)
+	Title_1.TextSize = 14
+
+	Holder_1.Name = "Holder"
+	Holder_1.Parent = Stats
+	Holder_1.Active = true
+	Holder_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Holder_1.BackgroundTransparency = 1
+	Holder_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Holder_1.BorderSizePixel = 0
+	Holder_1.Position = UDim2.new(0.0441176482, 0,0.13565892, 0)
+	Holder_1.Size = UDim2.new(0, 185,0, 213)
+	Holder_1.Visible = true
+	Holder_1.ClipsDescendants = true
+	Holder_1.AutomaticCanvasSize = Enum.AutomaticSize.Y
+	Holder_1.BottomImage = "rbxasset://textures/ui/Scroll/scroll-bottom.png"
+	Holder_1.CanvasPosition = Vector2.new(0, 0)
+	Holder_1.CanvasSize = UDim2.new(0, 0,0, 0)
+	Holder_1.ElasticBehavior = Enum.ElasticBehavior.WhenScrollable
+	Holder_1.HorizontalScrollBarInset = Enum.ScrollBarInset.None
+	Holder_1.MidImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+	Holder_1.ScrollBarImageColor3 = Color3.fromRGB(0,0,0)
+	Holder_1.ScrollBarImageTransparency = 0
+	Holder_1.ScrollBarThickness = 0
+	Holder_1.ScrollingDirection = Enum.ScrollingDirection.XY
+	Holder_1.TopImage = "rbxasset://textures/ui/Scroll/scroll-top.png"
+	Holder_1.VerticalScrollBarInset = Enum.ScrollBarInset.None
+	Holder_1.VerticalScrollBarPosition = Enum.VerticalScrollBarPosition.Right
+
+	UIListLayout_1.Parent = Holder_1
+	UIListLayout_1.Padding = UDim.new(0,5)
+	UIListLayout_1.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	UIListLayout_1.SortOrder = Enum.SortOrder.LayoutOrder
+
+	UIPadding_1.Parent = Holder_1
+	UIPadding_1.PaddingTop = UDim.new(0,5)
+	
+	local IsDragging = false
+	local Input
+	local Start, CurrentPosition, TargetPosition = nil 
+	local Speed = GlobalValues.GlobalGuiDragSpeed
+
+	local function UpdateDrag(input)
+		local Delta = input.Position - Start
+		TargetPosition = UDim2.new(
+			CurrentPosition.X.Scale,
+			CurrentPosition.X.Offset + Delta.X,
+			CurrentPosition.Y.Scale,
+			CurrentPosition.Y.Offset + Delta.Y
+		)
+	end
+
+	RunService.Heartbeat:Connect(function()
+		if TargetPosition and IsDragging and not IsInColorFrameDrag then
+			Stats.Position = UDim2.new(
+				Stats.Position.X.Scale,
+				Stats.Position.X.Offset + (TargetPosition.X.Offset - Stats.Position.X.Offset) * Speed,
+				Stats.Position.Y.Scale,
+				Stats.Position.Y.Offset + (TargetPosition.Y.Offset - Stats.Position.Y.Offset) * Speed
+			)
+		end
+	end)
+
+	Stats.InputBegan:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			IsDragging = true
+			Start = input.Position
+			CurrentPosition = Stats.Position
+			IsDragging = CurrentPosition
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					IsDragging = false
+				end
+			end)
+		end
+	end)
+
+	Stats.InputChanged:Connect(function(input)
+		if IsDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+			Input = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == Input and IsDragging then
+			UpdateDrag(input)
+		end
+	end)
+	
+	function Elements:SetVisibility(Bool)
+		Stats.Visible = Bool
+	end
+
+	function Elements:CreateStat(TableS2)
+		local Actions = {}
+		local Stat_1 = Instance.new("Frame")
+		local UICorner_2 = Instance.new("UICorner")
+		local UIStroke_2 = Instance.new("UIStroke")
+		local ValueName = Instance.new("TextLabel")
+		local StatName_2 = Instance.new("TextLabel")
+
+		Stat_1.Name = "Stat"
+		Stat_1.Parent = Holder_1
+		Stat_1.BackgroundColor3 = TableS2.BackgroundColor or Color3.fromRGB(16,39,37)
+		Stat_1.BackgroundTransparency = TableS2.BackgroundTransparency or 0.45
+		Stat_1.BorderColor3 = Color3.fromRGB(0,0,0)
+		Stat_1.BorderSizePixel = 0
+		Stat_1.Size = UDim2.new(0, 182,0, 25)
+
+		UICorner_2.Parent = Stat_1
+		UICorner_2.CornerRadius = TableS2.CornerRadius or UDim.new(0,10)
+
+		UIStroke_2.Parent = Stat_1
+		UIStroke_2.Color = TableS2.StrokeColor or Color3.fromRGB(37,91,86)
+		UIStroke_2.Transparency = TableS2.StrokeTransparency or 0
+		UIStroke_2.Thickness = 1
+
+		StatName_2.Name = "StatName"
+		StatName_2.Parent = Stat_1
+		StatName_2.AnchorPoint = Vector2.new(0, 0.5)
+		StatName_2.BackgroundColor3 = Color3.fromRGB(255,255,255)
+		StatName_2.BackgroundTransparency = 1
+		StatName_2.BorderColor3 = Color3.fromRGB(0,0,0)
+		StatName_2.BorderSizePixel = 0
+		StatName_2.Position = UDim2.new(0.0160659961, 3,0.5, 0)
+		StatName_2.Size = UDim2.new(0, 47,0, 18)
+		StatName_2.FontFace = FontType
+		StatName_2.Text = TableS2.StatName or ""
+		StatName_2.TextColor3 = Color3.fromRGB(165,255,214)
+		StatName_2.TextSize = 14
+		StatName_2.TextXAlignment = Enum.TextXAlignment.Left
+		
+		ValueName.Name = "StatName"
+		ValueName.Parent = Stat_1
+		ValueName.AnchorPoint = Vector2.new(0, 0.5)
+		ValueName.BackgroundColor3 = Color3.fromRGB(255,255,255)
+		ValueName.BackgroundTransparency = 1
+		ValueName.BorderColor3 = Color3.fromRGB(0,0,0)
+		ValueName.BorderSizePixel = 0
+		ValueName.Position = TableS2.ValuePos or UDim2.new(0.582000017, 2,0.5, 0)
+		ValueName.Size = UDim2.new(0, 47,0, 18)
+		ValueName.FontFace = FontType
+		ValueName.Text = TableS2.Value or ""
+		ValueName.TextColor3 = Color3.fromRGB(21,255,189)
+		ValueName.TextSize = 14
+		ValueName.TextXAlignment = Enum.TextXAlignment.Left
+		
+		function Actions:ChangeStatValue(Value)
+			ValueName.Text = tostring(Value)
+		end
+
+		return Actions
+	end
+
+	return Elements
+end
 --//Init, Window
 function Library:CreateWindow(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
