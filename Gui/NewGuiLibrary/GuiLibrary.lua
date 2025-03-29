@@ -660,7 +660,7 @@ function Library:CreateStatUi(Tables)
 			Glow.Size = UDim2.new(0.472527474, 20,2.24000001, 10)
 			Glow.ZIndex = 0
 			Glow.Image = "rbxassetid://8992230677"
-			Glow.ImageTransparency = or TableS2.GlowImageTransparency or 0.45
+			Glow.ImageTransparency = TableS2.GlowImageTransparency or 0.45
 			Glow.ImageColor3 = TableS2.GlowImageColor or Color3.fromRGB(22,54,51)
 			
 			while true do
