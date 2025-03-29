@@ -651,6 +651,21 @@ function Library:CreateStatUi(Tables)
 			ValueName.Text = tostring(Value)
 		end
 
+		function Actions:ChangeVisibility(Bool)
+			if Bool then
+				TweenService:Create(Stat_1, TweenInfo.new(0.3), {BackgroundTransparency = TableS2.BackgroundTransparency or 0.45}):Play()
+				TweenService:Create(UIStroke_2, TweenInfo.new(0.3), {Transparency = 0}):Play()
+				TweenService:Create(StatName_2, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+				TweenService:Create(ValueName, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+			else
+				TweenService:Create(Stat_1, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
+				TweenService:Create(UIStroke_2, TweenInfo.new(0.3), {Transparency = 1}):Play()
+				TweenService:Create(StatName_2, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+				TweenService:Create(ValueName, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+				
+			end
+		end
+
 		return Actions
 	end
 
