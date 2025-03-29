@@ -675,12 +675,14 @@ function Library:CreateStatUi(Tables)
 			Glow.ImageTransparency =  TableS2.GlowImageTransparency or 0.45
 			Glow.ImageColor3 = TableS2.GlowImageColor or Color3.fromRGB(22,54,51)
 			
-			while true do
-				TweenService:Create(Glow, TweenInfo.new(2), {Position = UDim2.new(2,0,0.5,0)}):Play()
-				task.wait(2.5)
-				Glow.Position = UDim2.new(0, 0,0.5, 0)
-				TweenService:Create(Glow, TweenInfo.new(2), {Position = UDim2.new(2,0,0.5,0)}):Play()
-			end
+			coroutine.wrap(function()
+				while true do
+					TweenService:Create(Glow, TweenInfo.new(2), {Position = UDim2.new(2,0,0.5,0)}):Play()
+					task.wait(2.5)
+					Glow.Position = UDim2.new(0, 0,0.5, 0)
+					TweenService:Create(Glow, TweenInfo.new(2), {Position = UDim2.new(2,0,0.5,0)}):Play()
+				end
+			end)()
 		end
 		
 		function Actions:ChangeStatValue(Value)
