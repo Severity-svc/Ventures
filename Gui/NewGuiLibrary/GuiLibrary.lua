@@ -456,7 +456,7 @@ function Library:CreateStatUi(Tables)
 	Stats.BorderSizePixel = 0
 	Stats.Position = UDim2.new(0.00813516881, 0,0.351966292, 0)
 	Stats.Size = UDim2.new(0, 204,0, 258)
-	Stats.ClipsDescendants = true
+	Stats.ClipsDescendants = false
 
 	UICorner_1.Parent = Stats
 	UICorner_1.CornerRadius = UDim.new(0,10)
@@ -628,7 +628,7 @@ function Library:CreateStatUi(Tables)
 		StatName_2.Size = UDim2.new(0, 47,0, 18)
 		StatName_2.FontFace = FontType
 		StatName_2.Text = TableS2.StatName or ""
-		StatName_2.TextColor3 = Color3.fromRGB(165,255,214)
+		StatName_2.TextColor3 = TableS2.NameColor or Color3.fromRGB(165,255,214)
 		StatName_2.TextSize = 14
 		StatName_2.TextXAlignment = Enum.TextXAlignment.Left
 		
@@ -643,14 +643,38 @@ function Library:CreateStatUi(Tables)
 		ValueName.Size = UDim2.new(0, 47,0, 18)
 		ValueName.FontFace = FontType
 		ValueName.Text = TableS2.Value or ""
-		ValueName.TextColor3 = Color3.fromRGB(21,255,189)
+		ValueName.TextColor3 = TableS2.ValueColor or Color3.fromRGB(21,255,189)
 		ValueName.TextSize = 14
 		ValueName.TextXAlignment = Enum.TextXAlignment.Left
+		
+		if TableS2.GlowEnabled then
+			local Glow = Instance.new("ImageLabel")
+			Glow.Name = "Glow"
+			Glow.Parent = Stat_1
+			Glow.AnchorPoint = Vector2.new(0, 0.5)
+			Glow.BackgroundColor3 = Color3.fromRGB(255,255,255)
+			Glow.BackgroundTransparency = 1
+			Glow.BorderColor3 = Color3.fromRGB(0,0,0)
+			Glow.BorderSizePixel = 0
+			Glow.Position = UDim2.new(0, 0,0.5, 0)
+			Glow.Size = UDim2.new(0.472527474, 20,2.24000001, 10)
+			Glow.ZIndex = 0
+			Glow.Image = "rbxassetid://8992230677"
+			Glow.ImageTransparency = or TableS2.GlowImageTransparency or 0.45
+			Glow.ImageColor3 = TableS2.GlowImageColor or Color3.fromRGB(22,54,51)
+			
+			while true do
+				TweenService:Create(Glow, TweenInfo.new(2), {Position = UDim2.new(2,0,0.5,0)}):Play()
+				task.wait(2.5)
+				Glow.Position = UDim2.new(0, 0,0.5, 0)
+				TweenService:Create(Glow, TweenInfo.new(2), {Position = UDim2.new(2,0,0.5,0)}):Play()
+			end
+		end
 		
 		function Actions:ChangeStatValue(Value)
 			ValueName.Text = tostring(Value)
 		end
-
+		
 		function Actions:ChangeVisibility(Bool)
 			if Bool then
 				TweenService:Create(Stat_1, TweenInfo.new(0.3), {BackgroundTransparency = TableS2.BackgroundTransparency or 0.45}):Play()
@@ -671,6 +695,7 @@ function Library:CreateStatUi(Tables)
 
 	return Elements
 end
+
 --//Init, Window
 function Library:CreateWindow(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
