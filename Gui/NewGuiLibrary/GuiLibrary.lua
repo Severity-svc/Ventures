@@ -721,7 +721,7 @@ function Library:CreateWindow(Info1)
 	local Keysystem = Info1.Keysystem
 
 	--// Init, Keysystem
-	if Keysystem and Keysystem.Key ~= nil and Keysystem.Enabled == true then
+	if Keysystem and Keysystem.Key ~= nil and Keysystem.Enabled == true and Rank == "Member" then
 		local CommonYOffset = -31
 		local IsFocused = false
 
