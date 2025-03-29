@@ -163,6 +163,18 @@ local function TweenInstance(instance, speed, propriety, target)
 	return Tween
 end
 
+local function CheckKey(Key)
+	local Url = "https://work.ink/_api/v2/token/isValid/"
+
+	local Sccs, Response = pcall(game.HttpGet, game, Url .. Key) 
+
+	if Sccs and Response:match("true") then
+		return true
+	else
+		return false
+	end
+end
+
 local function GetIconFromLucide(Name)
 	if Lucide then
 		for i, v in pairs(Lucide) do
@@ -660,7 +672,7 @@ function Library:CreateStatUi(Tables)
 			Glow.Size = UDim2.new(0.472527474, 20,2.24000001, 10)
 			Glow.ZIndex = 0
 			Glow.Image = "rbxassetid://8992230677"
-			Glow.ImageTransparency = TableS2.GlowImageTransparency or 0.45
+			Glow.ImageTransparency =  TableS2.GlowImageTransparency or 0.45
 			Glow.ImageColor3 = TableS2.GlowImageColor or Color3.fromRGB(22,54,51)
 			
 			while true do
@@ -681,7 +693,6 @@ function Library:CreateStatUi(Tables)
 				TweenService:Create(UIStroke_2, TweenInfo.new(0.3), {Transparency = 0}):Play()
 				TweenService:Create(StatName_2, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 				TweenService:Create(ValueName, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
-
 				task.wait(0.3)
 				Stat_1.Visible = Bool
 			else
@@ -710,7 +721,7 @@ function Library:CreateWindow(Info1)
 	local Keysystem = Info1.Keysystem
 
 	--// Init, Keysystem
-	if Keysystem and Keysystem.Key ~= nil and Keysystem.Enabled == true and Rank == "Member" then
+	if Keysystem and Keysystem.Key ~= nil and Keysystem.Enabled == true then
 		local CommonYOffset = -31
 		local IsFocused = false
 
@@ -1111,7 +1122,7 @@ function Library:CreateWindow(Info1)
 		local Key = Keysystem.Key 
 
 		while KeySystem do
-			if TextBox_1.Text:find(Key) then
+			if CheckKey(TextBox_1.Text) then
 				for _, v in next, KeySystem:GetDescendants() do
 					if v:IsA("UIStroke") then
 						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 1}):Play()
@@ -3595,7 +3606,7 @@ function Library:CreateWindow(Info1)
 			ParagraphTitle_1.TextColor3 = Color3.fromRGB(255, 255, 255)
 			ParagraphTitle_1.TextSize = 14
 			ParagraphTitle_1.TextXAlignment = Enum.TextXAlignment.Left
-			
+
 
 			UIGradient_2.Parent = Paragraph
 			UIGradient_2.Color = ColorSequence.new{
@@ -3646,7 +3657,7 @@ function Library:CreateWindow(Info1)
 				HeaderTitle.TextColor3 = Tableh.TitleAccentColor or Tableh.NameAccentColor or Color3.fromRGB(255, 255, 255)
 				HeaderTitle.TextSize = 14
 				HeaderTitle.TextXAlignment = Enum.TextXAlignment.Left
-			
+
 				HeaderContent.Name = "HeaderContent"
 				HeaderContent.Parent = Header
 				HeaderContent.BackgroundTransparency = 1
