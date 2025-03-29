@@ -681,12 +681,16 @@ function Library:CreateStatUi(Tables)
 				TweenService:Create(UIStroke_2, TweenInfo.new(0.3), {Transparency = 0}):Play()
 				TweenService:Create(StatName_2, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 				TweenService:Create(ValueName, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+				task.wait(0.3)
+				Stat_1.Visible = Bool
 			else
 				TweenService:Create(Stat_1, TweenInfo.new(0.3), {BackgroundTransparency = 1}):Play()
 				TweenService:Create(UIStroke_2, TweenInfo.new(0.3), {Transparency = 1}):Play()
 				TweenService:Create(StatName_2, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
 				TweenService:Create(ValueName, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-				
+				task.wait(0.3)
+				Stat_1.Visible = Bool
 			end
 		end
 
