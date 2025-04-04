@@ -159,6 +159,11 @@ end
 local function CheckKey(Key)
 	local Url = "https://work.ink/_api/v2/token/isValid/"
 
+    if Key == nil or Key == "" then
+        return false
+    end
+
+
 	local Sccs, Response = pcall(game.HttpGet, game, Url .. Key) 
 
 	if Sccs and Response:match("true") then
