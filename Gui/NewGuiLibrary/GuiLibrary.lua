@@ -156,13 +156,6 @@ else
 end
 
 --//Usefull Functions
-local function TweenInstance(instance, speed, propriety, target)
-	local Tween = TweenService:Create(Instance, TweenInfo.new(speed), {propriety = target})
-
-	Tween:Play()
-	return Tween
-end
-
 local function CheckKey(Key)
 	local Url = "https://work.ink/_api/v2/token/isValid/"
 
