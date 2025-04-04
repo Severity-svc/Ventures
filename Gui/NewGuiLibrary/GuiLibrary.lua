@@ -159,18 +159,27 @@ end
 local function CheckKey(Key)
 	local Url = "https://work.ink/_api/v2/token/isValid/"
 
-    if Key == nil or Key == "" then
-        return false
-    end
-
-
-	local Sccs, Response = pcall(game.HttpGet, game, Url .. Key) 
-
-	if Sccs and Response:match("true") then
-		return true
-	else
+	if not Key or Key == "" then
 		return false
 	end
+
+	local Success, Response = pcall(function()
+		return game:HttpGetAsync(Url .. Key)
+	end)
+
+	if Success then
+		local Data = nil
+		
+		pcall(function()
+			Data = HttpService:JSONDecode(Response)
+		end)
+		
+		if Data and Data.valid == true then
+			return true
+		end
+	end
+
+	return false
 end
 
 local function GetIconFromLucide(Name)
