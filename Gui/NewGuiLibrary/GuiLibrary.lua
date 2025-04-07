@@ -84,7 +84,7 @@ else
 	if not isfolder(FileBranch.GuiName) then makefolder(FileBranch.GuiName) end
 	if not isfolder(FileBranch.ConfigPath) then makefolder(FileBranch.ConfigPath) end
 
-	for _, filePath in pairs({FileBranch.FileBranch.Toggles, FileBranch.FileBranch.Sliders, FileBranch.FileBranch.Colors, FileBranch.FileBranch.Keybinds, FileBranch.Dropdowns, FileBranch.Inputs}) do
+	for _, filePath in pairs({FileBranch.Toggles, FileBranch.FileBranch.Sliders, FileBranch.FileBranch.Colors, FileBranch.FileBranch.Keybinds, FileBranch.Dropdowns, FileBranch.Inputs}) do
 		if not isfile(filePath) then writefile(filePath, "{}") end
 	end
 
