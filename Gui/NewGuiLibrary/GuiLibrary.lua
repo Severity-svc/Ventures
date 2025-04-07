@@ -3123,7 +3123,7 @@ function Library:CreateWindow(Info1)
 						DropdownButton_1.Text = v
 
 						if IsExecutionEnv then
-							SaveFlag(FileBranch.DropdownsP, Flag, v)
+							SaveFlag(FileBranch.Dropdowns, Flag, v)
 						end
 
 						coroutine.wrap(function()
@@ -3182,11 +3182,13 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.DropdownsP)
+				local Flags = GetFlags(FileBranch.Dropdowns)
 
-				for i, v in next, Flags do
-					if i == Flag and v ~= nil then
-						SelfActions:SetValue(v)
+				if Flags then
+					for i, v in next, Flags do
+						if i == Flag and v ~= nil then
+							SelfActions:SetValue(v)
+						end
 					end
 				end
 			end
