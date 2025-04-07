@@ -6,7 +6,7 @@ local whitelisted = {
     },
 
     ["Mike"] = {
-        ["Rank"] = "Beta Tester (slave)",
+        ["Rank"] = "Beta Tester",
         ["RankColor"] = Color3.fromRGB(255, 255, 255),
         ["ID"] = "D0541B82-1DD5-46BA-9FAD-FD98DDBCC750",
     },
