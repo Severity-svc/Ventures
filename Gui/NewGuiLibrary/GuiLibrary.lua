@@ -18,6 +18,7 @@ local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
+local TextService = game:GetService("TextService")
 
 local LocalPlayer = Players.LocalPlayer
 
@@ -32,28 +33,44 @@ local IsExecutionEnv = false
 local IsMobileDevice = false
 
 --//Config Vars
-local GlobalValues = {
-	GlobalSliderSpeed = 0.2,
-	GlobalToggleSpeed = 0.3,
-	GlobalDebounce = false,
-	GlobalMainGuiColor = {52, 52, 52},
-	GlobalMainGuiShadow = {15, 13, 63},
+local Config = {
+	SliderSpeed = 0.2,
+	ToggleSpeed = 0.3,
+	GuiDragSpeed = 0.5,
+
+	MainColor = {52, 52, 52},
+	MainShadow = {15, 13, 63},
+	MainShadowTransparecy = 0.48,
 	GlobalDescriptionColor = {83, 80, 102},
-	GlobalGuiDragSpeed = 0.5,
-	GlobalMinimizeKeybind = "RightControl"
+
+	MinimizeKeybind = "RightControl",
+
+	["FileSaving"] = {
+		FolderName = "Ventures",
+		GuiName = "Ventures/GuiLibrary",
+		SettingsPath = "Ventures/GuiLibrary/Settings.lua",
+		ConfigPath = "Ventures/Config",
+		Toggles = "Ventures/Config/Toggles.lua",
+		Sliders = "Ventures/Config/Sliders.lua",
+		Colors = "Ventures/Config/Colors.lua",
+		Keybinds = "Ventures/Config/Keybinds.lua",
+		Inputs = "Ventures/Config/Inputs.lua",
+		Dropdowns = "Ventures/Config/Dropdowns.lua"
+	},
+
+	["Github"] = {
+		Branch = "https://raw.githubusercontent.com/",
+		HostName = "Severity-svc/",
+		GlobalExtension = ".lua",
+	},
+
+	["Themes"] = {
+		"coming soon"
+	}
+
 }
 
-local FolderName = "Ventures"
-local GuiName = FolderName .. "/GuiLibrary"
-local SettingsPath = GuiName .. "/Settings.lua"
-local ConfigP = FolderName .. "/Config"
-local Toggles = ConfigP .. "/Toggles.lua"
-local Sliders = ConfigP .. "/Sliders.lua"
-local Colors = ConfigP .. "/Colors.lua"
-local Keybinds = ConfigP .. "/Keybinds.lua"
-local Inputs = ConfigP .. "/Inputs.lua"
-local DropdownsP = ConfigP .. "/Dropdowns.lua"
-
+local FileBranch = Config.FileSaving
 
 if RunService:IsStudio() then
 	Core = LocalPlayer:WaitForChild("PlayerGui")
@@ -63,35 +80,32 @@ else
 	Core = game:GetService("CoreGui")
 	local Analystics = game:GetService("RbxAnalyticsService")
 
-	if not isfolder(FolderName) then makefolder(FolderName) end
-	if not isfolder(GuiName) then makefolder(GuiName) end
-	if not isfolder(ConfigP) then makefolder(ConfigP) end
+	if not isfolder(FileBranch.FolderName) then makefolder(FileBranch.FolderName) end
+	if not isfolder(FileBranch.GuiName) then makefolder(FileBranch.GuiName) end
+	if not isfolder(FileBranch.ConfigPath) then makefolder(FileBranch.ConfigPath) end
 
-	if not isfile(Toggles) then writefile(Toggles, "{}") end
-	if not isfile(Sliders) then writefile(Sliders, "{}") end
-	if not isfile(Colors) then writefile(Colors, "{}") end
-	if not isfile(Keybinds) then writefile(Keybinds, "{}") end
-	if not isfile(DropdownsP) then writefile(DropdownsP, "{}") end
-	if not isfile(Inputs) then writefile(Inputs, "{}") end
+	for _, filePath in pairs({FileBranch.FileBranch.Toggles, FileBranch.FileBranch.Sliders, FileBranch.FileBranch.Colors, FileBranch.FileBranch.Keybinds, FileBranch.Dropdowns, FileBranch.Inputs}) do
+		if not isfile(filePath) then writefile(filePath, "{}") end
+	end
 
 	local function SaveGlobals()
 		local success, json = pcall(function()
-			return HttpService:JSONEncode(GlobalValues)
+			return HttpService:JSONEncode(Config)
 		end)
 		if success then
-			writefile(SettingsPath, json)
+			writefile(FileBranch.SettingsPath, json)
 		end
 	end
 
 	local function LoadGlobals()
-		if isfile(SettingsPath) then
+		if isfile(FileBranch.SettingsPath) then
 			local Success, Data = pcall(function()
-				return HttpService:JSONDecode(readfile(SettingsPath))
+				return HttpService:JSONDecode(readfile(FileBranch.SettingsPath))
 			end)
 			if Success and type(Data) == "table" then
 				for i, v in pairs(Data) do
-					if GlobalValues[i] ~= nil then
-						GlobalValues[i] = v
+					if Config[i] ~= nil then
+						Config[i] = v
 					end
 				end
 			end
@@ -137,7 +151,14 @@ else
 	warn("[Ventures Library]: Parenting Error, Core Set To Nil Or Invalid Instance Type")
 end
 
+
 --//Usefull Functions
+local function setclipboard(Content)
+	if getgenv().setcliboard then
+		getgenv().setclipboard(Content)
+	end
+end
+
 local function CheckKey(Key)
 	local Url = "https://work.ink/_api/v2/token/isValid/"
 
@@ -535,7 +556,7 @@ function Library:CreateStatUi(Tables)
 	local IsDragging = false
 	local Input
 	local Start, CurrentPosition, TargetPosition = nil 
-	local Speed = GlobalValues.GlobalGuiDragSpeed
+	local Speed = Config.GuiDragSpeed
 
 	local function UpdateDrag(input)
 		local Delta = input.Position - Start
@@ -677,6 +698,8 @@ end
 --//Window
 function Library:CreateWindow(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
+	local OffsetX = 20
+
 	local Bool = true
 	local Tabs = {}
 	local SettingAssync = {}
@@ -975,7 +998,7 @@ function Library:CreateWindow(Info1)
 		local IsDragging = false
 		local Input
 		local Start, CurrentPosition, TargetPosition = nil 
-		local Speed = GlobalValues.GlobalGuiDragSpeed
+		local Speed = Config.GuiDragSpeed
 
 		local function UpdateDrag(input)
 			local Delta = input.Position - Start
@@ -1081,9 +1104,9 @@ function Library:CreateWindow(Info1)
 					TextTransparency = 0
 				}):Play()
 
-				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.025, -31,0.235, CommonYOffset)}):Play()--{1.025, -27},{0.235, -32}
-				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.894, -31,0.235, CommonYOffset)}):Play()--{0.894, -27},{0.235, -32}
-				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -34,0.235, CommonYOffset)}):Play()--{0.967, -30},{0.235, -32}
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.025, -31,0.235, CommonYOffset)}):Play()--// {1.025, -27},{0.235, -32}
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.894, -31,0.235, CommonYOffset)}):Play()--// {0.894, -27},{0.235, -32}
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -34,0.235, CommonYOffset)}):Play()--// {0.967, -30},{0.235, -32}
 			end
 		end)
 
@@ -1176,6 +1199,7 @@ function Library:CreateWindow(Info1)
 	local UIGradient_d = Instance.new("UIGradient")
 	local FrameHolder_1 = Instance.new("Frame")
 	local MinimizeText = Instance.new("TextLabel")
+	local SubTitle = Instance.new("TextLabel")
 
 	MainFrame_1.Name = "MainFrame"
 	MainFrame_1.Parent = Ventures
@@ -1186,7 +1210,7 @@ function Library:CreateWindow(Info1)
 	MainFrame_1.Position = UDim2.new(0.572839499, -374,0.5, -214)
 	MainFrame_1.Size = UDim2.new(0, 656,0, 460)
 
-	local ShadownMN = CreateShadow(MainFrame_1, 1.74, 1.4, 0.48, Color3.fromRGB(15, 13, 63))
+	local ShadownMN = CreateShadow(MainFrame_1, 1.74, 1.4, Config.MainShadowTransparecy, Color3.fromRGB(15, 13, 63))
 	CreateGradient(MainFrame_1, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
 
 	UICorner_1.Parent = MainFrame_1
@@ -1234,6 +1258,36 @@ function Library:CreateWindow(Info1)
 	Title_1.TextSize = 14
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
 	Title_1.AutomaticSize = Enum.AutomaticSize.X
+
+	SubTitle.Name = "SubTitle"
+	SubTitle.Parent = TopBar_1
+	SubTitle.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	SubTitle.BackgroundTransparency = 1
+	SubTitle.BorderColor3 = Color3.fromRGB(0,0,0)
+	SubTitle.AnchorPoint = Vector2.new(0, 0.5)
+	SubTitle.BorderSizePixel = 0
+	SubTitle.Position = UDim2.new(0, 0,0.5, 0)
+	SubTitle.Size = UDim2.new(0, 0,0, 18)
+	SubTitle.FontFace = FontType
+	SubTitle.Text = Info1.SubTitle or "discord.gg/v3n"
+	SubTitle.TextColor3 = Color3.fromRGB(83,80,102)
+	SubTitle.TextSize = 11
+	SubTitle.TextXAlignment = Enum.TextXAlignment.Left
+	SubTitle.AutomaticSize = Enum.AutomaticSize.X
+
+	local TextSize = TextService:GetTextSize(
+		Title_1.Text,
+		Title_1.TextSize,
+		Enum.Font.SourceSansBold,
+		Vector2.new(math.huge, Title_1.AbsoluteSize.Y)
+	)
+
+	SubTitle.Position = UDim2.new(
+		Title_1.Position.X.Scale,
+		Title_1.Position.X.Offset + TextSize.X + OffsetX,
+		0.5,
+		0
+	)
 
 	TopBarLine_1.Name = "TopBarLine"
 	TopBarLine_1.Parent = TopBar_1
@@ -1485,7 +1539,7 @@ function Library:CreateWindow(Info1)
 	local IsDragging = false
 	local Input
 	local Start, CurrentPosition, TargetPosition = nil 
-	local Speed = GlobalValues.GlobalGuiDragSpeed
+	local Speed = Config.GuiDragSpeed
 
 	local function UpdateDrag(input)
 		local Delta = input.Position - Start
@@ -1900,7 +1954,7 @@ function Library:CreateWindow(Info1)
 			ToggleDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ToggleDescription_1.FontFace = FontType
 			ToggleDescription_1.Text = Info3.Description or "ipsum dolor ist semen allah and toate cele"
-			ToggleDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			ToggleDescription_1.TextColor3  = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			ToggleDescription_1.TextSize = 14
 			ToggleDescription_1.TextWrapped = true
 			ToggleDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -1966,13 +2020,13 @@ function Library:CreateWindow(Info1)
 
 			if Info3.Default then
 				if Info3.Default == true then
-					TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(197, 187, 255)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(197, 187, 255)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
+					TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(197, 187, 255)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(197, 187, 255)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 				else
-					TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
+					TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 				end
 
 				coroutine.wrap(function()
@@ -1988,17 +2042,17 @@ function Library:CreateWindow(Info1)
 					Bool = not Bool
 
 					if IsExecutionEnv then
-						SaveFlag(Toggles, Flag, Bool)
+						SaveFlag(FileBranch.Toggles, Flag, Bool)
 					end
 
 					if Bool then
-						TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(197, 187, 255)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(197, 187, 255)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
+						TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(197, 187, 255)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(197, 187, 255)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 					else
-						TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(117, 113, 144)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(117, 113, 144)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
+						TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(117, 113, 144)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(117, 113, 144)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 					end
 
 					coroutine.wrap(function()
@@ -2021,13 +2075,13 @@ function Library:CreateWindow(Info1)
 						end)()
 
 						if value == true then
-							TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
+							TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 						else
-							TweenService:Create(UIStroke_4, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Color = Color3.fromRGB(117, 113, 144)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {BackgroundColor3 = Color3.fromRGB(117, 113, 144)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(GlobalValues.GlobalToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
+							TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(117, 113, 144)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(117, 113, 144)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 						end
 					else
 						Library:CreateNotification({
@@ -2040,7 +2094,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(Toggles)
+				local Flags = GetFlags(FileBranch.Toggles)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2105,7 +2159,7 @@ function Library:CreateWindow(Info1)
 			SliderDescription_1.Size = UDim2.new(0, 265,0, 38)
 			SliderDescription_1.FontFace = FontType
 			SliderDescription_1.Text = Info4.Description or ""
-			SliderDescription_1.TextColor3 = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			SliderDescription_1.TextColor3 = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			SliderDescription_1.TextSize = 14
 			SliderDescription_1.TextWrapped = true
 			SliderDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2244,10 +2298,10 @@ function Library:CreateWindow(Info1)
 					ValueInput_1.Text = string.format("%." .. tostring(math.log10(1 / Increment)) .. "f", Value)
 
 					if IsExecutionEnv then
-						SaveFlag(Sliders, Flag, Value)
+						SaveFlag(FileBranch.Sliders, Flag, Value)
 					end
-					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.5, 0)})
-					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
+					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(Config.SliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.5, 0)})
+					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(Config.SliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
 
 					Tween1:Play()
 					Tween2:Play()
@@ -2271,8 +2325,8 @@ function Library:CreateWindow(Info1)
 					Value = value
 					ValueInput_1.Text = string.format("%." .. tostring(math.log10(1 / Increment)) .. "f", Value)
 
-					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(percentv, 0, 0.5, 0)})
-					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(GlobalValues.GlobalSliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
+					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(Config.SliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(percentv, 0, 0.5, 0)})
+					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(Config.SliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
 
 					Tween1:Play()
 					Tween2:Play()
@@ -2289,7 +2343,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(Sliders)
+				local Flags = GetFlags(FileBranch.Sliders)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2350,7 +2404,7 @@ function Library:CreateWindow(Info1)
 			Input.Size = UDim2.new(0, 453,0, 66)
 
 			UICorner_1.Parent = Input
-			UICorner_1.CornerRadius = UDim.new(0,5)
+			UICorner_1.CornerRadius = UDim.new(0,15)
 
 			UIStroke_1.Parent = Input
 			UIStroke_1.Color = Color3.fromRGB(86, 77, 131)
@@ -2373,7 +2427,7 @@ function Library:CreateWindow(Info1)
 			InputDescription_1.Size = UDim2.new(0, 300,0, 38)
 			InputDescription_1.FontFace = FontType
 			InputDescription_1.Text = Info6.Description or ""
-			InputDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			InputDescription_1.TextColor3  = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			InputDescription_1.TextSize = 14
 			InputDescription_1.TextWrapped = true
 			InputDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2404,7 +2458,7 @@ function Library:CreateWindow(Info1)
 			Input_1.Position = UDim2.new(0.310255557, 0,0, 0)
 			Input_1.Size = UDim2.new(0.676299095, 0,1, 0)
 			Input_1.FontFace = BoldFontType
-			Input_1.PlaceholderColor3 = Color3.fromRGB(199, 245, 255)
+			Input_1.PlaceholderColor3 = Color3.fromRGB(255, 255, 255)
 			Input_1.PlaceholderText = Placeholder or "Input"
 			Input_1.Text = Default or "Input"
 			Input_1.TextColor3 = Color3.fromRGB(255,255,255)
@@ -2449,7 +2503,7 @@ function Library:CreateWindow(Info1)
 								coroutine.wrap(function()
 									local Success, Error = pcall(function() Callback(Number) end)
 									if IsExecutionEnv then
-										SaveFlag(Inputs, Flag, Number)
+										SaveFlag(FileBranch.Inputs, Flag, Number)
 									end
 									if not Success then
 										Library:FastNotify("Input Error", tostring(Error))
@@ -2462,7 +2516,7 @@ function Library:CreateWindow(Info1)
 							coroutine.wrap(function()
 								local Success, Error = pcall(function() Callback(Input_1.Text) end)
 								if IsExecutionEnv then
-									SaveFlag(Inputs, Flag, Input_1.Text)
+									SaveFlag(FileBranch.Inputs, Flag, Input_1.Text)
 								end
 								if not Success then
 									Library:FastNotify("Input Error", tostring(Error))
@@ -2490,7 +2544,7 @@ function Library:CreateWindow(Info1)
 			end
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(Inputs)
+				local Flags = GetFlags(FileBranch.Inputs)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2557,7 +2611,7 @@ function Library:CreateWindow(Info1)
 			KeybindDescription_1.Size = UDim2.new(0, 340,0, 38)
 			KeybindDescription_1.FontFace = FontType
 			KeybindDescription_1.Text = Info7.Description or ""
-			KeybindDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			KeybindDescription_1.TextColor3  = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			KeybindDescription_1.TextSize = 14
 			KeybindDescription_1.TextWrapped = true
 			KeybindDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2644,7 +2698,7 @@ function Library:CreateWindow(Info1)
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
 
 						if IsExecutionEnv then
-							SaveFlag(Keybinds, Flag, CurrentKeybind)
+							SaveFlag(FileBranch.Keybinds, Flag, CurrentKeybind)
 						end
 
 						if not Success then
@@ -2656,7 +2710,7 @@ function Library:CreateWindow(Info1)
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
 
 						if IsExecutionEnv then
-							SaveFlag(Keybinds, Flag, CurrentKeybind)
+							SaveFlag(FileBranch.Keybinds, Flag, CurrentKeybind)
 						end
 
 						if not Success then
@@ -2684,14 +2738,14 @@ function Library:CreateWindow(Info1)
 					end
 
 					if IsExecutionEnv then
-						SaveFlag(Keybinds, Flag, CurrentKeybind)
+						SaveFlag(FileBranch.Keybinds, Flag, CurrentKeybind)
 					end
 
 				end
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(Keybinds)
+				local Flags = GetFlags(FileBranch.Keybinds)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2748,7 +2802,7 @@ function Library:CreateWindow(Info1)
 			ButtonDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ButtonDescription_1.FontFace = FontType
 			ButtonDescription_1.Text = Info8.Description or ""
-			ButtonDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			ButtonDescription_1.TextColor3  = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			ButtonDescription_1.TextSize = 14
 			ButtonDescription_1.TextWrapped = true
 			ButtonDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -2805,7 +2859,7 @@ function Library:CreateWindow(Info1)
 
 			ImageLabel_1.Parent = PickButton_1
 			ImageLabel_1.AnchorPoint = Vector2.new(0.5, 0.5)
-			ImageLabel_1.BackgroundColor3 = Color3.fromRGB(201, 239, 255)
+			ImageLabel_1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 			ImageLabel_1.BackgroundTransparency = 1
 			ImageLabel_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			ImageLabel_1.BorderSizePixel = 0
@@ -2920,7 +2974,7 @@ function Library:CreateWindow(Info1)
 			DropdownDescription_1.Size = UDim2.new(0, 340,0, 38)
 			DropdownDescription_1.FontFace = FontType
 			DropdownDescription_1.Text = Info9.Description or ""
-			DropdownDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			DropdownDescription_1.TextColor3  = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			DropdownDescription_1.TextSize = 14
 			DropdownDescription_1.TextWrapped = true
 			DropdownDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -3069,7 +3123,7 @@ function Library:CreateWindow(Info1)
 						DropdownButton_1.Text = v
 
 						if IsExecutionEnv then
-							SaveFlag(DropdownsP, Flag, v)
+							SaveFlag(FileBranch.DropdownsP, Flag, v)
 						end
 
 						coroutine.wrap(function()
@@ -3128,7 +3182,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(DropdownsP)
+				local Flags = GetFlags(FileBranch.DropdownsP)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -3208,7 +3262,7 @@ function Library:CreateWindow(Info1)
 			ColorPickerDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ColorPickerDescription_1.FontFace = FontType
 			ColorPickerDescription_1.Text = Info10.Description or ""
-			ColorPickerDescription_1.TextColor3  = Color3.fromRGB(unpack(GlobalValues.GlobalDescriptionColor))
+			ColorPickerDescription_1.TextColor3  = Color3.fromRGB(unpack(Config.GlobalDescriptionColor))
 			ColorPickerDescription_1.TextSize = 14
 			ColorPickerDescription_1.TextWrapped = true
 			ColorPickerDescription_1.TextXAlignment = Enum.TextXAlignment.Left
@@ -3389,7 +3443,7 @@ function Library:CreateWindow(Info1)
 				local Success, Error = pcall(function() Callback(DefaultColor) end)
 
 				if IsExecutionEnv then
-					SaveFlag(Colors, Flag, DefaultColor)
+					SaveFlag(FileBranch.Colors, Flag, DefaultColor)
 				end
 
 				if not Success then
@@ -3410,7 +3464,7 @@ function Library:CreateWindow(Info1)
 				local Success, Error = pcall(function() Callback(NewColor) end)
 
 				if IsExecutionEnv then
-					SaveFlag(Colors, Flag, NewColor)
+					SaveFlag(FileBranch.Colors, Flag, NewColor)
 				end
 
 				if not Success then
@@ -3480,7 +3534,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(Colors)
+				local Flags = GetFlags(FileBranch.Colors)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -3696,77 +3750,98 @@ function Library:CreateWindow(Info1)
 			Icon = "settings",
 		})
 
+		local BindingSection = Settings:CreateSection({
+			Title = "Binding"
+		})
+
 		local MinimizeKeybind = Settings:CreateKeybind({
 			Name = "Gui Minimize Keybind", 
 			Description = "Changes The Keybind For Minimizing The Gui",
-			Default = Enum.KeyCode[GlobalValues.GlobalMinimizeKeybind],
+			Default = Enum.KeyCode[Config.MinimizeKeybind],
 			Callback = function(Keybind)
-				GlobalValues.GlobalMinimizeKeybind = Keybind.Name
+				Config.MinimizeKeybind = Keybind.Name
 
-				MinimizeKeybind = Enum.KeyCode[GlobalValues.GlobalMinimizeKeybind]
+				MinimizeKeybind = Enum.KeyCode[Config.MinimizeKeybind]
 			end,
+		})
+
+		local AnimationSection = Settings:CreateSection({
+			Title = "Animations"
 		})
 
 		local GuiDragSpeed = Settings:CreateSlider({
 			Name = "Gui Dragging Speed",
 			Description = "Changes How Powerful The Dragging Speed Is",
-			Default = GlobalValues.GlobalGuiDragSpeed,
+			Default = Config.GuiDragSpeed,
 			MinValue = 0,
 			MaxValue = 2,
 			Increment = 0.01,
 			Callback = function(value)
-				GlobalValues.GlobalGuiDragSpeed = value
+				Config.GuiDragSpeed = value
 
-				Speed = GlobalValues.GlobalGuiDragSpeed
+				Speed = Config.GuiDragSpeed
 			end
 		})
 
 		local SliderAnimationSpeed = Settings:CreateSlider({
 			Name  = "Slider Animation Speed",
 			Description = "Changes How Fast The Slider Animation Is",
-			Default = GlobalValues.GlobalSliderSpeed,
+			Default = Config.SliderSpeed,
 			MinValue = 0,
 			MaxValue = 2,
 			Increment = 0.01,
 			Callback = function(value)
-				GlobalValues.GlobalSliderSpeed = value
+				Config.SliderSpeed = value
 			end
 		})
 
 		local ToggleAnimationSpeed = Settings:CreateSlider({
 			Name  = "Toggle Animation Speed",
 			Description = "Changes How Fast The Toggle Animation Is",
-			Default = GlobalValues.GlobalToggleSpeed,
+			Default = Config.ToggleSpeed,
 			MinValue = 0,
 			MaxValue = 2,
 			Increment = 0.01,
 			Callback = function(value)
-				GlobalValues.GlobalToggleSpeed = value
+				Config.ToggleSpeed = value
 			end
 		})
 
-		local Section = Settings:CreateSection({
-			Title = "GuiAppearence"
+		local GuiAppearenceSection = Settings:CreateSection({
+			Title = "Gui Appearence"
 		})
 
 		local MainGuiColor = Settings:CreateColorPicker({
 			Name = "Main Gui Color",
 			Description = "Changes The Color Of The MainGui",
-			Default = Color3.fromRGB(unpack(GlobalValues.GlobalMainGuiColor)),
+			Default = Color3.fromRGB(unpack(Config.MainColor)),
 			Callback = function(Color)
-				GlobalValues.GlobalMainGuiColor = {Color.R * 255, Color.G * 255, Color.B * 255}
+				Config.MainColor = {Color.R * 255, Color.G * 255, Color.B * 255}
 
 				MainFrame_1.BackgroundColor3 = Color
 			end,
 		})
 
-		local MainGuiColor = Settings:CreateColorPicker({
+		local MainGuiShadow = Settings:CreateColorPicker({
 			Name = "Main Gui Shadow Color",
 			Description = "Changes The Color Of The Shadows Ui",
-			Default = Color3.fromRGB(unpack(GlobalValues.GlobalMainGuiShadow)),
+			Default = Color3.fromRGB(unpack(Config.MainShadow)),
 			Callback = function(Color)
-				GlobalValues.GlobalMainGuiShadow = {Color.R * 255, Color.G * 255, Color.B * 255}
+				Config.MainShadow = {Color.R * 255, Color.G * 255, Color.B * 255}
 				ShadownMN.ImageColor3 = Color
+			end,
+		})
+
+		local MainGuiShadowTrans = Settings:CreateSlider({
+			Name = "Main Gui Shadow Transparency",
+			Description = "Changes The Transparency Of The Shadows Ui",
+			Default = Config.MainShadowTransparecy,
+			MinValue = 0,
+			MaxValue = 1,
+			Increment = 0.01,
+			Callback = function(value)
+				Config.MainShadowTransparecy = value
+				ShadownMN.ImageTransparency = value
 			end,
 		})
 	end
@@ -3898,5 +3973,7 @@ function Library:CreateWindow(Info1)
 
 	return Tabs, SettingAssync
 end
+
+Library:SetAutoButtonColor(false)
 
 return Library
