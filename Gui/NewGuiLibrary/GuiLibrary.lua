@@ -67,7 +67,6 @@ local Config = {
 	["Themes"] = {
 		"coming soon"
 	}
-
 }
 
 local FileBranch = Config.FileSaving
@@ -704,6 +703,7 @@ function Library:CreateWindow(Info1)
 	local Tabs = {}
 	local SettingAssync = {}
 	local ChangelogAssync = {}
+	local IgnoreWindow = Info1.IgnoreWindow or false
 	local Keysystem = Info1.Keysystem
 
 	--//Keysystem
@@ -1209,6 +1209,10 @@ function Library:CreateWindow(Info1)
 	MainFrame_1.BorderSizePixel = 0
 	MainFrame_1.Position = UDim2.new(0.572839499, -374,0.5, -214)
 	MainFrame_1.Size = UDim2.new(0, 656,0, 460)
+
+	if IgnoreWindow then
+		MainFrame_1.Visible = false
+	end
 
 	local ShadownMN = CreateShadow(MainFrame_1, 1.74, 1.4, Config.MainShadowTransparecy, Color3.fromRGB(15, 13, 63))
 	CreateGradient(MainFrame_1, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
@@ -3972,6 +3976,7 @@ function Library:CreateWindow(Info1)
 		end
 		return ExtraWrite
 	end
+
 
 	return Tabs, SettingAssync
 end
