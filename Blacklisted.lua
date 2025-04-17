@@ -1,3 +1,0 @@
-local Blacklisted = {}
-
-return Blacklisted
