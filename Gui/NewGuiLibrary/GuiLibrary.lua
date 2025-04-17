@@ -4,14 +4,14 @@
   //Inspired by Fluent :weary:
 ]]
 
---//StartUp
+--// StartUp
 local Library = {}
 local Lucide 
 local FontType = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
 local BoldFontType = Font.new("rbxassetid://12187365364", Enum.FontWeight.SemiBold, Enum.FontStyle.Normal)
 local Ventures = Instance.new("ScreenGui")
 
---//Services
+--// Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local TextService = game:GetService("TextService")
@@ -22,17 +22,19 @@ local TextService = game:GetService("TextService")
 
 local LocalPlayer = Players.LocalPlayer
 
---//Usefull
+--// Usefull
 local Core
 local Rank = "Member"
+local Version 
 local RankColor
-local WhitelistedName
 local Whitelisted 
-local IsInColorFrameDrag = false
+local WhitelistedName
 local IsExecutionEnv = false
 local IsMobileDevice = false
+local GamePlace = game.PlaceId
+local IsInColorFrameDrag = false
 
---//Config Vars
+--// Config Vars
 local Config = {
 	SliderSpeed = 0.2,
 	ToggleSpeed = 0.3,
@@ -41,7 +43,7 @@ local Config = {
 	MainColor = {52, 52, 52},
 	MainShadow = {15, 13, 63},
 	MainShadowTransparecy = 0.48,
-	GlobalDescriptionColor = {83, 80, 102},
+	GlobalDescriptionColor = {144, 144, 144},
 
 	MinimizeKeybind = "RightControl",
 
@@ -50,12 +52,7 @@ local Config = {
 		GuiName = "Ventures/GuiLibrary",
 		SettingsPath = "Ventures/GuiLibrary/Settings.lua",
 		ConfigPath = "Ventures/Config",
-		Toggles = "Ventures/Config/Toggles.lua",
-		Sliders = "Ventures/Config/Sliders.lua",
-		Colors = "Ventures/Config/Colors.lua",
-		Keybinds = "Ventures/Config/Keybinds.lua",
-		Inputs = "Ventures/Config/Inputs.lua",
-		Dropdowns = "Ventures/Config/Dropdowns.lua"
+		Configs = "Ventures/Config/".. tostring(GamePlace) .. ".lua",
 	},
 
 	["Github"] = {
@@ -77,15 +74,14 @@ if RunService:IsStudio() then
 else
 	Lucide = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Gui/NewGuiLibrary/Lucide%20Icons.lua'))()
 	Core = game:GetService("CoreGui")
+	Version = loadstring(game:HttpGet('https://raw.githubusercontent.com/Severity-svc/Ventures/refs/heads/main/Version.lua'))()
+	
 	local Analystics = game:GetService("RbxAnalyticsService")
 
 	if not isfolder(FileBranch.FolderName) then makefolder(FileBranch.FolderName) end
 	if not isfolder(FileBranch.GuiName) then makefolder(FileBranch.GuiName) end
 	if not isfolder(FileBranch.ConfigPath) then makefolder(FileBranch.ConfigPath) end
-
-	for _, filePath in pairs({FileBranch.Toggles, FileBranch.Sliders, FileBranch.Colors, FileBranch.Keybinds, FileBranch.Dropdowns, FileBranch.Inputs}) do
-		if not isfile(filePath) then writefile(filePath, "{}") end
-	end
+	if not isfile(FileBranch.Configs) then writefile(FileBranch.Configs, nil) end
 
 	local function SaveGlobals()
 		local success, json = pcall(function()
@@ -113,7 +109,7 @@ else
 
 	LoadGlobals()
 
-	task.spawn(function()
+	spawn(function()
 		while true do
 			SaveGlobals()
 			task.wait(5)
@@ -150,8 +146,7 @@ else
 	warn("[Ventures Library]: Parenting Error, Core Set To Nil Or Invalid Instance Type")
 end
 
-
---//Usefull Functions
+--// Functions
 local function setclipboard(Content)
 	if getgenv().setcliboard then
 		getgenv().setclipboard(Content)
@@ -250,27 +245,27 @@ local function CreateShadow(Parent, SizeX, SizeY, Transparency, Color)
 	return Image_1
 end
 
-local function CreateGradient(Parent, Color1, Color2, Color3, Color4, Bool)
+local function CreateGradient(Parent, Color1, Color2, Color3a, Color4, Bool)
 	local Gradient = Instance.new("UIGradient")
 	Gradient.Parent = Parent
-
-	if Bool then
+	
+	if Bool == "Special" then
+		Gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(254, 222, 255)), ColorSequenceKeypoint.new(0.49481, Color3.fromRGB(255, 231, 207)), ColorSequenceKeypoint.new(1, Color3.fromRGB(207, 245, 255))}
+	elseif Bool == true then
 		Gradient.Color = ColorSequence.new{
 			ColorSequenceKeypoint.new(0, Color1),
 			ColorSequenceKeypoint.new(1, Color2)
 		}
-	else
+	elseif Bool == false then
 		Gradient.Color = ColorSequence.new{
 			ColorSequenceKeypoint.new(0, Color1),
 			ColorSequenceKeypoint.new(0.351211, Color2),
-			ColorSequenceKeypoint.new(0.653979, Color3 or Color2),
+			ColorSequenceKeypoint.new(0.653979, Color3a or Color2),
 			ColorSequenceKeypoint.new(1, Color4 or Color1)
 		}
 	end
-
 	Gradient.Rotation = 3
 end
-
 
 function Library:SetAutoButtonColor(value)
 	for _, v in next, Ventures:GetDescendants() do
@@ -280,10 +275,11 @@ function Library:SetAutoButtonColor(value)
 	end
 end
 
---//Notification
+--// Notification
 function Library:CreateNotification(Info)
 	local Offfset = 0
-	local CommonYOffset = 0.097
+	local CommonYOffset = 0.091
+	local CommonXOffset = 0.835
 	local Duration = Info.Duration or 4
 
 	local function GetOffset()
@@ -301,26 +297,28 @@ function Library:CreateNotification(Info)
 	local UIStroke_1 = Instance.new("UIStroke")
 	local Title_1 = Instance.new("TextLabel")
 	local Content_1 = Instance.new("TextLabel")
-	local CloseButton_1 = Instance.new("TextButton")
+	local CloseButton_1 = Instance.new("ImageButton")
 	local UIGradient = Instance.new("UIGradient")
+	local ManualCorner = Instance.new("UICorner")
+	local Glow_1 = Instance.new("ImageLabel")
 
 	Notification.Name = "Notification"
 	Notification.Parent = Ventures
-	Notification.BackgroundColor3 = Color3.fromRGB(39, 39, 39)
+	Notification.BackgroundColor3 = Color3.fromRGB(38, 38, 38)
 	Notification.BackgroundTransparency = 0.100
 	Notification.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Notification.BorderSizePixel = 0
-	Notification.Position = UDim2.new(0.867, 0, 0.974 - GetOffset(), 0)
-	Notification.Size = UDim2.new(0, 235, 0, 66)
+	Notification.Position = UDim2.new(CommonXOffset, 0, 0.974 - GetOffset(), 0)
+	Notification.Size = UDim2.new(0, 294, 0, 69)
 
-	local Shadow = CreateShadow(Notification, 1.2, 1.1, 0.5, Color3.fromRGB(19, 21, 33))
+	local Shadow = CreateShadow(Notification, 1.2, 1.1, 0.5, Color3.fromRGB(48, 48, 48))
 	CreateGradient(Notification, Color3.fromRGB(201, 156, 255), Color3.fromRGB(172,255,252), nil, nil, true)
 
 	UICorner_1.Parent = Notification
 	UICorner_1.CornerRadius = UDim.new(0, 15)
 
 	UIStroke_1.Parent = Notification
-	UIStroke_1.Color = Color3.fromRGB(153, 153, 153)
+	UIStroke_1.Color = Color3.fromRGB(79, 79, 79)
 	UIStroke_1.Transparency = 1
 	UIStroke_1.Thickness = 1.3
 
@@ -332,7 +330,7 @@ function Library:CreateNotification(Info)
 	Title_1.BackgroundTransparency = 1
 	Title_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Title_1.BorderSizePixel = 0
-	Title_1.Position = UDim2.new(0.05, -2,0.035, 1)
+	Title_1.Position = UDim2.new(0.03, 0,0.035, 1)
 	Title_1.Size = UDim2.new(0, 47, 0, 17)
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
 	Title_1.FontFace = FontType
@@ -347,11 +345,11 @@ function Library:CreateNotification(Info)
 	Content_1.BackgroundTransparency = 1
 	Content_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
 	Content_1.BorderSizePixel = 0
-	Content_1.Position = UDim2.new(0.028, -1, 0.43, -6)
+	Content_1.Position = UDim2.new(0.031, -1,0.344, -4)
 	Content_1.Size = UDim2.new(0, 224, 0, 48)
 	Content_1.FontFace = FontType
 	Content_1.Text = Info.Content or ""
-	Content_1.TextColor3 = Color3.fromRGB(192, 200, 221)
+	Content_1.TextColor3 = Color3.fromRGB(216, 216, 216)
 	Content_1.TextSize = 12
 	Content_1.TextTransparency = 1
 	Content_1.TextWrapped = true
@@ -361,20 +359,29 @@ function Library:CreateNotification(Info)
 	CloseButton_1.Name = "CloseButton"
 	CloseButton_1.Parent = Notification
 	CloseButton_1.Active = true
-	CloseButton_1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	CloseButton_1.BackgroundTransparency = 1
-	CloseButton_1.BorderColor3 = Color3.fromRGB(0, 0, 0)
+	CloseButton_1.AnchorPoint = Vector2.new(0, 0.5)
+	CloseButton_1.BackgroundColor3 = Color3.fromRGB(59,59,59)
+	CloseButton_1.BackgroundTransparency = 0.800000011920929
+	CloseButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	CloseButton_1.BorderSizePixel = 0
-	CloseButton_1.Position = UDim2.new(0.884, 0, 0.035, 0)
-	CloseButton_1.Size = UDim2.new(0, 20, 0, 20)
-	CloseButton_1.Font = Enum.Font.SourceSansBold
-	CloseButton_1.Text = "x"
-	CloseButton_1.TextTransparency = 1
-	CloseButton_1.TextColor3 = Color3.fromRGB(179, 176, 197)
-	CloseButton_1.TextScaled = true
-	CloseButton_1.TextSize = 14
-	CloseButton_1.TextWrapped = true
+	CloseButton_1.Position = UDim2.new(1.01360548, -33,0.210144922, 1)
+	CloseButton_1.Size = UDim2.new(0, 23,0, 23)
+	CloseButton_1.Image = "http://www.roblox.com/asset/?id=132261474823036"
 
+	ManualCorner.Parent = CloseButton_1
+	ManualCorner.CornerRadius = UDim.new(0,6)
+
+	Glow_1.Name = "Glow"
+	Glow_1.Parent = CloseButton_1
+	Glow_1.BackgroundColor3 = Color3.fromRGB(255,255,255)
+	Glow_1.BackgroundTransparency = 1
+	Glow_1.BorderColor3 = Color3.fromRGB(0,0,0)
+	Glow_1.BorderSizePixel = 0
+	Glow_1.Position = UDim2.new(-0.100000009, 0,-0.100000001, 0)
+	Glow_1.Size = UDim2.new(1.20000005, 0,1.20000005, 0)
+	Glow_1.ZIndex = 1
+	Glow_1.Image = "rbxassetid://8992230677"
+	Glow_1.ImageTransparency = 0.8700000047683716
 	Notification.BackgroundTransparency = 0.100
 
 	Ventures.ChildRemoved:Connect(function(child)
@@ -383,7 +390,7 @@ function Library:CreateNotification(Info)
 			for _, v in ipairs(Ventures:GetChildren()) do
 				if v.Name == "Notification" then
 					TweenService:Create(v, TweenInfo.new(0.35), {
-						Position = UDim2.new(0.867, 0, 0.875647664 - Offset, 0)
+						Position = UDim2.new(CommonXOffset, 0, 0.875647664 - Offset, 0)
 					}):Play()
 					Offset = Offset + CommonYOffset
 				end
@@ -397,7 +404,7 @@ function Library:CreateNotification(Info)
 			for _, v in ipairs(Ventures:GetChildren()) do
 				if v.Name == "Notification" then
 					TweenService:Create(v, TweenInfo.new(0.5), {
-						Position = UDim2.new(0.867, 0, 0.875647664 - Offset, 0)
+						Position = UDim2.new(CommonXOffset, 0, 0.875647664 - Offset, 0)
 					}):Play()
 					Offset = Offset + CommonYOffset
 				end
@@ -406,14 +413,14 @@ function Library:CreateNotification(Info)
 	end)
 
 	CloseButton_1.MouseEnter:Connect(function()
-		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {
-			TextColor3 = Color3.fromRGB(255, 255, 255)
+		TweenService:Create(Glow_1, TweenInfo.new(0.3), {
+			ImageTransparency = 0.56
 		}):Play()
 	end)
 
 	CloseButton_1.MouseLeave:Connect(function()
-		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {
-			TextColor3 = Color3.fromRGB(186, 196, 196)
+		TweenService:Create(Glow_1, TweenInfo.new(0.3), {
+			ImageTransparency = 0.87
 		}):Play()
 	end)
 
@@ -422,7 +429,7 @@ function Library:CreateNotification(Info)
 		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
 		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
 		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
 		TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
 		task.wait(0.3)
 		Notification:Destroy()
@@ -433,7 +440,7 @@ function Library:CreateNotification(Info)
 		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 0}):Play()
 		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
 		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
-		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {ImageTransparency = 0}):Play()
 		TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 0.5}):Play()
 
 		task.wait(Duration)
@@ -442,7 +449,7 @@ function Library:CreateNotification(Info)
 		TweenService:Create(Title_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
 		TweenService:Create(UIStroke_1, TweenInfo.new(0.3), {Transparency = 1}):Play()
 		TweenService:Create(Content_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
-		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+		TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
 		TweenService:Create(Shadow, TweenInfo.new(0.3), {ImageTransparency = 1}):Play()
 
 		task.wait(0.3)
@@ -450,7 +457,7 @@ function Library:CreateNotification(Info)
 	end)()
 end
 
---// Mobile Bind
+--//  Mobile Bind
 if UserInputService.TouchEnabled and not UserInputService.KeyboardEnabled then
 	IsMobileDevice = true
 	Library:CreateNotification({
@@ -485,7 +492,7 @@ function Library:CreateStatUi(Tables)
 
 	Stats.Name = "Stats"
 	Stats.Parent = Ventures
-	Stats.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+	Stats.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 	Stats.BackgroundTransparency = 0.1
 	Stats.BorderColor3 = Color3.fromRGB(0,0,0)
 	Stats.BorderSizePixel = 0
@@ -494,13 +501,13 @@ function Library:CreateStatUi(Tables)
 	Stats.ClipsDescendants = false
 
 	CreateGradient(Stats, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
-	CreateShadow(Stats, 1.74,1.4,0.48, Color3.fromRGB(47,23,20))
+	CreateShadow(Stats, 1.74,1.4,0.48, Color3.fromRGB(48, 48, 48))
 
 	UICorner_1.Parent = Stats
 	UICorner_1.CornerRadius = UDim.new(0,15)
 
 	UIStroke_1.Parent = Stats
-	UIStroke_1.Color = Color3.fromRGB(102, 102, 102)
+	UIStroke_1.Color = Color3.fromRGB(79, 79, 79)
 	UIStroke_1.Thickness = 1
 
 	CreateGradient(UIStroke_1, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
@@ -694,7 +701,7 @@ function Library:CreateStatUi(Tables)
 	return Elements
 end
 
---//Window
+--// Window
 function Library:CreateWindow(Info1)
 	local MinimizeKeybind = Info1.MinimizeKeybind or Enum.KeyCode.RightControl
 	local OffsetX = 20
@@ -706,7 +713,7 @@ function Library:CreateWindow(Info1)
 	local IgnoreWindow = Info1.IgnoreWindow or false
 	local Keysystem = Info1.Keysystem
 
-	--//Keysystem
+	--// Keysystem
 	if Keysystem and Keysystem.Key ~= nil and Keysystem.Enabled == true and Rank == "Member" then
 		local CommonYOffset = -32
 		local IsFocused = false
@@ -734,21 +741,21 @@ function Library:CreateWindow(Info1)
 		KeySystem.Name = "KeySystem"
 		KeySystem.Parent = Ventures
 		KeySystem.AnchorPoint = Vector2.new(0.5, 0.5)
-		KeySystem.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+		KeySystem.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		KeySystem.BackgroundTransparency = 0.05999999865889549
 		KeySystem.BorderColor3 = Color3.fromRGB(0,0,0)
 		KeySystem.BorderSizePixel = 0
 		KeySystem.Position = UDim2.new(0.5, 0,0.5, 0)
 		KeySystem.Size = UDim2.new(0, 432,0, 155)
 
-		local Shadow = CreateShadow(KeySystem, 1.6, 1.5, 0.48, Color3.fromRGB(52,15,39))
+		local Shadow = CreateShadow(KeySystem, 1.6, 1.5, 0.48, Color3.fromRGB(48, 48, 48))
 		CreateGradient(KeySystem, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
 
 		UICorner_1.Parent = KeySystem
 		UICorner_1.CornerRadius = UDim.new(0,15)
 
 		UIStroke_1.Parent = KeySystem
-		UIStroke_1.Color = Color3.fromRGB(102, 102, 102)
+		UIStroke_1.Color = Color3.fromRGB(79, 79, 79)
 		UIStroke_1.Thickness = 1
 		CreateGradient(UIStroke_1, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
 
@@ -770,7 +777,7 @@ function Library:CreateWindow(Info1)
 		DiscordButton_1.Parent = KeySystem
 		DiscordButton_1.Active = true
 		DiscordButton_1.AnchorPoint = Vector2.new(0.5, 0)
-		DiscordButton_1.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+		DiscordButton_1.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		DiscordButton_1.BackgroundTransparency = 0.7099999785423279
 		DiscordButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		DiscordButton_1.BorderSizePixel = 0
@@ -789,7 +796,7 @@ function Library:CreateWindow(Info1)
 		CloseButton_1.Parent = KeySystem
 		CloseButton_1.Active = true
 		CloseButton_1.AnchorPoint = Vector2.new(0.5, 0)
-		CloseButton_1.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+		CloseButton_1.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		CloseButton_1.BackgroundTransparency = 0.7099999785423279
 		CloseButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		CloseButton_1.BorderSizePixel = 0
@@ -808,7 +815,7 @@ function Library:CreateWindow(Info1)
 		MinimizeButton_1.Parent = KeySystem
 		MinimizeButton_1.Active = true
 		MinimizeButton_1.AnchorPoint = Vector2.new(0.5, 0)
-		MinimizeButton_1.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+		MinimizeButton_1.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		MinimizeButton_1.BackgroundTransparency = 0.7099999785423279
 		MinimizeButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		MinimizeButton_1.BorderSizePixel = 0
@@ -826,7 +833,7 @@ function Library:CreateWindow(Info1)
 		TextBox_1.Name = "Keylog"
 		TextBox_1.Parent = KeySystem
 		TextBox_1.Active = true
-		TextBox_1.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+		TextBox_1.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 		TextBox_1.BackgroundTransparency = 0.7099999785423279
 		TextBox_1.BorderColor3 = Color3.fromRGB(0,0,0)
 		TextBox_1.BorderSizePixel = 0
@@ -845,7 +852,7 @@ function Library:CreateWindow(Info1)
 
 		UIStroke_5.Parent = TextBox_1
 		UIStroke_5.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-		UIStroke_5.Color = Color3.fromRGB(102, 102, 102)
+		UIStroke_5.Color = Color3.fromRGB(79, 79, 79)
 		UIStroke_5.Thickness = 1
 
 		CreateGradient(UIStroke_5, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
@@ -918,7 +925,7 @@ function Library:CreateWindow(Info1)
 		end)
 
 		TextBox_1.FocusLost:Connect(function()
-			TweenService:Create(UIStroke_5, TweenInfo.new(0.2), {Color = Color3.fromRGB(102, 102, 102)}):Play()
+			TweenService:Create(UIStroke_5, TweenInfo.new(0.2), {Color = Color3.fromRGB(79, 79, 79)}):Play()
 			TweenService:Create(TextBox_1, TweenInfo.new(0.3), {PlaceholderColor3 = Color3.fromRGB(178,178,178)}):Play()
 			IsFocused = false
 		end)
@@ -934,7 +941,7 @@ function Library:CreateWindow(Info1)
 		TextBox_1.MouseLeave:Connect(function()
 			local Stroke = TextBox_1:FindFirstChild("UIStroke")
 			if Stroke and not IsFocused then
-				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(102, 102, 102)}):Play()
+				TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(79, 79, 79)}):Play()
 				TweenService:Create(TextBox_1, TweenInfo.new(0.3), {PlaceholderColor3 = Color3.fromRGB(188,188,188)}):Play()
 			end
 		end)
@@ -1054,7 +1061,7 @@ function Library:CreateWindow(Info1)
 			IsMinimized = not IsMinimized
 
 			if IsMinimized then
-				--//Minimize On
+				--// Minimize On
 				for _, v in next, KeySystem:GetDescendants() do
 					if v:IsA("UIStroke") and not (v.Parent.Name == "CloseButton" or v.Parent.Name == "MinimizeButton" or v.Parent.Name == "DiscordButton" or v.Parent == KeySystem) then
 						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 1}):Play()
@@ -1083,7 +1090,7 @@ function Library:CreateWindow(Info1)
 				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -29, 0.234, -3)}):Play()
 
 			else
-				--//Minimize Off
+				--// Minimize Off
 				for _, v in next, KeySystem:GetDescendants() do
 					if v:IsA("UIStroke") then
 						TweenService:Create(v, TweenInfo.new(0.3), {Transparency = 0}):Play()
@@ -1104,9 +1111,9 @@ function Library:CreateWindow(Info1)
 					TextTransparency = 0
 				}):Play()
 
-				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.025, -31,0.235, CommonYOffset)}):Play()--// {1.025, -27},{0.235, -32}
-				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.894, -31,0.235, CommonYOffset)}):Play()--// {0.894, -27},{0.235, -32}
-				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -34,0.235, CommonYOffset)}):Play()--// {0.967, -30},{0.235, -32}
+				TweenService:Create(CloseButton_1, TweenInfo.new(0.3), {Position = UDim2.new(1.025, -31,0.235, CommonYOffset)}):Play()--//  {1.025, -27},{0.235, -32}
+				TweenService:Create(DiscordButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.894, -31,0.235, CommonYOffset)}):Play()--//  {0.894, -27},{0.235, -32}
+				TweenService:Create(MinimizeButton_1, TweenInfo.new(0.3), {Position = UDim2.new(0.967, -34,0.235, CommonYOffset)}):Play()--//  {0.967, -30},{0.235, -32}
 			end
 		end)
 
@@ -1203,7 +1210,7 @@ function Library:CreateWindow(Info1)
 
 	MainFrame_1.Name = "MainFrame"
 	MainFrame_1.Parent = Ventures
-	MainFrame_1.BackgroundColor3 = Color3.fromRGB(52, 52, 52)
+	MainFrame_1.BackgroundColor3 = Color3.fromRGB(26, 26, 26)
 	MainFrame_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	MainFrame_1.BackgroundTransparency = 0.1
 	MainFrame_1.BorderSizePixel = 0
@@ -1214,14 +1221,14 @@ function Library:CreateWindow(Info1)
 		MainFrame_1.Visible = false
 	end
 
-	local ShadownMN = CreateShadow(MainFrame_1, 1.74, 1.4, Config.MainShadowTransparecy, Color3.fromRGB(15, 13, 63))
+	local ShadownMN = CreateShadow(MainFrame_1, 1.74, 1.4, Config.MainShadowTransparecy, Color3.fromRGB(48, 48, 48))
 	CreateGradient(MainFrame_1, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
 
 	UICorner_1.Parent = MainFrame_1
 	UICorner_1.CornerRadius = UDim.new(0,15)
 
 	UIStroke_1.Parent = MainFrame_1
-	UIStroke_1.Color = Color3.fromRGB(102, 102, 102)
+	UIStroke_1.Color = Color3.fromRGB(47, 47, 47)
 	UIStroke_1.Thickness = 1
 
 	CreateGradient(UIStroke_1, Color3.fromRGB(201, 156, 255), Color3.fromRGB(255,255,255), Color3.fromRGB(231,255,249), Color3.fromRGB(172,255,252), false)
@@ -1262,6 +1269,8 @@ function Library:CreateWindow(Info1)
 	Title_1.TextSize = 14
 	Title_1.TextXAlignment = Enum.TextXAlignment.Left
 	Title_1.AutomaticSize = Enum.AutomaticSize.X
+	
+	--CreateGradient(Title_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 	SubTitle.Name = "SubTitle"
 	SubTitle.Parent = TopBar_1
@@ -1273,11 +1282,13 @@ function Library:CreateWindow(Info1)
 	SubTitle.Position = UDim2.new(0, 0,0.5, 0)
 	SubTitle.Size = UDim2.new(0, 0,0, 18)
 	SubTitle.FontFace = FontType
-	SubTitle.Text = Info1.SubTitle or "discord.gg/v3n"
-	SubTitle.TextColor3 = Color3.fromRGB(83,80,102)
+	SubTitle.Text = Version or Info1.SubTitle or "discord.gg/v3n"
+	SubTitle.TextColor3 = Color3.fromRGB(116, 165, 170)
 	SubTitle.TextSize = 11
 	SubTitle.TextXAlignment = Enum.TextXAlignment.Left
 	SubTitle.AutomaticSize = Enum.AutomaticSize.X
+	
+	CreateGradient(SubTitle,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 	local TextSize = TextService:GetTextSize(
 		Title_1.Text,
@@ -1295,7 +1306,7 @@ function Library:CreateWindow(Info1)
 
 	TopBarLine_1.Name = "TopBarLine"
 	TopBarLine_1.Parent = TopBar_1
-	TopBarLine_1.BackgroundColor3 = Color3.fromRGB(60, 60, 79)
+	TopBarLine_1.BackgroundColor3 = Color3.fromRGB(59, 70, 79)
 	TopBarLine_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	TopBarLine_1.BackgroundTransparency = 0
 	TopBarLine_1.BorderSizePixel = 0
@@ -1306,7 +1317,7 @@ function Library:CreateWindow(Info1)
 	CloseButton_1.Parent = TopBar_1
 	CloseButton_1.Active = true
 	CloseButton_1.AnchorPoint = Vector2.new(0, 0.5)
-	CloseButton_1.BackgroundColor3 = Color3.fromRGB(45, 45, 59)
+	CloseButton_1.BackgroundColor3 = Color3.fromRGB(59, 70, 79)
 	CloseButton_1.BackgroundTransparency = 0.7099999785423279
 	CloseButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	CloseButton_1.BorderSizePixel = 0
@@ -1316,7 +1327,7 @@ function Library:CreateWindow(Info1)
 
 	local ManualStroke1 = Instance.new("UIStroke")
 	ManualStroke1.Parent = CloseButton_1
-	ManualStroke1.Color = Color3.fromRGB(60, 60, 79)
+	ManualStroke1.Color = Color3.fromRGB(59, 70, 79)
 	ManualStroke1.Thickness = 1
 
 	UICorner_4.Parent = CloseButton_1
@@ -1326,7 +1337,7 @@ function Library:CreateWindow(Info1)
 	MinimizeButton_1.Parent = TopBar_1
 	MinimizeButton_1.Active = true
 	MinimizeButton_1.AnchorPoint = Vector2.new(0, 0.5)
-	MinimizeButton_1.BackgroundColor3 = Color3.fromRGB(45, 45, 59)
+	MinimizeButton_1.BackgroundColor3 = Color3.fromRGB(59, 70, 79)
 	MinimizeButton_1.BackgroundTransparency = 0.7099999785423279
 	MinimizeButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	MinimizeButton_1.BorderSizePixel = 0
@@ -1336,7 +1347,7 @@ function Library:CreateWindow(Info1)
 
 	local ManualStroke2 = Instance.new("UIStroke")
 	ManualStroke2.Parent = MinimizeButton_1
-	ManualStroke2.Color = Color3.fromRGB(60, 60, 79)
+	ManualStroke2.Color = Color3.fromRGB(59, 70, 79)
 	ManualStroke2.Thickness = 1
 
 	local function MinimizeGui(Direction)
@@ -1370,7 +1381,7 @@ function Library:CreateWindow(Info1)
 	DiscordButton_1.Parent = TopBar_1
 	DiscordButton_1.Active = true
 	DiscordButton_1.AnchorPoint = Vector2.new(0, 0.5)
-	DiscordButton_1.BackgroundColor3 = Color3.fromRGB(45, 45, 59)
+	DiscordButton_1.BackgroundColor3 = Color3.fromRGB(59, 70, 79)
 	DiscordButton_1.BackgroundTransparency = 0.7099999785423279
 	DiscordButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	DiscordButton_1.BorderSizePixel = 0
@@ -1380,7 +1391,7 @@ function Library:CreateWindow(Info1)
 
 	local ManualStroke3 = Instance.new("UIStroke")
 	ManualStroke3.Parent = DiscordButton_1
-	ManualStroke3.Color = Color3.fromRGB(60, 60, 79)
+	ManualStroke3.Color = Color3.fromRGB(59, 70, 79)
 	ManualStroke3.Thickness = 1
 
 	UICorner_6.Parent = DiscordButton_1
@@ -1388,7 +1399,7 @@ function Library:CreateWindow(Info1)
 
 	SideBarLine_1.Name = "SideBarLine"
 	SideBarLine_1.Parent = MainFrame_1
-	SideBarLine_1.BackgroundColor3 = Color3.fromRGB(60, 60, 79)
+	SideBarLine_1.BackgroundColor3 = Color3.fromRGB(59, 70, 79)
 	SideBarLine_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	SideBarLine_1.BorderSizePixel = 0
 	SideBarLine_1.Position = UDim2.new(0.277439028, 0,0.0847826079, 0)
@@ -1414,19 +1425,23 @@ function Library:CreateWindow(Info1)
 
 	UserProfile_1.Name = "UserProfile"
 	UserProfile_1.Parent = MainFrame_1
-	UserProfile_1.BackgroundColor3 = Color3.fromRGB(36, 36, 36)
+	UserProfile_1.BackgroundColor3 = Color3.fromRGB(78, 62, 91)
 	UserProfile_1.BackgroundTransparency = 0.75
 	UserProfile_1.BorderColor3 = Color3.fromRGB(0,0,0)
 	UserProfile_1.BorderSizePixel = 0
 	UserProfile_1.Position = UDim2.new(0.0137195121, 3,0.828260899, 0)
 	UserProfile_1.Size = UDim2.new(0, 160,0, 71)
+	
+	CreateGradient(UserProfile_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 	UICorner_27.Parent = UserProfile_1
 	UICorner_27.CornerRadius = UDim.new(0,15)
 
 	UIStroke_17.Parent = UserProfile_1
-	UIStroke_17.Color = Color3.fromRGB(60, 60, 79)
+	UIStroke_17.Color = Color3.fromRGB(88, 77, 108)
 	UIStroke_17.Thickness = 1
+	
+	CreateGradient(UIStroke_17,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 	FrameHolder_1.Name = "FrameHolder"
 	FrameHolder_1.Parent = UserProfile_1
@@ -1449,17 +1464,23 @@ function Library:CreateWindow(Info1)
 	UserScreenshot_1.Size = UDim2.new(0, 43,0, 43)
 	UserScreenshot_1.ZIndex = 1
 	UserScreenshot_1.Image = Players:GetUserThumbnailAsync(LocalPlayer.UserId,Enum.ThumbnailType.HeadShot,Enum.ThumbnailSize.Size420x420)
+	
+	local ManualCorner2 = Instance.new("UICorner")
+	ManualCorner2.Parent = UserScreenshot_1
+	ManualCorner2.CornerRadius = UDim.new(1,0)
 
 	UIStroke_d.Parent = FrameHolder_1
-	UIStroke_d.Color = Color3.fromRGB(100, 100, 132)
+	UIStroke_d.Color = Color3.fromRGB(151, 132, 185)
 	UIStroke_d.Thickness = 1
+	
+	CreateGradient(UIStroke_d,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 	UIGradient_d.Parent = FrameHolder_1
 	UIGradient_d.Rotation = 90
 	UIGradient_d.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.925466)}
 
 	UICorner_28.Parent = FrameHolder_1
-	UICorner_28.CornerRadius = UDim.new(0,8)
+	UICorner_28.CornerRadius = UDim.new(1,0)
 
 	Display_1.Name = "Display"
 	Display_1.Parent = UserProfile_1
@@ -1475,7 +1496,7 @@ function Library:CreateWindow(Info1)
 	Display_1.TextColor3 = Color3.fromRGB(255,255,255)
 	Display_1.TextSize = 14
 	Display_1.TextXAlignment = Enum.TextXAlignment.Left
-
+	
 	if Rank ~= "Member" and Rank ~= nil then
 		Display_1.Text = WhitelistedName or ""
 	end
@@ -1530,9 +1551,11 @@ function Library:CreateWindow(Info1)
 	Rank_1.Size = UDim2.new(0, 96,0, 18)
 	Rank_1.FontFace = FontType
 	Rank_1.Text = Rank or "Member"
-	Rank_1.TextColor3 = RankColor or Color3.fromRGB(83, 80, 102)
+	Rank_1.TextColor3 = RankColor or Color3.fromRGB(120, 97, 115)
 	Rank_1.TextSize = 14
 	Rank_1.TextXAlignment = Enum.TextXAlignment.Left
+	
+	CreateGradient(Rank_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 	Library:CreateNotification({
 		Title = "Ventures - Startup",
@@ -1600,7 +1623,7 @@ function Library:CreateWindow(Info1)
 
 	MinimizeButton_1.MouseLeave:Connect(function()
 		local Stroke = MinimizeButton_1:FindFirstChild("UIStroke")
-		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(60, 60, 79)}):Play()
+		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(59, 70, 79)}):Play()
 	end)
 
 	CloseButton_1.MouseEnter:Connect(function()
@@ -1610,7 +1633,7 @@ function Library:CreateWindow(Info1)
 
 	CloseButton_1.MouseLeave:Connect(function()
 		local Stroke = CloseButton_1:FindFirstChild("UIStroke")
-		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(60, 60, 79)}):Play()
+		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(59, 70, 79)}):Play()
 	end)
 
 	DiscordButton_1.MouseEnter:Connect(function()
@@ -1620,7 +1643,7 @@ function Library:CreateWindow(Info1)
 
 	DiscordButton_1.MouseLeave:Connect(function()
 		local Stroke = DiscordButton_1:FindFirstChild("UIStroke")
-		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(60, 60, 79)}):Play()
+		TweenService:Create(Stroke, TweenInfo.new(0.3), {Color = Color3.fromRGB(59, 70, 79)}):Play()
 	end)
 
 	DiscordButton_1.MouseButton1Click:Connect(function()
@@ -1628,7 +1651,6 @@ function Library:CreateWindow(Info1)
 
 		setclipboard("Discord.gg/v3n")
 	end)
-
 
 	MinimizeButton_1.MouseButton1Click:Connect(function()
 		Bool = not Bool
@@ -1680,6 +1702,8 @@ function Library:CreateWindow(Info1)
 		Tab2_1.BorderSizePixel = 0
 		Tab2_1.Position = UDim2.new(0.0759493634, 0, 0, 0)
 		Tab2_1.Size = UDim2.new(1, 0, 0, 34)
+		
+		CreateGradient(Tab2_1 ,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 		UICorner_2.Parent = Tab2_1
 		UICorner_2.CornerRadius = UDim.new(0, 8)
@@ -1707,10 +1731,8 @@ function Library:CreateWindow(Info1)
 		UIStroke_2.Thickness = 1
 		UIStroke_2.Transparency = 1
 
-		UIGradient_1.Parent = UIStroke_2
-		UIGradient_1.Transparency =  NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.652174)}
-		UIGradient_1.Enabled = true
-
+		CreateGradient(UIStroke_2,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
+		
 		UIGradient_2.Parent = Tab2_1
 		UIGradient_2.Color = ColorSequence.new {
 			ColorSequenceKeypoint.new(0, Color3.fromRGB(255, 255, 255)),
@@ -1799,10 +1821,10 @@ function Library:CreateWindow(Info1)
 
 				if  Padding then
 					if Direction == "Right" then
-						local Tween = TweenService:Create(Padding, TweenInfo.new(0.4), {PaddingLeft = UDim.new(2,0)})
+						local Tween = TweenService:Create(Padding, TweenInfo.new(0.3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {PaddingLeft = UDim.new(2,0)})
 						Tween:Play()
 					elseif Direction == "Left" then
-						local Tween = TweenService:Create(Padding, TweenInfo.new(0.4), {PaddingLeft = UDim.new(0,15)})
+						local Tween = TweenService:Create(Padding, TweenInfo.new(0.3, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {PaddingLeft = UDim.new(0,15)})
 						Tween:Play()
 					end
 				end
@@ -1813,7 +1835,7 @@ function Library:CreateWindow(Info1)
 			SelectedTab = GetFirstTab()
 
 			local Container = GetContainer(SelectedTab.Name)
-			SelectedTab.BackgroundColor3 = Color3.fromRGB(60, 57, 88)
+			SelectedTab.BackgroundColor3 = Color3.fromRGB(78, 62, 91)
 			SelectedTab.BackgroundTransparency = 0.45
 
 			local Gradient, Stroke = SelectedTab:FindFirstChild("UIGradient"), SelectedTab:FindFirstChild("UIStroke")
@@ -1830,7 +1852,7 @@ function Library:CreateWindow(Info1)
 
 			if Stroke then
 				TweenService:Create(Stroke, TweenInfo.new(0.4), {Transparency = 0}):Play()
-				TweenService:Create(Stroke, TweenInfo.new(0.4), {Color = Color3.fromRGB(110, 110, 145)}):Play()
+				TweenService:Create(Stroke, TweenInfo.new(0.4), {Color = Color3.fromRGB(126, 100, 147)}):Play()
 			end
 		end
 
@@ -1845,7 +1867,7 @@ function Library:CreateWindow(Info1)
 					debounce = true  
 
 					if v ~= SelectedTab then
-						--//old
+						--// old
 						SelectedTab.BackgroundTransparency = 0.9
 						local PastContainer = GetContainer(SelectedTab.Name)
 						local Gradient, Stroke = SelectedTab:FindFirstChild("UIGradient"), SelectedTab:FindFirstChild("UIStroke")
@@ -1865,7 +1887,7 @@ function Library:CreateWindow(Info1)
 						end
 
 						SelectedTab = v
-						--//new
+						--// new
 						SelectedTab.BackgroundTransparency = 0.45
 						local NewContainer = GetContainer(SelectedTab.Name)
 
@@ -1907,7 +1929,7 @@ function Library:CreateWindow(Info1)
 			end
 		end
 
-		--// Toggle
+		--//  Toggle
 		function Elements:CreateToggle(Info3)
 			local SelfActions = {}
 
@@ -1931,22 +1953,21 @@ function Library:CreateWindow(Info1)
 
 			Toggle_1.Name = Info3.Flag or "Toggle"
 			Toggle_1.Parent = TabContainer_1
-			Toggle_1.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Toggle_1.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Toggle_1.BackgroundTransparency = 0.6000000238418579
 			Toggle_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Toggle_1.BorderSizePixel = 0
 			Toggle_1.Position = UDim2.new(-0.352963328, 0,0.0546318293, 0)
 			Toggle_1.Size = UDim2.new(0, 453,0, 66)
+			
+			CreateGradient(Toggle_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_7.Parent = Toggle_1
 			UICorner_7.CornerRadius = UDim.new(0,15)
 
 			UIStroke_3.Parent = Toggle_1
-			UIStroke_3.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_3.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_3.Thickness = 1
-
-			UIGradient_3.Parent = UIStroke_3
-			UIGradient_3.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
 
 			ToggleDescription_1.Name = "ToggleDescription"
 			ToggleDescription_1.Parent = Toggle_1
@@ -1963,6 +1984,8 @@ function Library:CreateWindow(Info1)
 			ToggleDescription_1.TextWrapped = true
 			ToggleDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			ToggleDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(ToggleDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			ToggleName_1.Name = "ToggleName"
 			ToggleName_1.Parent = Toggle_1
@@ -1990,7 +2013,7 @@ function Library:CreateWindow(Info1)
 			Dot_1.Name = "Dot"
 			Dot_1.Parent = ToggleHolder_1
 			Dot_1.AnchorPoint = Vector2.new(0, 0.5)
-			Dot_1.BackgroundColor3 = Color3.fromRGB(117, 113, 144)
+			Dot_1.BackgroundColor3 = Color3.fromRGB(114, 140, 144)
 			Dot_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Dot_1.BorderSizePixel = 0
 			Dot_1.Position = UDim2.new(0.0599999987, 0,0.5, 0)
@@ -2003,7 +2026,7 @@ function Library:CreateWindow(Info1)
 			UICorner_9.CornerRadius = UDim.new(1,0)
 
 			UIStroke_4.Parent = ToggleHolder_1
-			UIStroke_4.Color = Color3.fromRGB(117, 113, 144)
+			UIStroke_4.Color = Color3.fromRGB(114, 140, 144)
 			UIStroke_4.Thickness = 1.4
 
 			Button_3.Name = "Button"
@@ -2024,12 +2047,12 @@ function Library:CreateWindow(Info1)
 
 			if Info3.Default then
 				if Info3.Default == true then
-					TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(197, 187, 255)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(197, 187, 255)}):Play()
+					TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(205, 253, 255)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(205, 253, 255)}):Play()
 					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 				else
-					TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(90, 90, 90)}):Play()
-					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(90, 90, 90)}):Play()
+					TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(114, 140, 144)}):Play()
+					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(114, 140, 144)}):Play()
 					TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 				end
 
@@ -2046,16 +2069,16 @@ function Library:CreateWindow(Info1)
 					Bool = not Bool
 
 					if IsExecutionEnv then
-						SaveFlag(FileBranch.Toggles, Flag, Bool)
+						SaveFlag(FileBranch.Configs, Flag, Bool)
 					end
 
 					if Bool then
-						TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(197, 187, 255)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(197, 187, 255)}):Play()
+						TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(205, 253, 255)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(205, 253, 255)}):Play()
 						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 					else
-						TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(117, 113, 144)}):Play()
-						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(117, 113, 144)}):Play()
+						TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(114, 140, 144)}):Play()
+						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(114, 140, 144)}):Play()
 						TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 					end
 
@@ -2079,12 +2102,12 @@ function Library:CreateWindow(Info1)
 						end)()
 
 						if value == true then
-							TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(223, 223, 223)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(223, 223, 223)}):Play()
+							TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(205, 253, 255)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(205, 253, 255)}):Play()
 							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.58, 0, 0.5, 0)}):Play()
 						else
-							TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(117, 113, 144)}):Play()
-							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(117, 113, 144)}):Play()
+							TweenService:Create(UIStroke_4, TweenInfo.new(Config.ToggleSpeed), {Color = Color3.fromRGB(114, 140, 144)}):Play()
+							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {BackgroundColor3 = Color3.fromRGB(114, 140, 144)}):Play()
 							TweenService:Create(Dot_1, TweenInfo.new(Config.ToggleSpeed), {Position = UDim2.new(0.06, 0, 0.5, 0)}):Play()
 						end
 					else
@@ -2098,7 +2121,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.Toggles)
+				local Flags = GetFlags(FileBranch.Configs)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2110,7 +2133,7 @@ function Library:CreateWindow(Info1)
 			return SelfActions
 		end
 
-		--// Slider
+		--//  Slider
 		function Elements:CreateSlider(Info4)
 			local SelfActions = {}
 
@@ -2136,19 +2159,23 @@ function Library:CreateWindow(Info1)
 
 			Slider_1.Name = "Slider"
 			Slider_1.Parent = TabContainer_1
-			Slider_1.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Slider_1.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Slider_1.BackgroundTransparency = 0.6000000238418579
 			Slider_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Slider_1.BorderSizePixel = 0
 			Slider_1.Position = UDim2.new(-0.352963328, 0,0.0546318293, 0)
 			Slider_1.Size = UDim2.new(0, 453,0, 66)
+			
+			CreateGradient(Slider_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_13.Parent = Slider_1
 			UICorner_13.CornerRadius = UDim.new(0,15)
 
 			UIStroke_7.Parent = Slider_1
-			UIStroke_7.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_7.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_7.Thickness = 1
+			
+			CreateGradient(UIStroke_7,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UIGradient_7.Parent = UIStroke_7
 			UIGradient_7.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
@@ -2168,6 +2195,8 @@ function Library:CreateWindow(Info1)
 			SliderDescription_1.TextWrapped = true
 			SliderDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			SliderDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(SliderDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			SliderName_1.Name = "SliderName"
 			SliderName_1.Parent = Slider_1
@@ -2194,7 +2223,7 @@ function Library:CreateWindow(Info1)
 
 			Maximum_1.Name = "Maximum"
 			Maximum_1.Parent = SliderHolder_1
-			Maximum_1.BackgroundColor3 = Color3.fromRGB(76, 69, 103)
+			Maximum_1.BackgroundColor3 = Color3.fromRGB(92, 103, 102)
 			Maximum_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Maximum_1.BorderSizePixel = 0
 			Maximum_1.Position = UDim2.new(-0.00666666683, 0,0.472222209, 0)
@@ -2202,7 +2231,7 @@ function Library:CreateWindow(Info1)
 
 			Percent_1.Name = "Percent"
 			Percent_1.Parent = Maximum_1
-			Percent_1.BackgroundColor3 = Color3.fromRGB(179, 159, 231)
+			Percent_1.BackgroundColor3 = Color3.fromRGB(191, 231, 208)
 			Percent_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Percent_1.BorderSizePixel = 0
 			Percent_1.Size = UDim2.new(0.600000024, 0,1, 0)
@@ -2214,7 +2243,7 @@ function Library:CreateWindow(Info1)
 			Dot_3.Parent = Percent_1
 			Dot_3.Active = true
 			Dot_3.AnchorPoint = Vector2.new(0, 0.5)
-			Dot_3.BackgroundColor3 = Color3.fromRGB(179, 159, 231)
+			Dot_3.BackgroundColor3 = Color3.fromRGB(191, 231, 208)
 			Dot_3.BorderColor3 = Color3.fromRGB(0,0,0)
 			Dot_3.BorderSizePixel = 0
 			Dot_3.Position = UDim2.new(1, 0,0.5, 0)
@@ -2302,7 +2331,7 @@ function Library:CreateWindow(Info1)
 					ValueInput_1.Text = string.format("%." .. tostring(math.log10(1 / Increment)) .. "f", Value)
 
 					if IsExecutionEnv then
-						SaveFlag(FileBranch.Sliders, Flag, Value)
+						SaveFlag(FileBranch.Configs, Flag, Value)
 					end
 					local Tween1 = TweenService:Create(Dot_3, TweenInfo.new(Config.SliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, 0, 0.5, 0)})
 					local Tween2 = TweenService:Create(Percent_1, TweenInfo.new(Config.SliderSpeed, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Size = UDim2.new(percentv, 0, 1, 0)})
@@ -2347,7 +2376,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.Sliders)
+				local Flags = GetFlags(FileBranch.Configs)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2358,7 +2387,7 @@ function Library:CreateWindow(Info1)
 
 			return SelfActions
 		end
-		--// Section
+		--//  Section
 		function Elements:CreateSection(Info5)
 			local Section_1 = Instance.new("TextLabel")
 
@@ -2377,7 +2406,7 @@ function Library:CreateWindow(Info1)
 			Section_1.TextXAlignment = Enum.TextXAlignment.Left
 		end
 
-		--// Input
+		--//  Input
 		function Elements:CreateInput(Info6)
 			local SelfActions = {}
 
@@ -2400,22 +2429,23 @@ function Library:CreateWindow(Info1)
 
 			Input.Name = "Input"
 			Input.Parent = TabContainer_1
-			Input.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Input.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Input.BackgroundTransparency = 0.6000000238418579
 			Input.BorderColor3 = Color3.fromRGB(0,0,0)
 			Input.BorderSizePixel = 0
 			Input.Position = UDim2.new(-0.352963328, 0,0.0546318293, 0)
 			Input.Size = UDim2.new(0, 453,0, 66)
+			
+			CreateGradient(Input,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_1.Parent = Input
 			UICorner_1.CornerRadius = UDim.new(0,15)
 
 			UIStroke_1.Parent = Input
-			UIStroke_1.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_1.Color = Color3.fromRGB(127, 127, 127)
 			UIStroke_1.Thickness = 1
-
-			UIGradient_1.Parent = UIStroke_1
-			UIGradient_1.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
+			
+			CreateGradient(UIStroke_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UIGradient_2.Parent = Input
 			UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(213, 213, 213)), ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 16, 16))}
@@ -2436,6 +2466,8 @@ function Library:CreateWindow(Info1)
 			InputDescription_1.TextWrapped = true
 			InputDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			InputDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(InputDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			InputHolder_1.Name = "InputHolder"
 			InputHolder_1.Parent = Input
@@ -2454,7 +2486,7 @@ function Library:CreateWindow(Info1)
 			Input_1.Name = "Input"
 			Input_1.Parent = InputHolder_1
 			Input_1.Active = true
-			Input_1.BackgroundColor3 = Color3.fromRGB(63, 60, 104)
+			Input_1.BackgroundColor3 = Color3.fromRGB(72, 82, 88)
 			Input_1.BackgroundTransparency = 0.6000000238418579
 			Input_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Input_1.BorderSizePixel = 0
@@ -2471,8 +2503,10 @@ function Library:CreateWindow(Info1)
 
 			UIStroke_2.Parent = Input_1
 			UIStroke_2.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			UIStroke_2.Color = Color3.fromRGB(78, 74, 129)
+			UIStroke_2.Color = Color3.fromRGB(105, 120, 129)
 			UIStroke_2.Thickness = 1.2999999523162842
+			
+			CreateGradient(UIStroke_2,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_2.Parent = Input_1
 			UICorner_2.CornerRadius = UDim.new(0,15)
@@ -2507,7 +2541,7 @@ function Library:CreateWindow(Info1)
 								coroutine.wrap(function()
 									local Success, Error = pcall(function() Callback(Number) end)
 									if IsExecutionEnv then
-										SaveFlag(FileBranch.Inputs, Flag, Number)
+										SaveFlag(FileBranch.Configs, Flag, Number)
 									end
 									if not Success then
 										Library:FastNotify("Input Error", tostring(Error))
@@ -2520,7 +2554,7 @@ function Library:CreateWindow(Info1)
 							coroutine.wrap(function()
 								local Success, Error = pcall(function() Callback(Input_1.Text) end)
 								if IsExecutionEnv then
-									SaveFlag(FileBranch.Inputs, Flag, Input_1.Text)
+									SaveFlag(FileBranch.Configs, Flag, Input_1.Text)
 								end
 								if not Success then
 									Library:FastNotify("Input Error", tostring(Error))
@@ -2548,7 +2582,7 @@ function Library:CreateWindow(Info1)
 			end
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.Inputs)
+				local Flags = GetFlags(FileBranch.Configs)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2560,7 +2594,7 @@ function Library:CreateWindow(Info1)
 			return SelfActions
 		end
 
-		--// Keybind
+		--//  Keybind
 		function Elements:CreateKeybind(Info7)
 			local SelfActions = {}
 
@@ -2584,22 +2618,23 @@ function Library:CreateWindow(Info1)
 
 			Keybind_1.Name = Info7.Name or "Keybind"
 			Keybind_1.Parent = TabContainer_1
-			Keybind_1.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Keybind_1.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Keybind_1.BackgroundTransparency = 0.6000000238418579
 			Keybind_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Keybind_1.BorderSizePixel = 0
 			Keybind_1.Position = UDim2.new(-0.352963328, 0,0.0546318293, 0)
 			Keybind_1.Size = UDim2.new(0, 453,0, 66)
+			
+			CreateGradient(Keybind_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_19.Parent = Keybind_1
 			UICorner_19.CornerRadius = UDim.new(0,15)
 
 			UIStroke_10.Parent = Keybind_1
-			UIStroke_10.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_10.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_10.Thickness = 1
-
-			UIGradient_11.Parent = UIStroke_10
-			UIGradient_11.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
+			
+			CreateGradient(UIStroke_10,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UIGradient_12.Parent = Keybind_1
 			UIGradient_12.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(213, 213, 213)), ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 16, 16))}
@@ -2620,6 +2655,8 @@ function Library:CreateWindow(Info1)
 			KeybindDescription_1.TextWrapped = true
 			KeybindDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			KeybindDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(KeybindDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			KeybindHolder_1.Name = "KeybindHolder"
 			KeybindHolder_1.Parent = Keybind_1
@@ -2637,7 +2674,7 @@ function Library:CreateWindow(Info1)
 			Keybind_2.Name = "Keybind"
 			Keybind_2.Parent = KeybindHolder_1
 			Keybind_2.Active = true
-			Keybind_2.BackgroundColor3 = Color3.fromRGB(63, 60, 104)
+			Keybind_2.BackgroundColor3 = Color3.fromRGB(72, 82, 88)
 			Keybind_2.BackgroundTransparency = 0.6000000238418579
 			Keybind_2.BorderColor3 = Color3.fromRGB(0,0,0)
 			Keybind_2.BorderSizePixel = 0
@@ -2649,8 +2686,10 @@ function Library:CreateWindow(Info1)
 
 			UIStroke_11.Parent = Keybind_2
 			UIStroke_11.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			UIStroke_11.Color = Color3.fromRGB(78, 74, 129)
+			UIStroke_11.Color = Color3.fromRGB(105, 120, 129)
 			UIStroke_11.Thickness = 1.2999999523162842
+			
+			CreateGradient(UIStroke_11,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_20.Parent = Keybind_2
 			UICorner_20.CornerRadius = UDim.new(0,15)
@@ -2702,7 +2741,7 @@ function Library:CreateWindow(Info1)
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
 
 						if IsExecutionEnv then
-							SaveFlag(FileBranch.Keybinds, Flag, CurrentKeybind)
+							SaveFlag(FileBranch.Configs, Flag, CurrentKeybind)
 						end
 
 						if not Success then
@@ -2714,7 +2753,7 @@ function Library:CreateWindow(Info1)
 						local Success, Error = pcall(function() Callback(CurrentKeybind) end)
 
 						if IsExecutionEnv then
-							SaveFlag(FileBranch.Keybinds, Flag, CurrentKeybind)
+							SaveFlag(FileBranch.Configs, Flag, CurrentKeybind)
 						end
 
 						if not Success then
@@ -2742,14 +2781,14 @@ function Library:CreateWindow(Info1)
 					end
 
 					if IsExecutionEnv then
-						SaveFlag(FileBranch.Keybinds, Flag, CurrentKeybind)
+						SaveFlag(FileBranch.Configs, Flag, CurrentKeybind)
 					end
 
 				end
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.Keybinds)
+				local Flags = GetFlags(FileBranch.Configs)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -2760,7 +2799,7 @@ function Library:CreateWindow(Info1)
 			return SelfActions
 		end
 
-		--//Button
+		--// Button
 		function Elements:CreateButton(Info8)
 			local Callback = Info8.Callback
 
@@ -2779,22 +2818,23 @@ function Library:CreateWindow(Info1)
 
 			Button_5.Name = "Button"
 			Button_5.Parent = TabContainer_1
-			Button_5.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Button_5.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Button_5.BackgroundTransparency = 0.6000000238418579
 			Button_5.BorderColor3 = Color3.fromRGB(0,0,0)
 			Button_5.BorderSizePixel = 0
 			Button_5.Position = UDim2.new(-0.352963328, 0,0.0546318293, 0)
 			Button_5.Size = UDim2.new(0, 453,0, 66)
+			
+			CreateGradient(Button_5,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_17.Parent = Button_5
 			UICorner_17.CornerRadius = UDim.new(0,15)
 
 			UIStroke_8.Parent = Button_5
-			UIStroke_8.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_8.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_8.Thickness = 1
-
-			UIGradient_9.Parent = UIStroke_8
-			UIGradient_9.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
+			
+			CreateGradient(UIStroke_8,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			ButtonDescription_1.Name = "ButtonDescription"
 			ButtonDescription_1.Parent = Button_5
@@ -2811,6 +2851,8 @@ function Library:CreateWindow(Info1)
 			ButtonDescription_1.TextWrapped = true
 			ButtonDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			ButtonDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(ButtonDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			ButtonName_1.Name = "ButtonName"
 			ButtonName_1.Parent = Button_5
@@ -2844,7 +2886,7 @@ function Library:CreateWindow(Info1)
 			PickButton_1.Parent = ButtonHolder_1
 			PickButton_1.Active = true
 			PickButton_1.AutoButtonColor = false
-			PickButton_1.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			PickButton_1.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			PickButton_1.BackgroundTransparency = 0.6
 			PickButton_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			PickButton_1.BorderSizePixel = 0
@@ -2857,7 +2899,7 @@ function Library:CreateWindow(Info1)
 			UICorner_18.CornerRadius = UDim.new(0,12.5)
 
 			UIStroke_9.Parent = PickButton_1
-			UIStroke_9.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_9.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_9.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 			UIStroke_9.Thickness = 1.2999999523162842
 
@@ -2883,10 +2925,10 @@ function Library:CreateWindow(Info1)
 				coroutine.wrap(function()
 					local Success, Error = pcall(function() Callback() end)
 
-					TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(140, 125, 213)}):Play()
+					TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(134, 212, 213)}):Play()
 					TweenService:Create(PickButton_1, TweenInfo.new(0.1), {Size = UDim2.new(0.96,0,0.96,0)}):Play()
 					task.wait(0.1)
-					TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(86, 77, 131)}):Play()
+					TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(127, 127, 131)}):Play()
 					TweenService:Create(PickButton_1, TweenInfo.new(0.11), {Size = UDim2.new(1,0,1,0)}):Play()
 
 					if not Success then
@@ -2906,7 +2948,7 @@ function Library:CreateWindow(Info1)
 						TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(95, 85, 144)}):Play()
 						TweenService:Create(PickButton_1, TweenInfo.new(0.1), {Size = UDim2.new(0.96,0,0.96,0)}):Play()
 						task.wait(0.1)
-						TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(86, 77, 131)}):Play()
+						TweenService:Create(UIStroke_9, TweenInfo.new(0.1), {Color = Color3.fromRGB(127, 127, 131)}):Play()
 						TweenService:Create(PickButton_1, TweenInfo.new(0.11), {Size = UDim2.new(1,0,1,0)}):Play()
 
 						if not Success then
@@ -2917,7 +2959,7 @@ function Library:CreateWindow(Info1)
 			}
 		end
 
-		--//Dropdown
+		--// Dropdown
 		function Elements:CreateDropdown(Info9)
 			local SelfActions = {}
 
@@ -2946,23 +2988,24 @@ function Library:CreateWindow(Info1)
 
 			Dropdown_1.Name = "Dropdown"
 			Dropdown_1.Parent = TabContainer_1
-			Dropdown_1.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Dropdown_1.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Dropdown_1.BackgroundTransparency = 0.6000000238418579
 			Dropdown_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			Dropdown_1.BorderSizePixel = 0
 			Dropdown_1.Position = UDim2.new(-0.352963328, 0,0.0546318293, 0)
 			Dropdown_1.Size = UDim2.new(0, 453,0, 66)
 			Dropdown_1.ZIndex = 2
+			
+			CreateGradient(Dropdown_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_21.Parent = Dropdown_1
 			UICorner_21.CornerRadius = UDim.new(0,15)
 
 			UIStroke_12.Parent = Dropdown_1
-			UIStroke_12.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_12.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_12.Thickness = 1
-
-			UIGradient_13.Parent = UIStroke_12
-			UIGradient_13.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
+			
+			CreateGradient(UIStroke_12,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UIGradient_14.Parent = Dropdown_1
 			UIGradient_14.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(213, 213, 213)), ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 16, 16))}
@@ -2983,10 +3026,12 @@ function Library:CreateWindow(Info1)
 			DropdownDescription_1.TextWrapped = true
 			DropdownDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			DropdownDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(DropdownDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			DropdownHolder_1.Name = "DropdownHolder"
 			DropdownHolder_1.Parent = Dropdown_1
-			DropdownHolder_1.BackgroundColor3 = Color3.fromRGB(63, 60, 104)
+			DropdownHolder_1.BackgroundColor3 = Color3.fromRGB(72, 82, 88)
 			DropdownHolder_1.BackgroundTransparency = 0.6000000238418579
 			DropdownHolder_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			DropdownHolder_1.BorderSizePixel = 0
@@ -3004,6 +3049,7 @@ function Library:CreateWindow(Info1)
 			DropdownButton_1.FontFace = FontType
 			DropdownButton_1.Text = Values[Info9.Default] or "Select..."
 			DropdownButton_1.TextColor3 = Color3.fromRGB(255,255,255)
+			DropdownButton_1.ZIndex = 2
 			DropdownButton_1.TextSize = 14
 			DropdownButton_1.TextWrapped = true
 
@@ -3015,8 +3061,10 @@ function Library:CreateWindow(Info1)
 
 			UIStroke_13.Parent = DropdownHolder_1
 			UIStroke_13.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			UIStroke_13.Color = Color3.fromRGB(78, 74, 129)
+			UIStroke_13.Color = Color3.fromRGB(105, 120, 129)
 			UIStroke_13.Thickness = 1.2999999523162842
+			
+			CreateGradient(UIStroke_13,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			ClickIcon_1.Name = "ClickIcon"
 			ClickIcon_1.Parent = DropdownHolder_1
@@ -3030,7 +3078,7 @@ function Library:CreateWindow(Info1)
 
 			ValuesHolder_1.Name = "ValuesHolder"
 			ValuesHolder_1.Parent = DropdownHolder_1
-			ValuesHolder_1.BackgroundColor3 = Color3.fromRGB(45, 43, 75)
+			ValuesHolder_1.BackgroundColor3 = Color3.fromRGB(48, 54, 58)
 			ValuesHolder_1.BackgroundTransparency = 0.06
 			ValuesHolder_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			ValuesHolder_1.BorderSizePixel = 0
@@ -3044,8 +3092,10 @@ function Library:CreateWindow(Info1)
 
 			UIStroke_14.Parent = ValuesHolder_1
 			UIStroke_14.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-			UIStroke_14.Color = Color3.fromRGB(78, 74, 129)
+			UIStroke_14.Color = Color3.fromRGB(105, 120, 129)
 			UIStroke_14.Thickness = 1.2999999523162842
+			
+			CreateGradient(UIStroke_14,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UIListLayout_3.Parent = ValuesHolder_1
 			UIListLayout_3.Padding = UDim.new(0,10)
@@ -3090,7 +3140,7 @@ function Library:CreateWindow(Info1)
 					Value_1.Name = "Value"
 					Value_1.Parent = ValuesHolder_1
 					Value_1.Active = true
-					Value_1.BackgroundColor3 = Color3.fromRGB(54, 52, 90)
+					Value_1.BackgroundColor3 = Color3.fromRGB(72, 82, 88)
 					Value_1.BorderColor3 = Color3.fromRGB(0,0,0)
 					Value_1.BorderSizePixel = 0
 					Value_1.Position = UDim2.new(0.00510204071, 0,0, 0)
@@ -3107,27 +3157,27 @@ function Library:CreateWindow(Info1)
 
 					UIStroke_15.Parent = Value_1
 					UIStroke_15.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-					UIStroke_15.Color = Color3.fromRGB(105, 81, 139)
+					UIStroke_15.Color = Color3.fromRGB(105, 120, 129)
 					UIStroke_15.Transparency = 1
 					UIStroke_15.Thickness = 1.2999999523162842
+					
+					CreateGradient(UIStroke_15,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 					Value_1.MouseEnter:Connect(function()
 						TweenService:Create(UIStroke_15, TweenInfo.new(0.2), {Transparency = 0}):Play()
-						TweenService:Create(UIStroke_15, TweenInfo.new(0.4), {Color = Color3.fromRGB(105, 81, 139)}):Play()
-						TweenService:Create(Value_1, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(78, 75, 130)}):Play()
+						TweenService:Create(Value_1, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(107, 122, 131)}):Play()
 					end)
 
 					Value_1.MouseLeave:Connect(function()
-						TweenService:Create(UIStroke_15, TweenInfo.new(0.4), {Color = Color3.fromRGB(86, 77, 131)}):Play()
 						TweenService:Create(UIStroke_15, TweenInfo.new(0.2), {Transparency = 1}):Play()
-						TweenService:Create(Value_1, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(54, 52, 90)}):Play()
+						TweenService:Create(Value_1, TweenInfo.new(0.4), {BackgroundColor3 = Color3.fromRGB(72, 82, 88)}):Play()
 					end)
 
 					Value_1.MouseButton1Click:Connect(function()
 						DropdownButton_1.Text = v
 
 						if IsExecutionEnv then
-							SaveFlag(FileBranch.Dropdowns, Flag, v)
+							SaveFlag(FileBranch.Configs, Flag, v)
 						end
 
 						coroutine.wrap(function()
@@ -3186,7 +3236,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.Dropdowns)
+				local Flags = GetFlags(FileBranch.Configs)
 
 				if Flags then
 					for i, v in next, Flags do
@@ -3237,7 +3287,7 @@ function Library:CreateWindow(Info1)
 
 			ColorPicker.Name = "ColorPicker"
 			ColorPicker.Parent = TabContainer_1
-			ColorPicker.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			ColorPicker.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			ColorPicker.BackgroundTransparency = 0.6000000238418579
 			ColorPicker.BorderColor3 = Color3.fromRGB(0,0,0)
 			ColorPicker.BorderSizePixel = 0
@@ -3248,7 +3298,7 @@ function Library:CreateWindow(Info1)
 			UICorner_c.CornerRadius = UDim.new(0,15)
 
 			UIStroke_c.Parent = ColorPicker
-			UIStroke_c.Color = Color3.fromRGB(86, 77, 131)
+			UIStroke_c.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_c.Thickness = 1
 
 			UIGradient_1.Parent = UIStroke_c
@@ -3264,7 +3314,7 @@ function Library:CreateWindow(Info1)
 			ColorPickerDescription_1.BackgroundTransparency = 1
 			ColorPickerDescription_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			ColorPickerDescription_1.BorderSizePixel = 0
-			ColorPickerDescription_1.Position = UDim2.new(00.015,0,0.348,0) --//UDim2.new(0.0147992065, 0,0.143606797, 0)
+			ColorPickerDescription_1.Position = UDim2.new(00.015,0,0.348,0) --// UDim2.new(0.0147992065, 0,0.143606797, 0)
 			ColorPickerDescription_1.Size = UDim2.new(0, 349,0, 38)
 			ColorPickerDescription_1.FontFace = FontType
 			ColorPickerDescription_1.Text = Info10.Description or ""
@@ -3293,7 +3343,7 @@ function Library:CreateWindow(Info1)
 			ColorFrame_1.BackgroundColor3 = Default or Color3.fromRGB(255, 255, 255)
 			ColorFrame_1.BorderColor3 = Color3.fromRGB(0,0,0)
 			ColorFrame_1.BorderSizePixel = 0
-			ColorFrame_1.Position = UDim2.new(0.874,0,0.136,0) --//UDim2.new(0.878587067, 0,0.0485588275, 0)
+			ColorFrame_1.Position = UDim2.new(0.874,0,0.136,0) --// UDim2.new(0.878587067, 0,0.0485588275, 0)
 			ColorFrame_1.Size = UDim2.new(0, 47,0, 47)
 
 			local ManualStroke = Instance.new("UIStroke")
@@ -3449,7 +3499,7 @@ function Library:CreateWindow(Info1)
 				local Success, Error = pcall(function() Callback(DefaultColor) end)
 
 				if IsExecutionEnv then
-					SaveFlag(FileBranch.Colors, Flag, DefaultColor)
+					SaveFlag(FileBranch.Configs, Flag, DefaultColor)
 				end
 
 				if not Success then
@@ -3470,7 +3520,7 @@ function Library:CreateWindow(Info1)
 				local Success, Error = pcall(function() Callback(NewColor) end)
 
 				if IsExecutionEnv then
-					SaveFlag(FileBranch.Colors, Flag, NewColor)
+					SaveFlag(FileBranch.Configs, Flag, NewColor)
 				end
 
 				if not Success then
@@ -3540,7 +3590,7 @@ function Library:CreateWindow(Info1)
 			}
 
 			if IsExecutionEnv then
-				local Flags = GetFlags(FileBranch.Colors)
+				local Flags = GetFlags(FileBranch.Configs)
 
 				for i, v in next, Flags do
 					if i == Flag and v ~= nil then
@@ -3581,7 +3631,7 @@ function Library:CreateWindow(Info1)
 
 			Paragraph.Name = "Paragraph"
 			Paragraph.Parent = TabContainer_1
-			Paragraph.BackgroundColor3 = Color3.fromRGB(86, 77, 131)
+			Paragraph.BackgroundColor3 = Color3.fromRGB(83, 83, 86)
 			Paragraph.BackgroundTransparency = 0.6
 			Paragraph.BorderSizePixel = 0
 			Paragraph.Position = UDim2.new(0, 0, 0.01, 0)
@@ -3749,7 +3799,7 @@ function Library:CreateWindow(Info1)
 		return Elements
 	end
 
-	--//Settings
+	--// Settings
 	function SettingAssync:StartupSettings()
 		local Settings = Tabs:CreateTab({
 			Name = "Settings",
@@ -3980,7 +4030,5 @@ function Library:CreateWindow(Info1)
 
 	return Tabs, SettingAssync
 end
-
-Library:SetAutoButtonColor(false)
 
 return Library
