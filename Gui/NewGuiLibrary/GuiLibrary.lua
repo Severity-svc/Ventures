@@ -81,7 +81,7 @@ else
 	if not isfolder(FileBranch.FolderName) then makefolder(FileBranch.FolderName) end
 	if not isfolder(FileBranch.GuiName) then makefolder(FileBranch.GuiName) end
 	if not isfolder(FileBranch.ConfigPath) then makefolder(FileBranch.ConfigPath) end
-	if not isfile(FileBranch.Configs) then writefile(FileBranch.Configs, nil) end
+	if not isfile(FileBranch.Configs) then writefile(FileBranch.Configs, "{}") end
 
 	local function SaveGlobals()
 		local success, json = pcall(function()
@@ -4026,9 +4026,9 @@ function Library:CreateWindow(Info1)
 		end
 		return ExtraWrite
 	end
-
-
 	return Tabs, SettingAssync
 end
+
+Library:SetAutoButtonColor(false)
 
 return Library
