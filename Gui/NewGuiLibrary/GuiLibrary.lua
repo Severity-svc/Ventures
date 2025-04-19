@@ -14,7 +14,6 @@ local Ventures = Instance.new("ScreenGui")
 --// Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local TextService = game:GetService("TextService")
 local HttpService = game:GetService("HttpService")
 local TweenService = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
@@ -3293,6 +3292,8 @@ function Library:CreateWindow(Info1)
 			ColorPicker.BorderSizePixel = 0
 			ColorPicker.Position = UDim2.new(0.0149892932, 0,0.290865391, 0)
 			ColorPicker.Size = UDim2.new(0, 453,0,66)   --UDim2.new(0, 453,0, 205)
+			
+			CreateGradient(ColorPicker,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UICorner_c.Parent = ColorPicker
 			UICorner_c.CornerRadius = UDim.new(0,15)
@@ -3301,8 +3302,7 @@ function Library:CreateWindow(Info1)
 			UIStroke_c.Color = Color3.fromRGB(127, 127, 131)
 			UIStroke_c.Thickness = 1
 
-			UIGradient_1.Parent = UIStroke_c
-			UIGradient_1.Transparency = NumberSequence.new{NumberSequenceKeypoint.new(0,0), NumberSequenceKeypoint.new(1,0.757764)}
+			CreateGradient(UIStroke_c,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			UIGradient_2.Parent = ColorPicker
 			UIGradient_2.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(213, 213, 213)), ColorSequenceKeypoint.new(1, Color3.fromRGB(16, 16, 16))}
@@ -3323,6 +3323,8 @@ function Library:CreateWindow(Info1)
 			ColorPickerDescription_1.TextWrapped = true
 			ColorPickerDescription_1.TextXAlignment = Enum.TextXAlignment.Left
 			ColorPickerDescription_1.TextYAlignment = Enum.TextYAlignment.Top
+			
+			CreateGradient(ColorPickerDescription_1,Color3.fromRGB(254, 222, 255), Color3.fromRGB(255, 231, 207), Color3.fromRGB(207, 245, 255),nil,  "Special")
 
 			ColorPickerName_1.Name = "ColorPickerName"
 			ColorPickerName_1.Parent = ColorPicker
