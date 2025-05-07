@@ -4,7 +4,7 @@ local Library = loadstring(game:HttpGet('https://raw.githubusercontent.com/Sever
 if game.PlaceId == "116495829188952" then
 	Library:CreateNotification({
 		Title = "Ventures - Lobby Detected",
-		Content = "Join a game for the main gui to work!",
+		Content = "Join the main game to get the main UI!",
 		Duration = 4,
 	})
 
